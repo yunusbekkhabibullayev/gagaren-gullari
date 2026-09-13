@@ -277,7 +277,6 @@ function CheckoutPage() {
               500 000 so'mdan yuqori buyurtmalar uchun yetkazib berish bepul.
             </div>
           )}
-          {submitError && <div className="mt-3 text-xs text-red-600">{submitError}</div>}
           <button
             type="submit"
             disabled={saving}
