@@ -1,8 +1,6 @@
 // Telegram Bot Integration Service
 
-const BOT_TOKEN =
-  (import.meta.env?.VITE_TELEGRAM_BOT_TOKEN as string) ||
-  "8898489484:AAGqQN4nAPNSxb6KNHx2VNRbcVoww4U5dBU";
+const BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN as string;
 
 const CHAT_ID_STORAGE_KEY = "admin_telegram_chat_id";
 
