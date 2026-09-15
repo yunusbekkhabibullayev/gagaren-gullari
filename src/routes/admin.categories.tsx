@@ -34,7 +34,7 @@ export const Route = createFileRoute("/admin/categories")({
 
 function DynIcon({ name, size = 20, className = "" }: { name: string | null; size?: number; className?: string }) {
   if (!name) return <Folder size={size} className={className} />;
-  const Icon = (LucideIcons as Record<string, React.ComponentType<{ size?: number; className?: string }>>)[name];
+  const Icon = (LucideIcons as Record<string, React.ComponentType<{ size?: number; className?: string }>>)[name as string];
   if (!Icon) return <Folder size={size} className={className} />;
   return <Icon size={size} className={className} />;
 }
@@ -233,11 +233,10 @@ function AdminCategoriesPage() {
         <button
           type="button"
           onClick={() => setFilter("all")}
-          className={`text-left rounded-3xl border p-5 shadow-sm flex items-center justify-between transition ${
-            filter === "all"
-              ? "border-[#e0526c] bg-rose-50/40 ring-2 ring-rose-200 shadow-md"
-              : "border-slate-200/80 bg-white hover:border-slate-300"
-          }`}
+          className={`text-left rounded-3xl border p-5 shadow-sm flex items-center justify-between transition ${filter === "all"
+            ? "border-[#e0526c] bg-rose-50/40 ring-2 ring-rose-200 shadow-md"
+            : "border-slate-200/80 bg-white hover:border-slate-300"
+            }`}
         >
           <div>
             <div className="text-[10px] font-extrabold tracking-wider text-slate-400 uppercase">JAMI TOIFALAR</div>
@@ -251,11 +250,10 @@ function AdminCategoriesPage() {
         <button
           type="button"
           onClick={() => setFilter("active")}
-          className={`text-left rounded-3xl border p-5 shadow-sm flex items-center justify-between transition ${
-            filter === "active"
-              ? "border-emerald-500 bg-emerald-50/40 ring-2 ring-emerald-200 shadow-md"
-              : "border-slate-200/80 bg-white hover:border-slate-300"
-          }`}
+          className={`text-left rounded-3xl border p-5 shadow-sm flex items-center justify-between transition ${filter === "active"
+            ? "border-emerald-500 bg-emerald-50/40 ring-2 ring-emerald-200 shadow-md"
+            : "border-slate-200/80 bg-white hover:border-slate-300"
+            }`}
         >
           <div>
             <div className="text-[10px] font-extrabold tracking-wider text-slate-400 uppercase">FAOL TOIFALAR</div>
@@ -269,11 +267,10 @@ function AdminCategoriesPage() {
         <button
           type="button"
           onClick={() => setFilter("inactive")}
-          className={`text-left rounded-3xl border p-5 shadow-sm flex items-center justify-between transition ${
-            filter === "inactive"
-              ? "border-slate-400 bg-slate-100/60 ring-2 ring-slate-200 shadow-md"
-              : "border-slate-200/80 bg-white hover:border-slate-300"
-          }`}
+          className={`text-left rounded-3xl border p-5 shadow-sm flex items-center justify-between transition ${filter === "inactive"
+            ? "border-slate-400 bg-slate-100/60 ring-2 ring-slate-200 shadow-md"
+            : "border-slate-200/80 bg-white hover:border-slate-300"
+            }`}
         >
           <div>
             <div className="text-[10px] font-extrabold tracking-wider text-slate-400 uppercase">NOFAOL TOIFALAR</div>
@@ -314,25 +311,22 @@ function AdminCategoriesPage() {
           <div className="flex items-center gap-1 rounded-2xl bg-slate-100 p-1 text-xs font-bold">
             <button
               onClick={() => setFilter("all")}
-              className={`rounded-xl px-3 py-1.5 transition ${
-                filter === "all" ? "bg-[#e0526c] text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
-              }`}
+              className={`rounded-xl px-3 py-1.5 transition ${filter === "all" ? "bg-[#e0526c] text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
+                }`}
             >
               Barchasi {categories.length}
             </button>
             <button
               onClick={() => setFilter("active")}
-              className={`rounded-xl px-3 py-1.5 transition ${
-                filter === "active" ? "bg-[#e0526c] text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
-              }`}
+              className={`rounded-xl px-3 py-1.5 transition ${filter === "active" ? "bg-[#e0526c] text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
+                }`}
             >
               Faol {activeCount}
             </button>
             <button
               onClick={() => setFilter("inactive")}
-              className={`rounded-xl px-3 py-1.5 transition ${
-                filter === "inactive" ? "bg-[#e0526c] text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
-              }`}
+              className={`rounded-xl px-3 py-1.5 transition ${filter === "inactive" ? "bg-[#e0526c] text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
+                }`}
             >
               Nofaol {inactiveCount}
             </button>
@@ -341,17 +335,15 @@ function AdminCategoriesPage() {
           <div className="flex items-center gap-1 border-l border-slate-200 pl-3">
             <button
               onClick={() => setViewMode("grid")}
-              className={`rounded-xl p-2 transition ${
-                viewMode === "grid" ? "bg-rose-50 text-[#e0526c]" : "text-slate-400 hover:text-slate-700"
-              }`}
+              className={`rounded-xl p-2 transition ${viewMode === "grid" ? "bg-rose-50 text-[#e0526c]" : "text-slate-400 hover:text-slate-700"
+                }`}
             >
               <LayoutGrid className="h-4 w-4" />
             </button>
             <button
               onClick={() => setViewMode("table")}
-              className={`rounded-xl p-2 transition ${
-                viewMode === "table" ? "bg-rose-50 text-[#e0526c]" : "text-slate-400 hover:text-slate-700"
-              }`}
+              className={`rounded-xl p-2 transition ${viewMode === "table" ? "bg-rose-50 text-[#e0526c]" : "text-slate-400 hover:text-slate-700"
+                }`}
             >
               <List className="h-4 w-4" />
             </button>
@@ -394,9 +386,8 @@ function AdminCategoriesPage() {
                     </div>
                     <button
                       onClick={() => toggleActiveMutation.mutate({ id: cat.id, active: !cat.active })}
-                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${
-                        cat.active ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-slate-100 text-slate-400"
-                      }`}
+                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${cat.active ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-slate-100 text-slate-400"
+                        }`}
                     >
                       <span className={`h-1.5 w-1.5 rounded-full ${cat.active ? "bg-emerald-500" : "bg-slate-400"}`} />
                       {cat.active ? "Faol" : "Nofaol"}
@@ -462,9 +453,8 @@ function AdminCategoriesPage() {
                     <td className="px-6 py-4 font-mono text-xs text-slate-400">{cat.slug}</td>
                     <td className="px-6 py-4">
                       <span
-                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${
-                          cat.active ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400"
-                        }`}
+                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${cat.active ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400"
+                          }`}
                       >
                         <span className={`h-1.5 w-1.5 rounded-full ${cat.active ? "bg-emerald-500" : "bg-slate-400"}`} />
                         {cat.active ? "Faol" : "Nofaol"}
@@ -496,7 +486,7 @@ function AdminCategoriesPage() {
       {editing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
           <div className="flex flex-col w-full max-w-lg max-h-[90vh] rounded-3xl border border-slate-200 bg-white shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            {/* Header - Fixed at Top */}
+            {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-100 p-5 bg-white shrink-0">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-50 text-[#e0526c]">
@@ -534,7 +524,7 @@ function AdminCategoriesPage() {
                     else if (n.includes("tuvak") || n.includes("simlik")) autoIcon = "Leaf";
                     else if (n.includes("sovga") || n.includes("to'plam")) autoIcon = "Gift";
                     else if (n.includes("choy") || n.includes("ziynat")) autoIcon = "Sparkles";
-                    
+
                     setEditing({
                       ...editing,
                       name,
@@ -592,11 +582,10 @@ function AdminCategoriesPage() {
                         key={icName}
                         type="button"
                         onClick={() => setEditing({ ...editing, icon: icName })}
-                        className={`flex flex-col items-center justify-center p-2 rounded-xl transition border ${
-                          isSelected
-                            ? "border-[#e0526c] bg-white text-[#e0526c] shadow-sm ring-2 ring-rose-100"
-                            : "border-transparent text-slate-500 hover:bg-white hover:text-slate-900"
-                        }`}
+                        className={`flex flex-col items-center justify-center p-2 rounded-xl transition border ${isSelected
+                          ? "border-[#e0526c] bg-white text-[#e0526c] shadow-sm ring-2 ring-rose-100"
+                          : "border-transparent text-slate-500 hover:bg-white hover:text-slate-900"
+                          }`}
                       >
                         <DynIcon name={icName} size={18} />
                         <span className="mt-1 text-[9px] font-semibold truncate w-full text-center">
@@ -629,30 +618,28 @@ function AdminCategoriesPage() {
                 </div>
               </div>
 
-              {/* Faol Holati - Modern Toggle Switch */}
+              {/* Faol Holati */}
               <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4 border border-slate-100">
                 <div>
                   <div className="text-sm font-bold text-slate-900">Faol holati</div>
                   <div className="text-xs text-slate-500">Mijozlar uchun do'konda ko'rinadi</div>
                 </div>
-                
+
                 <button
                   type="button"
                   onClick={() => setEditing({ ...editing, active: !(editing.active ?? true) })}
-                  className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    (editing.active ?? true) ? "bg-[#e0526c]" : "bg-slate-300"
-                  }`}
+                  className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${(editing.active ?? true) ? "bg-[#e0526c]" : "bg-slate-300"
+                    }`}
                 >
                   <span
-                    className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                      (editing.active ?? true) ? "translate-x-5" : "translate-x-0"
-                    }`}
+                    className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${(editing.active ?? true) ? "translate-x-5" : "translate-x-0"
+                      }`}
                   />
                 </button>
               </div>
             </div>
 
-            {/* Footer - Fixed Sticky Action Bar at Bottom */}
+            {/* Footer */}
             <div className="flex items-center justify-end gap-3 border-t border-slate-100 p-5 bg-slate-50/50 shrink-0">
               <button
                 onClick={() => setEditing(null)}
