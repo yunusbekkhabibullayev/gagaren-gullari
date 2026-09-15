@@ -55,8 +55,8 @@ function AdminCategoriesPage() {
   const filtered = useMemo(() => {
     return categories.filter((c) => {
       const matchSearch =
-        c.name.toLowerCase().includes(search.toLowerCase()) ||
-        c.slug.toLowerCase().includes(search.toLowerCase());
+        (c.name || "").toLowerCase().includes(search.toLowerCase()) ||
+        (c.slug || "").toLowerCase().includes(search.toLowerCase());
 
       if (filter === "active") return matchSearch && c.active;
       if (filter === "inactive") return matchSearch && !c.active;
@@ -178,10 +178,10 @@ function AdminCategoriesPage() {
       return { id, active };
     },
     onSuccess: ({ id, active }) => {
-      qc.setQueryData<CategoryItem[]>(["admin-categories"], (old = []) =>
+      qc.setQueryData<Category[]>(["admin-categories"], (old = []) =>
         old.map((c) => (c.id === id ? { ...c, active } : c))
       );
-      qc.setQueryData<CategoryItem[]>(["categories"], (old = []) =>
+      qc.setQueryData<Category[]>(["categories"], (old = []) =>
         old.map((c) => (c.id === id ? { ...c, active } : c))
       );
       qc.invalidateQueries({ queryKey: ["admin-categories"] });
@@ -375,8 +375,8 @@ function AdminCategoriesPage() {
           {filtered.map((cat) => {
             const catProductCount = products.filter(
               (p) =>
-                p.category?.toLowerCase() === cat.name.toLowerCase() ||
-                p.category?.toLowerCase() === cat.slug.toLowerCase()
+                p.category?.toLowerCase() === (cat.name || "").toLowerCase() ||
+                p.category?.toLowerCase() === (cat.slug || "").toLowerCase()
             ).length;
 
             return (
