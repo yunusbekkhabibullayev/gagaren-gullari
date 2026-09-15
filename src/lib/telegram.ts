@@ -1,12 +1,19 @@
 // Telegram Bot Integration Service
 
-const BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN as string;
-
 const CHAT_ID_STORAGE_KEY = "admin_telegram_chat_id";
+
+// Helper: Dynamically fetch latest bot token
+function getBotToken(): string {
+  return (import.meta.env.VITE_TELEGRAM_BOT_TOKEN as string) || "";
+}
 
 export function getSavedTelegramChatId(): string | null {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem(CHAT_ID_STORAGE_KEY) || (import.meta.env?.VITE_TELEGRAM_CHAT_ID as string) || null;
+  return (
+    localStorage.getItem(CHAT_ID_STORAGE_KEY) ||
+    (import.meta.env?.VITE_TELEGRAM_CHAT_ID as string) ||
+    null
+  );
 }
 
 export function saveTelegramChatId(chatId: string) {
@@ -18,13 +25,20 @@ export function saveTelegramChatId(chatId: string) {
  * Tries to auto-detect chat_id from recent bot messages (/start)
  */
 export async function autoDetectTelegramChatId(): Promise<string | null> {
+  const token = getBotToken();
+  if (!token) {
+    console.warn("Telegram bot token is missing.");
+    return null;
+  }
+
   try {
-    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates`);
+    const res = await fetch(`https://api.telegram.org/bot${token}/getUpdates`);
     const json = await res.json();
     if (json.ok && Array.isArray(json.result) && json.result.length > 0) {
       // Find latest message chat ID
       const lastUpdate = json.result[json.result.length - 1];
-      const chatId = lastUpdate?.message?.chat?.id || lastUpdate?.channel_post?.chat?.id;
+      const chatId =
+        lastUpdate?.message?.chat?.id || lastUpdate?.channel_post?.chat?.id;
       if (chatId) {
         const idStr = String(chatId);
         saveTelegramChatId(idStr);
@@ -56,8 +70,16 @@ export type OrderNotificationPayload = {
   }>;
 };
 
-export async function sendTelegramOrderNotification(payload: OrderNotificationPayload) {
+export async function sendTelegramOrderNotification(
+  payload: OrderNotificationPayload
+) {
   try {
+    const token = getBotToken();
+    if (!token) {
+      console.warn("Telegram notification skipped: Bot token not provided.");
+      return false;
+    }
+
     // 1. Get or auto-detect chat_id
     let chatId = getSavedTelegramChatId();
     if (!chatId) {
@@ -82,14 +104,14 @@ export async function sendTelegramOrderNotification(payload: OrderNotificationPa
       payload.paymentMethod === "cash"
         ? "💵 Naqd pul (qabul qilganda)"
         : payload.paymentMethod === "card"
-        ? "💳 Karta orqali"
-        : "🏦 O'tkazma";
+          ? "💳 Karta orqali"
+          : "🏦 O'tkazma";
 
     const formattedTotal = payload.total.toLocaleString("uz-UZ");
 
     // 3. Construct Telegram Message
     const message = `
-🌸 <b>YANGI BUYURTMA #` + payload.orderId + `</b>
+🌸 <b>YANGI BUYURTMA #${payload.orderId}</b>
 
 👤 <b>Mijoz:</b> ${payload.customerName}
 📞 <b>Tel:</b> <code>${payload.customerPhone}</code>
@@ -105,7 +127,7 @@ ${itemsList}
 `.trim();
 
     // 4. Send API HTTP POST to Telegram Bot
-    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
