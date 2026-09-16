@@ -143,7 +143,7 @@ function AdminOrdersPage() {
 
   // Filtered Orders (Xavfsiz va crash bermaydigan qilib tuzatilgan)
   const filtered = useMemo(() => {
-    const searchLower = search.toLowerCase();
+    const searchLower = (search ?? "").toLowerCase();
 
     return orders.filter((o) => {
       const code = (o.code ?? "").toLowerCase();
