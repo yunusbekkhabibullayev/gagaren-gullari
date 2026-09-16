@@ -54,9 +54,10 @@ function AdminCategoriesPage() {
   // Filtered Categories
   const filtered = useMemo(() => {
     return categories.filter((c) => {
+      const s = (search ?? "").toLowerCase();
       const matchSearch =
-        (c.name || "").toLowerCase().includes(search.toLowerCase()) ||
-        (c.slug || "").toLowerCase().includes(search.toLowerCase());
+        (c.name ?? "").toLowerCase().includes(s) ||
+        (c.slug ?? "").toLowerCase().includes(s);
 
       if (filter === "active") return matchSearch && c.active;
       if (filter === "inactive") return matchSearch && !c.active;

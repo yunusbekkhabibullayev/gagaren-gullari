@@ -8,12 +8,18 @@ function getBotToken(): string {
 }
 
 export function getSavedTelegramChatId(): string | null {
-  if (typeof window === "undefined") return null;
-  return (
-    localStorage.getItem(CHAT_ID_STORAGE_KEY) ||
-    (import.meta.env?.VITE_TELEGRAM_CHAT_ID as string) ||
-    null
-  );
+  // Prefer persisted localStorage chat id in browser, but fall back to
+  // build-time Vite env var on server or if not set in client storage.
+  try {
+    if (typeof window !== "undefined") {
+      const fromStorage = localStorage.getItem(CHAT_ID_STORAGE_KEY);
+      if (fromStorage && fromStorage.trim()) return fromStorage.trim();
+    }
+  } catch (e) {
+    // ignore localStorage errors in restricted environments
+  }
+
+  return (import.meta.env?.VITE_TELEGRAM_CHAT_ID as string) || null;
 }
 
 export function saveTelegramChatId(chatId: string) {

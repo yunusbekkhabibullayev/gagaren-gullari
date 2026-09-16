@@ -6,23 +6,14 @@ import { formatSom } from "@/lib/products";
 import {
   ShoppingBag,
   Search,
-  Filter,
-  Calendar,
   ExternalLink,
   Eye,
-  CheckCircle2,
-  Clock,
-  Truck,
-  XCircle,
-  PackageCheck,
-  ChevronDown,
   X,
   MapPin,
   Phone,
   User,
   Send,
   Bot,
-  MessageSquare,
 } from "lucide-react";
 import {
   getSavedTelegramChatId,
@@ -37,13 +28,13 @@ export const Route = createFileRoute("/admin/orders")({
 
 type Order = {
   id: string;
-  code: string;
-  customer_name: string;
-  customer_phone: string;
-  customer_address: string;
-  customer_city: string;
+  code: string | null;
+  customer_name: string | null;
+  customer_phone: string | null;
+  customer_address: string | null;
+  customer_city: string | null;
   notes: string | null;
-  payment_method: string;
+  payment_method: string | null;
   subtotal: number;
   shipping: number;
   total: number;
@@ -144,20 +135,27 @@ function AdminOrdersPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-orders"] });
       if (selectedOrder) {
-        setSelectedOrder((prev) => (prev ? { ...prev, status: selectedOrder.status } : null));
+        setSelectedOrder((prev) => (prev ? { ...prev, status: prev.status } : null));
       }
     },
     onError: (err: Error) => alert("Xatolik: " + err.message),
   });
 
-  // Filtered Orders
+  // Filtered Orders (Xavfsiz va crash bermaydigan qilib tuzatilgan)
   const filtered = useMemo(() => {
+    const searchLower = search.toLowerCase();
+
     return orders.filter((o) => {
+      const code = (o.code ?? "").toLowerCase();
+      const name = (o.customer_name ?? "").toLowerCase();
+      const phone = o.customer_phone ?? "";
+      const address = (o.customer_address ?? "").toLowerCase();
+
       const matchSearch =
-        o.code.toLowerCase().includes(search.toLowerCase()) ||
-        o.customer_name.toLowerCase().includes(search.toLowerCase()) ||
-        o.customer_phone.includes(search) ||
-        o.customer_address.toLowerCase().includes(search.toLowerCase());
+        code.includes(searchLower) ||
+        name.includes(searchLower) ||
+        phone.includes(search) ||
+        address.includes(searchLower);
 
       if (!matchSearch) return false;
       if (selectedStatus === "all") return true;
@@ -396,36 +394,38 @@ function AdminOrdersPage() {
                     text: "text-slate-600",
                   };
                   const itemsSummary = Array.isArray(o.items)
-                    ? o.items.map((i) => `${i.name || i.title || "Tovar"} (${i.quantity || 1} dona)`).join(", ")
+                    ? o.items.map((i) => `${i?.name || i?.title || "Tovar"} (${i?.quantity || 1} dona)`).join(", ")
                     : "Maxsus buyurtma";
 
                   return (
                     <tr key={o.id} className="hover:bg-slate-50/80 transition">
                       <td className="px-6 py-4">
                         <span className="rounded-xl bg-slate-900 px-2.5 py-1 text-xs font-mono font-bold text-white shadow-sm">
-                          #{o.code?.slice(-4) || o.id.slice(0, 4)}
+                          #{o.code ? o.code.slice(-4) : o.id.slice(0, 4)}
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="font-bold text-slate-900">{o.customer_name}</div>
+                        <div className="font-bold text-slate-900">{o.customer_name || "Noma'lum"}</div>
                         <div className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
                           <Phone className="h-3 w-3" />
-                          {o.customer_phone}
+                          {o.customer_phone || "Mavjud emas"}
                         </div>
                       </td>
                       <td className="px-6 py-4 max-w-xs">
                         <div className="truncate text-xs font-semibold text-slate-700">
-                          {o.customer_city}, {o.customer_address}
+                          {o.customer_city ? `${o.customer_city}, ` : ""}{o.customer_address || "Manzil ko'rsatilmagan"}
                         </div>
-                        <a
-                          href={`https://maps.google.com/?q=${encodeURIComponent(o.customer_address)}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1 text-[11px] font-bold text-red-600 hover:underline mt-0.5"
-                        >
-                          <span>Xarita</span>
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
+                        {o.customer_address && (
+                          <a
+                            href={`https://maps.google.com/?q=${encodeURIComponent(o.customer_address)}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-red-600 hover:underline mt-0.5"
+                          >
+                            <span>Xarita</span>
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+                        )}
                       </td>
                       <td className="px-6 py-4 max-w-xs">
                         <div className="truncate text-xs font-medium text-slate-600" title={itemsSummary}>
@@ -433,13 +433,13 @@ function AdminOrdersPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="font-extrabold text-slate-900">{formatSom(o.total)}</div>
+                        <div className="font-extrabold text-slate-900">{formatSom(o.total || 0)}</div>
                         <div className="text-[11px] text-slate-400 capitalize">
                           {o.payment_method === "cash"
                             ? "Naqd pul"
                             : o.payment_method === "card"
                             ? "Karta orqali"
-                            : o.payment_method}
+                            : o.payment_method || "Ko'rsatilmagan"}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -493,15 +493,15 @@ function AdminOrdersPage() {
             <div className="rounded-2xl bg-slate-50 p-4 border border-slate-100 space-y-2 text-xs">
               <div className="flex items-center gap-2 font-bold text-slate-900 text-sm">
                 <User className="h-4 w-4 text-slate-500" />
-                {selectedOrder.customer_name}
+                {selectedOrder.customer_name || "Noma'lum mijoz"}
               </div>
               <div className="flex items-center gap-2 text-slate-600 font-semibold">
                 <Phone className="h-4 w-4 text-slate-400" />
-                {selectedOrder.customer_phone}
+                {selectedOrder.customer_phone || "Mavjud emas"}
               </div>
               <div className="flex items-center gap-2 text-slate-600">
                 <MapPin className="h-4 w-4 text-slate-400" />
-                {selectedOrder.customer_city}, {selectedOrder.customer_address}
+                {selectedOrder.customer_city ? `${selectedOrder.customer_city}, ` : ""}{selectedOrder.customer_address || "Manzil yo'q"}
               </div>
             </div>
 
@@ -512,9 +512,11 @@ function AdminOrdersPage() {
               </label>
               <select
                 value={selectedOrder.status}
-                onChange={(e) =>
-                  updateStatusMutation.mutate({ id: selectedOrder.id, status: e.target.value })
-                }
+                onChange={(e) => {
+                  const newStatus = e.target.value;
+                  setSelectedOrder((prev) => (prev ? { ...prev, status: newStatus } : null));
+                  updateStatusMutation.mutate({ id: selectedOrder.id, status: newStatus });
+                }}
                 className="w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-bold outline-none focus:border-red-600"
               >
                 <option value="new">Kutilmoqda (Yangi)</option>
@@ -530,7 +532,7 @@ function AdminOrdersPage() {
             <div className="flex items-center justify-between border-t border-slate-100 pt-4">
               <span className="text-sm font-bold text-slate-600">Jami summasi:</span>
               <span className="text-xl font-extrabold text-red-600">
-                {formatSom(selectedOrder.total)}
+                {formatSom(selectedOrder.total || 0)}
               </span>
             </div>
 

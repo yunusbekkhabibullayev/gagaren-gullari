@@ -67,8 +67,8 @@ function AdminProductsPage() {
   const filtered = useMemo(() => {
     return products.filter((p) => {
       const matchSearch =
-        p.name.toLowerCase().includes(search.toLowerCase()) ||
-        p.slug.toLowerCase().includes(search.toLowerCase());
+        (p.name ?? "").toLowerCase().includes((search ?? "").toLowerCase()) ||
+        (p.slug ?? "").toLowerCase().includes((search ?? "").toLowerCase());
       const matchCat = categoryFilter === "all" || p.category === categoryFilter;
 
       if (!matchSearch || !matchCat) return false;
