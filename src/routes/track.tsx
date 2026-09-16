@@ -16,7 +16,10 @@ export const Route = createFileRoute("/track")({
         content: "Buyurtma raqami va telefon raqamingiz orqali buyurtmangiz holatini tekshiring.",
       },
       { property: "og:title", content: "Buyurtmani kuzatish — Sopol Ustalari" },
-      { property: "og:description", content: "Buyurtmangiz qayerda? Holatini bir daqiqada bilib oling." },
+      {
+        property: "og:description",
+        content: "Buyurtmangiz qayerda? Holatini bir daqiqada bilib oling.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -140,7 +143,9 @@ function TrackPage() {
                       >
                         {i + 1}
                       </span>
-                      <span className={`text-sm sm:mt-2 sm:block ${done ? "" : "text-muted-foreground"}`}>
+                      <span
+                        className={`text-sm sm:mt-2 sm:block ${done ? "" : "text-muted-foreground"}`}
+                      >
                         {s.label}
                       </span>
                     </li>
@@ -150,7 +155,10 @@ function TrackPage() {
             )}
 
             <div className="mt-6 text-sm text-muted-foreground">
-              Holat: <span className="font-medium text-foreground">{STATUS_LABEL[order.status] ?? order.status}</span>
+              Holat:{" "}
+              <span className="font-medium text-foreground">
+                {STATUS_LABEL[order.status] ?? order.status}
+              </span>
               {" · "}Shahar: <span className="text-foreground">{order.city}</span>
             </div>
 

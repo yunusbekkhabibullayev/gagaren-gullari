@@ -179,9 +179,7 @@ function AdminLayout() {
             className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="fixed inset-y-0 left-0 w-72 max-w-[80vw]">
-            {sidebarContent}
-          </div>
+          <div className="fixed inset-y-0 left-0 w-72 max-w-[80vw]">{sidebarContent}</div>
         </div>
       )}
 
@@ -241,9 +239,7 @@ function AdminLayout() {
               {profileDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-64 rounded-3xl border border-slate-100 bg-white p-4 shadow-2xl z-50 space-y-3">
                   <div className="border-b border-slate-100 pb-3 text-left">
-                    <div className="font-bold text-slate-900 text-sm">
-                      Admin
-                    </div>
+                    <div className="font-bold text-slate-900 text-sm">Admin</div>
                     <div className="text-xs text-[#e0526c] font-bold">Admin</div>
                     <div className="text-[11px] text-slate-400 truncate mt-0.5">{user.email}</div>
                   </div>

@@ -87,7 +87,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Gagaren Gullari — Mirzacho'l tumani gul yetkazib berish" },
-      { name: "twitter:description", content: "Yangi buketlar, atirgullar va sovg'a to'plamlari — tanlagan kuningizda yetkazamiz." },
+      {
+        name: "twitter:description",
+        content:
+          "Yangi buketlar, atirgullar va sovg'a to'plamlari — tanlagan kuningizda yetkazamiz.",
+      },
     ],
     links: [
       {

@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import type { Product } from "@/lib/products";
 
 export type CartItem = {
@@ -77,7 +85,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const setQty = useCallback((slug: string, color: string, qty: number) => {
     setItems((prev) =>
       prev
-        .map((i) => (i.slug === slug && i.color === color ? { ...i, qty: Math.max(0, Math.min(99, qty)) } : i))
+        .map((i) =>
+          i.slug === slug && i.color === color ? { ...i, qty: Math.max(0, Math.min(99, qty)) } : i,
+        )
         .filter((i) => i.qty > 0),
     );
   }, []);

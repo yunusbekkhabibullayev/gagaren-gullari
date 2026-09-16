@@ -37,7 +37,9 @@ function AdminDashboard() {
       const totalOrdersCount = orders.length;
 
       const totalRevenue = orders.reduce((sum, o) => sum + Number(o.total || 0), 0);
-      const pendingOrdersCount = orders.filter((o) => o.status === "new" || o.status === "pending").length;
+      const pendingOrdersCount = orders.filter(
+        (o) => o.status === "new" || o.status === "pending",
+      ).length;
 
       return {
         productsCount,
@@ -58,9 +60,7 @@ function AdminDashboard() {
     const daysLimit = Number(period);
     const cutoffTime = Date.now() - daysLimit * 86400000;
 
-    const filteredOrders = orders.filter(
-      (o) => new Date(o.created_at).getTime() >= cutoffTime
-    );
+    const filteredOrders = orders.filter((o) => new Date(o.created_at).getTime() >= cutoffTime);
 
     const dayNames = [
       { key: 1, label: "Dush", full: "Dushanba" },
@@ -139,7 +139,9 @@ function AdminDashboard() {
               onClick={() => stats.refetch()}
               className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50 transition"
             >
-              <RefreshCw className={`h-4 w-4 text-slate-500 ${stats.isFetching ? "animate-spin" : ""}`} />
+              <RefreshCw
+                className={`h-4 w-4 text-slate-500 ${stats.isFetching ? "animate-spin" : ""}`}
+              />
               <span>Yangilash</span>
             </button>
             <Link
@@ -253,8 +255,12 @@ function AdminDashboard() {
               <BarChart3 className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="font-bold text-slate-900 text-lg font-display">Savdo Dinamikasi & Tushum Grafigi</h2>
-              <p className="text-xs text-slate-500 font-medium">Do'konning kunlik savdo ko'rsatkichlari va tushum tahlili</p>
+              <h2 className="font-bold text-slate-900 text-lg font-display">
+                Savdo Dinamikasi & Tushum Grafigi
+              </h2>
+              <p className="text-xs text-slate-500 font-medium">
+                Do'konning kunlik savdo ko'rsatkichlari va tushum tahlili
+              </p>
             </div>
           </div>
 
@@ -263,7 +269,9 @@ function AdminDashboard() {
             <button
               onClick={() => setPeriod("7")}
               className={`rounded-xl px-3 py-1.5 transition ${
-                period === "7" ? "bg-[#e0526c] text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
+                period === "7"
+                  ? "bg-[#e0526c] text-white shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
               7 kun
@@ -271,7 +279,9 @@ function AdminDashboard() {
             <button
               onClick={() => setPeriod("14")}
               className={`rounded-xl px-3 py-1.5 transition ${
-                period === "14" ? "bg-[#e0526c] text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
+                period === "14"
+                  ? "bg-[#e0526c] text-white shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
               14 kun
@@ -279,7 +289,9 @@ function AdminDashboard() {
             <button
               onClick={() => setPeriod("30")}
               className={`rounded-xl px-3 py-1.5 transition ${
-                period === "30" ? "bg-[#e0526c] text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
+                period === "30"
+                  ? "bg-[#e0526c] text-white shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
               30 kun
@@ -290,7 +302,10 @@ function AdminDashboard() {
         {/* Dynamic Visual Chart Bars */}
         <div className="h-48 w-full rounded-2xl bg-slate-50 border border-slate-100 p-4 flex items-end justify-between gap-2 sm:gap-4">
           {chartData.bars.map((bar, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center gap-2 group h-full justify-end relative">
+            <div
+              key={i}
+              className="flex-1 flex flex-col items-center gap-2 group h-full justify-end relative"
+            >
               {/* Tooltip on Hover */}
               <div className="opacity-0 group-hover:opacity-100 pointer-events-none absolute -top-8 bg-slate-900 text-white text-[10px] font-bold px-2 py-1 rounded-lg transition shadow-md whitespace-nowrap z-10">
                 {bar.full}: {formatSom(bar.sum)}
@@ -300,9 +315,7 @@ function AdminDashboard() {
                 style={{ height: `${bar.heightPercent}%` }}
                 className="w-full max-w-[36px] rounded-t-xl bg-gradient-to-t from-[#e0526c] to-[#f4728b] group-hover:from-[#ce425b] group-hover:to-[#e0526c] transition-all duration-300 shadow-sm"
               />
-              <span className="text-[10px] font-bold text-slate-400">
-                {bar.label}
-              </span>
+              <span className="text-[10px] font-bold text-slate-400">{bar.label}</span>
             </div>
           ))}
         </div>

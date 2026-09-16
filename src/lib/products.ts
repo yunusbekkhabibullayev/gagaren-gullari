@@ -136,11 +136,7 @@ export function useProduct(slug: string) {
       const match = all.find((p) => p.slug === slug || p.id === slug);
       if (match) return match;
 
-      const { data } = await supabase
-        .from("products")
-        .select("*")
-        .eq("slug", slug)
-        .maybeSingle();
+      const { data } = await supabase.from("products").select("*").eq("slug", slug).maybeSingle();
       return (data as Product | null) ?? null;
     },
   });

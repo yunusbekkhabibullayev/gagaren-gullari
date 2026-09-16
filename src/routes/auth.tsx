@@ -131,9 +131,7 @@ function AuthPage() {
 
           {/* Password Input */}
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-1.5">
-              Maxfiy parol
-            </label>
+            <label className="block text-xs font-bold text-slate-600 mb-1.5">Maxfiy parol</label>
             <div className="relative">
               <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <input
@@ -163,7 +161,10 @@ function AuthPage() {
               onChange={(e) => setRemember(e.target.checked)}
               className="h-4 w-4 rounded border-slate-300 text-[#e0526c] focus:ring-[#e0526c] cursor-pointer"
             />
-            <label htmlFor="remember" className="text-xs font-semibold text-slate-600 cursor-pointer">
+            <label
+              htmlFor="remember"
+              className="text-xs font-semibold text-slate-600 cursor-pointer"
+            >
               Eslab qolish
             </label>
           </div>

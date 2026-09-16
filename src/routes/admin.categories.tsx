@@ -32,9 +32,19 @@ export const Route = createFileRoute("/admin/categories")({
   component: AdminCategoriesPage,
 });
 
-function DynIcon({ name, size = 20, className = "" }: { name: string | null; size?: number; className?: string }) {
+function DynIcon({
+  name,
+  size = 20,
+  className = "",
+}: {
+  name: string | null;
+  size?: number;
+  className?: string;
+}) {
   if (!name) return <Folder size={size} className={className} />;
-  const Icon = (LucideIcons as Record<string, React.ComponentType<{ size?: number; className?: string }>>)[name as string];
+  const Icon = (
+    LucideIcons as Record<string, React.ComponentType<{ size?: number; className?: string }>>
+  )[name as string];
   if (!Icon) return <Folder size={size} className={className} />;
   return <Icon size={size} className={className} />;
 }
@@ -56,8 +66,7 @@ function AdminCategoriesPage() {
     return categories.filter((c) => {
       const s = (search ?? "").toLowerCase();
       const matchSearch =
-        (c.name ?? "").toLowerCase().includes(s) ||
-        (c.slug ?? "").toLowerCase().includes(s);
+        (c.name ?? "").toLowerCase().includes(s) || (c.slug ?? "").toLowerCase().includes(s);
 
       if (filter === "active") return matchSearch && c.active;
       if (filter === "inactive") return matchSearch && !c.active;
@@ -154,7 +163,9 @@ function AdminCategoriesPage() {
       return id;
     },
     onSuccess: (id) => {
-      qc.setQueryData<Category[]>(["admin-categories"], (old = []) => old.filter((c) => c.id !== id));
+      qc.setQueryData<Category[]>(["admin-categories"], (old = []) =>
+        old.filter((c) => c.id !== id),
+      );
       qc.setQueryData<Category[]>(["categories"], (old = []) => old.filter((c) => c.id !== id));
       qc.invalidateQueries({ queryKey: ["admin-categories"] });
       qc.invalidateQueries({ queryKey: ["categories"] });
@@ -180,10 +191,10 @@ function AdminCategoriesPage() {
     },
     onSuccess: ({ id, active }) => {
       qc.setQueryData<Category[]>(["admin-categories"], (old = []) =>
-        old.map((c) => (c.id === id ? { ...c, active } : c))
+        old.map((c) => (c.id === id ? { ...c, active } : c)),
       );
       qc.setQueryData<Category[]>(["categories"], (old = []) =>
-        old.map((c) => (c.id === id ? { ...c, active } : c))
+        old.map((c) => (c.id === id ? { ...c, active } : c)),
       );
       qc.invalidateQueries({ queryKey: ["admin-categories"] });
       qc.invalidateQueries({ queryKey: ["categories"] });
@@ -203,7 +214,9 @@ function AdminCategoriesPage() {
               <Layers className="h-6 w-6" />
             </div>
             <div>
-              <h1 className="font-extrabold text-slate-900 text-2xl tracking-tight">Katalog Toifalari</h1>
+              <h1 className="font-extrabold text-slate-900 text-2xl tracking-tight">
+                Katalog Toifalari
+              </h1>
               <p className="text-sm font-medium text-slate-500">
                 Do'kon toifalari va ularga biriktirilgan mahsulotlar boshqaruvi
               </p>
@@ -234,14 +247,19 @@ function AdminCategoriesPage() {
         <button
           type="button"
           onClick={() => setFilter("all")}
-          className={`text-left rounded-3xl border p-5 shadow-sm flex items-center justify-between transition ${filter === "all"
-            ? "border-[#e0526c] bg-rose-50/40 ring-2 ring-rose-200 shadow-md"
-            : "border-slate-200/80 bg-white hover:border-slate-300"
-            }`}
+          className={`text-left rounded-3xl border p-5 shadow-sm flex items-center justify-between transition ${
+            filter === "all"
+              ? "border-[#e0526c] bg-rose-50/40 ring-2 ring-rose-200 shadow-md"
+              : "border-slate-200/80 bg-white hover:border-slate-300"
+          }`}
         >
           <div>
-            <div className="text-[10px] font-extrabold tracking-wider text-slate-400 uppercase">JAMI TOIFALAR</div>
-            <div className="mt-1 text-2xl font-extrabold text-slate-900">{categories.length} ta</div>
+            <div className="text-[10px] font-extrabold tracking-wider text-slate-400 uppercase">
+              JAMI TOIFALAR
+            </div>
+            <div className="mt-1 text-2xl font-extrabold text-slate-900">
+              {categories.length} ta
+            </div>
           </div>
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-100 text-slate-600">
             <Folder className="h-5 w-5" />
@@ -251,13 +269,16 @@ function AdminCategoriesPage() {
         <button
           type="button"
           onClick={() => setFilter("active")}
-          className={`text-left rounded-3xl border p-5 shadow-sm flex items-center justify-between transition ${filter === "active"
-            ? "border-emerald-500 bg-emerald-50/40 ring-2 ring-emerald-200 shadow-md"
-            : "border-slate-200/80 bg-white hover:border-slate-300"
-            }`}
+          className={`text-left rounded-3xl border p-5 shadow-sm flex items-center justify-between transition ${
+            filter === "active"
+              ? "border-emerald-500 bg-emerald-50/40 ring-2 ring-emerald-200 shadow-md"
+              : "border-slate-200/80 bg-white hover:border-slate-300"
+          }`}
         >
           <div>
-            <div className="text-[10px] font-extrabold tracking-wider text-slate-400 uppercase">FAOL TOIFALAR</div>
+            <div className="text-[10px] font-extrabold tracking-wider text-slate-400 uppercase">
+              FAOL TOIFALAR
+            </div>
             <div className="mt-1 text-2xl font-extrabold text-emerald-600">{activeCount} ta</div>
           </div>
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
@@ -268,13 +289,16 @@ function AdminCategoriesPage() {
         <button
           type="button"
           onClick={() => setFilter("inactive")}
-          className={`text-left rounded-3xl border p-5 shadow-sm flex items-center justify-between transition ${filter === "inactive"
-            ? "border-slate-400 bg-slate-100/60 ring-2 ring-slate-200 shadow-md"
-            : "border-slate-200/80 bg-white hover:border-slate-300"
-            }`}
+          className={`text-left rounded-3xl border p-5 shadow-sm flex items-center justify-between transition ${
+            filter === "inactive"
+              ? "border-slate-400 bg-slate-100/60 ring-2 ring-slate-200 shadow-md"
+              : "border-slate-200/80 bg-white hover:border-slate-300"
+          }`}
         >
           <div>
-            <div className="text-[10px] font-extrabold tracking-wider text-slate-400 uppercase">NOFAOL TOIFALAR</div>
+            <div className="text-[10px] font-extrabold tracking-wider text-slate-400 uppercase">
+              NOFAOL TOIFALAR
+            </div>
             <div className="mt-1 text-2xl font-extrabold text-slate-500">{inactiveCount} ta</div>
           </div>
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
@@ -284,8 +308,12 @@ function AdminCategoriesPage() {
 
         <div className="rounded-3xl border border-slate-200/80 bg-white p-5 shadow-sm flex items-center justify-between">
           <div>
-            <div className="text-[10px] font-extrabold tracking-wider text-slate-400 uppercase">BIRIKTIRILGAN TOVARLAR</div>
-            <div className="mt-1 text-2xl font-extrabold text-[#e0526c]">{products.length} ta tovar</div>
+            <div className="text-[10px] font-extrabold tracking-wider text-slate-400 uppercase">
+              BIRIKTIRILGAN TOVARLAR
+            </div>
+            <div className="mt-1 text-2xl font-extrabold text-[#e0526c]">
+              {products.length} ta tovar
+            </div>
           </div>
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-50 text-[#e0526c]">
             <Box className="h-5 w-5" />
@@ -312,22 +340,31 @@ function AdminCategoriesPage() {
           <div className="flex items-center gap-1 rounded-2xl bg-slate-100 p-1 text-xs font-bold">
             <button
               onClick={() => setFilter("all")}
-              className={`rounded-xl px-3 py-1.5 transition ${filter === "all" ? "bg-[#e0526c] text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
-                }`}
+              className={`rounded-xl px-3 py-1.5 transition ${
+                filter === "all"
+                  ? "bg-[#e0526c] text-white shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
             >
               Barchasi {categories.length}
             </button>
             <button
               onClick={() => setFilter("active")}
-              className={`rounded-xl px-3 py-1.5 transition ${filter === "active" ? "bg-[#e0526c] text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
-                }`}
+              className={`rounded-xl px-3 py-1.5 transition ${
+                filter === "active"
+                  ? "bg-[#e0526c] text-white shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
             >
               Faol {activeCount}
             </button>
             <button
               onClick={() => setFilter("inactive")}
-              className={`rounded-xl px-3 py-1.5 transition ${filter === "inactive" ? "bg-[#e0526c] text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
-                }`}
+              className={`rounded-xl px-3 py-1.5 transition ${
+                filter === "inactive"
+                  ? "bg-[#e0526c] text-white shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
             >
               Nofaol {inactiveCount}
             </button>
@@ -336,15 +373,21 @@ function AdminCategoriesPage() {
           <div className="flex items-center gap-1 border-l border-slate-200 pl-3">
             <button
               onClick={() => setViewMode("grid")}
-              className={`rounded-xl p-2 transition ${viewMode === "grid" ? "bg-rose-50 text-[#e0526c]" : "text-slate-400 hover:text-slate-700"
-                }`}
+              className={`rounded-xl p-2 transition ${
+                viewMode === "grid"
+                  ? "bg-rose-50 text-[#e0526c]"
+                  : "text-slate-400 hover:text-slate-700"
+              }`}
             >
               <LayoutGrid className="h-4 w-4" />
             </button>
             <button
               onClick={() => setViewMode("table")}
-              className={`rounded-xl p-2 transition ${viewMode === "table" ? "bg-rose-50 text-[#e0526c]" : "text-slate-400 hover:text-slate-700"
-                }`}
+              className={`rounded-xl p-2 transition ${
+                viewMode === "table"
+                  ? "bg-rose-50 text-[#e0526c]"
+                  : "text-slate-400 hover:text-slate-700"
+              }`}
             >
               <List className="h-4 w-4" />
             </button>
@@ -361,7 +404,9 @@ function AdminCategoriesPage() {
         <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-12 text-center">
           <Folder className="mx-auto h-12 w-12 text-slate-300" />
           <h3 className="mt-4 text-base font-bold text-slate-800">Toifa topilmadi</h3>
-          <p className="mt-1 text-xs text-slate-500">Qidiruv bo'yicha hech qanday toifa mos kelmadi</p>
+          <p className="mt-1 text-xs text-slate-500">
+            Qidiruv bo'yicha hech qanday toifa mos kelmadi
+          </p>
         </div>
       ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -369,7 +414,7 @@ function AdminCategoriesPage() {
             const catProductCount = products.filter(
               (p) =>
                 p.category?.toLowerCase() === (cat.name || "").toLowerCase() ||
-                p.category?.toLowerCase() === (cat.slug || "").toLowerCase()
+                p.category?.toLowerCase() === (cat.slug || "").toLowerCase(),
             ).length;
 
             return (
@@ -386,11 +431,18 @@ function AdminCategoriesPage() {
                       <DynIcon name={cat.icon} size={22} />
                     </div>
                     <button
-                      onClick={() => toggleActiveMutation.mutate({ id: cat.id, active: !cat.active })}
-                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${cat.active ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-slate-100 text-slate-400"
-                        }`}
+                      onClick={() =>
+                        toggleActiveMutation.mutate({ id: cat.id, active: !cat.active })
+                      }
+                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${
+                        cat.active
+                          ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
+                          : "bg-slate-100 text-slate-400"
+                      }`}
                     >
-                      <span className={`h-1.5 w-1.5 rounded-full ${cat.active ? "bg-emerald-500" : "bg-slate-400"}`} />
+                      <span
+                        className={`h-1.5 w-1.5 rounded-full ${cat.active ? "bg-emerald-500" : "bg-slate-400"}`}
+                      />
                       {cat.active ? "Faol" : "Nofaol"}
                     </button>
                   </div>
@@ -454,10 +506,15 @@ function AdminCategoriesPage() {
                     <td className="px-6 py-4 font-mono text-xs text-slate-400">{cat.slug}</td>
                     <td className="px-6 py-4">
                       <span
-                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${cat.active ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400"
-                          }`}
+                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${
+                          cat.active
+                            ? "bg-emerald-50 text-emerald-600"
+                            : "bg-slate-100 text-slate-400"
+                        }`}
                       >
-                        <span className={`h-1.5 w-1.5 rounded-full ${cat.active ? "bg-emerald-500" : "bg-slate-400"}`} />
+                        <span
+                          className={`h-1.5 w-1.5 rounded-full ${cat.active ? "bg-emerald-500" : "bg-slate-400"}`}
+                        />
                         {cat.active ? "Faol" : "Nofaol"}
                       </span>
                     </td>
@@ -517,7 +574,12 @@ function AdminCategoriesPage() {
                   value={editing.name ?? ""}
                   onChange={(e) => {
                     const name = e.target.value;
-                    const autoSlug = name.toLowerCase().replace(/ʻ|ʼ|'/g, "").replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "").replace(/-+/g, "-");
+                    const autoSlug = name
+                      .toLowerCase()
+                      .replace(/ʻ|ʼ|'/g, "")
+                      .replace(/\s+/g, "-")
+                      .replace(/[^a-z0-9-]/g, "")
+                      .replace(/-+/g, "-");
                     let autoIcon = editing.icon || "Folder";
                     const n = name.toLowerCase();
                     if (n.includes("buket") || n.includes("gul")) autoIcon = "Flower2";
@@ -557,7 +619,8 @@ function AdminCategoriesPage() {
                     Icon tanlash
                   </label>
                   <span className="text-xs font-bold text-[#e0526c] flex items-center gap-1">
-                    Tanlangan: <DynIcon name={editing.icon || "Folder"} size={16} /> {editing.icon || "Folder"}
+                    Tanlangan: <DynIcon name={editing.icon || "Folder"} size={16} />{" "}
+                    {editing.icon || "Folder"}
                   </span>
                 </div>
 
@@ -583,10 +646,11 @@ function AdminCategoriesPage() {
                         key={icName}
                         type="button"
                         onClick={() => setEditing({ ...editing, icon: icName })}
-                        className={`flex flex-col items-center justify-center p-2 rounded-xl transition border ${isSelected
-                          ? "border-[#e0526c] bg-white text-[#e0526c] shadow-sm ring-2 ring-rose-100"
-                          : "border-transparent text-slate-500 hover:bg-white hover:text-slate-900"
-                          }`}
+                        className={`flex flex-col items-center justify-center p-2 rounded-xl transition border ${
+                          isSelected
+                            ? "border-[#e0526c] bg-white text-[#e0526c] shadow-sm ring-2 ring-rose-100"
+                            : "border-transparent text-slate-500 hover:bg-white hover:text-slate-900"
+                        }`}
                       >
                         <DynIcon name={icName} size={18} />
                         <span className="mt-1 text-[9px] font-semibold truncate w-full text-center">
@@ -629,12 +693,14 @@ function AdminCategoriesPage() {
                 <button
                   type="button"
                   onClick={() => setEditing({ ...editing, active: !(editing.active ?? true) })}
-                  className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${(editing.active ?? true) ? "bg-[#e0526c]" : "bg-slate-300"
-                    }`}
+                  className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    (editing.active ?? true) ? "bg-[#e0526c]" : "bg-slate-300"
+                  }`}
                 >
                   <span
-                    className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${(editing.active ?? true) ? "translate-x-5" : "translate-x-0"
-                      }`}
+                    className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                      (editing.active ?? true) ? "translate-x-5" : "translate-x-0"
+                    }`}
                   />
                 </button>
               </div>
@@ -668,7 +734,9 @@ function AdminCategoriesPage() {
               <Trash2 className="h-7 w-7" />
             </div>
             <h3 className="font-bold text-slate-900 text-lg">Toifani o'chirish</h3>
-            <p className="text-xs text-slate-500">Ushbu toifani o'chirmoqchimisiz? Amalni ortga qaytarib bo'lmaydi.</p>
+            <p className="text-xs text-slate-500">
+              Ushbu toifani o'chirmoqchimisiz? Amalni ortga qaytarib bo'lmaydi.
+            </p>
             <div className="flex items-center justify-center gap-3 pt-2">
               <button
                 onClick={() => setDeletingId(null)}

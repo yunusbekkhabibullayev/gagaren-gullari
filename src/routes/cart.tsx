@@ -60,7 +60,11 @@ function CartPage() {
                 <div className="flex min-w-0 flex-1 flex-col">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <Link to="/product/$id" params={{ id: l.slug }} className="truncate font-medium hover:underline">
+                      <Link
+                        to="/product/$id"
+                        params={{ id: l.slug }}
+                        className="truncate font-medium hover:underline"
+                      >
                         {l.name}
                       </Link>
                       <div className="mt-0.5 truncate text-xs text-muted-foreground">
@@ -76,9 +80,19 @@ function CartPage() {
                   </div>
                   <div className="mt-auto flex items-end justify-between gap-3 pt-3">
                     <div className="inline-flex items-center rounded-full border border-border bg-background">
-                      <button onClick={() => setQty(l.slug, l.color, l.qty - 1)} className="px-3 py-1.5">−</button>
+                      <button
+                        onClick={() => setQty(l.slug, l.color, l.qty - 1)}
+                        className="px-3 py-1.5"
+                      >
+                        −
+                      </button>
                       <div className="w-8 text-center text-sm">{l.qty}</div>
-                      <button onClick={() => setQty(l.slug, l.color, l.qty + 1)} className="px-3 py-1.5">+</button>
+                      <button
+                        onClick={() => setQty(l.slug, l.color, l.qty + 1)}
+                        className="px-3 py-1.5"
+                      >
+                        +
+                      </button>
                     </div>
                     <div className="text-sm font-semibold">{formatSom(l.price * l.qty)}</div>
                   </div>

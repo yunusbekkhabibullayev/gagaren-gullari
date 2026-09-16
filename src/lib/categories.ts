@@ -14,10 +14,50 @@ export type Category = {
 };
 
 export const DEFAULT_CATEGORIES: Category[] = [
-  { id: "1", name: "Buketlar", slug: "buketlar", icon: "Flower2", color: "#e85d4a", order_index: 0, active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-  { id: "2", name: "Atirgullar", slug: "atirgullar", icon: "Heart", color: "#f43f5e", order_index: 1, active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-  { id: "3", name: "Tuvakdagi o'simliklar", slug: "tuvakdagi-osimliklar", icon: "Leaf", color: "#10b981", order_index: 2, active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-  { id: "4", name: "Sovg'a to'plamlari", slug: "sovga-toplamlari", icon: "Gift", color: "#f59e0b", order_index: 3, active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  {
+    id: "1",
+    name: "Buketlar",
+    slug: "buketlar",
+    icon: "Flower2",
+    color: "#e85d4a",
+    order_index: 0,
+    active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: "2",
+    name: "Atirgullar",
+    slug: "atirgullar",
+    icon: "Heart",
+    color: "#f43f5e",
+    order_index: 1,
+    active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: "3",
+    name: "Tuvakdagi o'simliklar",
+    slug: "tuvakdagi-osimliklar",
+    icon: "Leaf",
+    color: "#10b981",
+    order_index: 2,
+    active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: "4",
+    name: "Sovg'a to'plamlari",
+    slug: "sovga-toplamlari",
+    icon: "Gift",
+    color: "#f59e0b",
+    order_index: 3,
+    active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
 ];
 
 const CATEGORY_OVERRIDES_KEY = "admin_category_overrides";
@@ -68,7 +108,9 @@ export function mergeCategoriesWithOverrides(dbCategories: Category[]): Category
   try {
     const rawDel = localStorage.getItem(CATEGORY_DELETED_KEY);
     if (rawDel) deletedIds = new Set(JSON.parse(rawDel));
-  } catch {}
+  } catch (e) {
+    console.warn("Failed to read deleted category ids from localStorage", e);
+  }
 
   const source = dbCategories.length > 0 ? dbCategories : DEFAULT_CATEGORIES;
   const remainingDb = source.filter((c) => !deletedIds.has(c.id));

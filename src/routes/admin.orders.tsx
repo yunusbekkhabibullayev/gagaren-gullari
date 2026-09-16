@@ -39,10 +39,19 @@ type Order = {
   shipping: number;
   total: number;
   status: string;
-  items: any[];
+  items: OrderItem[];
   delivery_date: string | null;
   delivery_time: string | null;
   created_at: string;
+};
+
+type OrderItem = {
+  name?: string;
+  title?: string;
+  quantity?: number;
+  qty?: number;
+  price?: number;
+  color?: string;
 };
 
 const statusMap: Record<string, { label: string; bg: string; text: string }> = {
@@ -82,7 +91,9 @@ function AdminOrdersPage() {
       setTelegramChatId(detected);
       setTelegramStatusMsg(`✓ Chat ID aniqlandi: ${detected}`);
     } else {
-      setTelegramStatusMsg("⚠️ Chat ID topilmadi. Avval Telegram botingizga /start bosing va qayta bosing!");
+      setTelegramStatusMsg(
+        "⚠️ Chat ID topilmadi. Avval Telegram botingizga /start bosing va qayta bosing!",
+      );
     }
   };
 
@@ -278,10 +289,18 @@ function AdminOrdersPage() {
           {/* Date Filter Pills */}
           <div className="flex items-center gap-1.5 text-xs font-bold text-slate-600">
             <span className="text-[10px] text-slate-400 uppercase tracking-wider mr-1">Sana:</span>
-            <button className="rounded-xl bg-slate-900 px-3 py-1.5 text-white shadow-sm">Barchasi</button>
-            <button className="rounded-xl bg-slate-100 px-3 py-1.5 hover:bg-slate-200 transition">Bugun</button>
-            <button className="rounded-xl bg-slate-100 px-3 py-1.5 hover:bg-slate-200 transition">Kecha</button>
-            <button className="rounded-xl bg-slate-100 px-3 py-1.5 hover:bg-slate-200 transition">Bu hafta</button>
+            <button className="rounded-xl bg-slate-900 px-3 py-1.5 text-white shadow-sm">
+              Barchasi
+            </button>
+            <button className="rounded-xl bg-slate-100 px-3 py-1.5 hover:bg-slate-200 transition">
+              Bugun
+            </button>
+            <button className="rounded-xl bg-slate-100 px-3 py-1.5 hover:bg-slate-200 transition">
+              Kecha
+            </button>
+            <button className="rounded-xl bg-slate-100 px-3 py-1.5 hover:bg-slate-200 transition">
+              Bu hafta
+            </button>
           </div>
         </div>
 
@@ -370,7 +389,9 @@ function AdminOrdersPage() {
           <div className="p-12 text-center">
             <ShoppingBag className="mx-auto h-12 w-12 text-slate-300" />
             <h3 className="mt-4 text-base font-bold text-slate-800">Buyurtma topilmadi</h3>
-            <p className="mt-1 text-xs text-slate-500">Ushbu mezon bo'yicha hech qanday buyurtma mavjud emas</p>
+            <p className="mt-1 text-xs text-slate-500">
+              Ushbu mezon bo'yicha hech qanday buyurtma mavjud emas
+            </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -394,7 +415,9 @@ function AdminOrdersPage() {
                     text: "text-slate-600",
                   };
                   const itemsSummary = Array.isArray(o.items)
-                    ? o.items.map((i) => `${i?.name || i?.title || "Tovar"} (${i?.quantity || 1} dona)`).join(", ")
+                    ? o.items
+                        .map((i) => `${i?.name || i?.title || "Tovar"} (${i?.quantity || 1} dona)`)
+                        .join(", ")
                     : "Maxsus buyurtma";
 
                   return (
@@ -405,7 +428,9 @@ function AdminOrdersPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="font-bold text-slate-900">{o.customer_name || "Noma'lum"}</div>
+                        <div className="font-bold text-slate-900">
+                          {o.customer_name || "Noma'lum"}
+                        </div>
                         <div className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
                           <Phone className="h-3 w-3" />
                           {o.customer_phone || "Mavjud emas"}
@@ -413,7 +438,8 @@ function AdminOrdersPage() {
                       </td>
                       <td className="px-6 py-4 max-w-xs">
                         <div className="truncate text-xs font-semibold text-slate-700">
-                          {o.customer_city ? `${o.customer_city}, ` : ""}{o.customer_address || "Manzil ko'rsatilmagan"}
+                          {o.customer_city ? `${o.customer_city}, ` : ""}
+                          {o.customer_address || "Manzil ko'rsatilmagan"}
                         </div>
                         {o.customer_address && (
                           <a
@@ -428,18 +454,23 @@ function AdminOrdersPage() {
                         )}
                       </td>
                       <td className="px-6 py-4 max-w-xs">
-                        <div className="truncate text-xs font-medium text-slate-600" title={itemsSummary}>
+                        <div
+                          className="truncate text-xs font-medium text-slate-600"
+                          title={itemsSummary}
+                        >
                           {itemsSummary}
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="font-extrabold text-slate-900">{formatSom(o.total || 0)}</div>
+                        <div className="font-extrabold text-slate-900">
+                          {formatSom(o.total || 0)}
+                        </div>
                         <div className="text-[11px] text-slate-400 capitalize">
                           {o.payment_method === "cash"
                             ? "Naqd pul"
                             : o.payment_method === "card"
-                            ? "Karta orqali"
-                            : o.payment_method || "Ko'rsatilmagan"}
+                              ? "Karta orqali"
+                              : o.payment_method || "Ko'rsatilmagan"}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -501,7 +532,8 @@ function AdminOrdersPage() {
               </div>
               <div className="flex items-center gap-2 text-slate-600">
                 <MapPin className="h-4 w-4 text-slate-400" />
-                {selectedOrder.customer_city ? `${selectedOrder.customer_city}, ` : ""}{selectedOrder.customer_address || "Manzil yo'q"}
+                {selectedOrder.customer_city ? `${selectedOrder.customer_city}, ` : ""}
+                {selectedOrder.customer_address || "Manzil yo'q"}
               </div>
             </div>
 

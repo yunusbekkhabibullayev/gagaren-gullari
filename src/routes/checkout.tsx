@@ -141,11 +141,23 @@ function CheckoutPage() {
         <SiteHeader />
         <section className="mx-auto max-w-2xl px-5 py-24 text-center">
           <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-[color:var(--terracotta)]/15 text-[color:var(--terracotta)]">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M5 13l4 4L19 7" />
+            </svg>
           </div>
           <h1 className="mt-6 font-display text-4xl">Rahmat! Buyurtma qabul qilindi</h1>
           <p className="mt-3 text-muted-foreground">
-            Buyurtma raqami: <span className="font-medium text-foreground">{submitted.orderId}</span>
+            Buyurtma raqami:{" "}
+            <span className="font-medium text-foreground">{submitted.orderId}</span>
           </p>
           <p className="mt-1 text-muted-foreground">
             Jami: <span className="font-medium text-foreground">{formatSom(submitted.total)}</span>
@@ -154,13 +166,22 @@ function CheckoutPage() {
             Menejerimiz 15 daqiqa ichida siz bilan bog'lanadi va yetkazib berishni tasdiqlaydi.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link to="/track" className="rounded-full bg-[color:var(--terracotta)] px-6 py-3 text-sm font-medium text-background transition hover:opacity-90">
+            <Link
+              to="/track"
+              className="rounded-full bg-[color:var(--terracotta)] px-6 py-3 text-sm font-medium text-background transition hover:opacity-90"
+            >
               Buyurtmani kuzatish
             </Link>
-            <Link to="/catalog" className="rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition hover:opacity-90">
+            <Link
+              to="/catalog"
+              className="rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition hover:opacity-90"
+            >
               Xarid davom ettirish
             </Link>
-            <Link to="/" className="rounded-full border border-border bg-card px-6 py-3 text-sm font-medium transition hover:bg-secondary">
+            <Link
+              to="/"
+              className="rounded-full border border-border bg-card px-6 py-3 text-sm font-medium transition hover:bg-secondary"
+            >
               Bosh sahifa
             </Link>
           </div>
@@ -199,9 +220,18 @@ function CheckoutPage() {
         <h1 className="mt-2 font-display text-4xl sm:text-5xl">Yetkazib berish</h1>
       </section>
 
-      <form onSubmit={onSubmit} noValidate className="mx-auto grid max-w-5xl gap-10 px-5 py-10 md:grid-cols-[1fr_360px]">
+      <form
+        onSubmit={onSubmit}
+        noValidate
+        className="mx-auto grid max-w-5xl gap-10 px-5 py-10 md:grid-cols-[1fr_360px]"
+      >
         <div className="space-y-5">
-          <Field label="Ism va familiya" name="name" placeholder="Alisher Karimov" error={errors.name} />
+          <Field
+            label="Ism va familiya"
+            name="name"
+            placeholder="Alisher Karimov"
+            error={errors.name}
+          />
           <Field
             label="Telefon raqam"
             name="phone"
@@ -221,9 +251,20 @@ function CheckoutPage() {
           <div>
             <div className="mb-2 text-sm font-medium">To'lov usuli</div>
             <div className="grid gap-2 sm:grid-cols-3">
-              <RadioTile name="method" value="cash" label="Naqd" desc="Qabulda to'lov" defaultChecked />
+              <RadioTile
+                name="method"
+                value="cash"
+                label="Naqd"
+                desc="Qabulda to'lov"
+                defaultChecked
+              />
               <RadioTile name="method" value="card" label="Payme / Click" desc="Onlayn karta" />
-              <RadioTile name="method" value="transfer" label="Bank o'tkazma" desc="Yur. shaxslar" />
+              <RadioTile
+                name="method"
+                value="transfer"
+                label="Bank o'tkazma"
+                desc="Yur. shaxslar"
+              />
             </div>
           </div>
 
@@ -343,7 +384,13 @@ function RadioTile({
 }) {
   return (
     <label className="relative flex cursor-pointer flex-col rounded-2xl border border-border bg-card p-4 transition hover:bg-secondary has-[:checked]:border-foreground has-[:checked]:bg-foreground has-[:checked]:text-background">
-      <input type="radio" name={name} value={value} defaultChecked={defaultChecked} className="sr-only" />
+      <input
+        type="radio"
+        name={name}
+        value={value}
+        defaultChecked={defaultChecked}
+        className="sr-only"
+      />
       <span className="text-sm font-medium">{label}</span>
       <span className="mt-1 text-[11px] opacity-80">{desc}</span>
     </label>

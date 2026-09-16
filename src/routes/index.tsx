@@ -18,7 +18,8 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Gagaren Gullari — Mirzacho'l tumani gul yetkazib berish" },
       {
         property: "og:description",
-        content: "Har kuni yangi kelgan gullardan yig'ilgan buketlar. 2 soat ichida yetkazib berish.",
+        content:
+          "Har kuni yangi kelgan gullardan yig'ilgan buketlar. 2 soat ichida yetkazib berish.",
       },
     ],
   }),
@@ -75,7 +76,7 @@ function Home() {
             <div className="mt-12 grid max-w-md grid-cols-3 gap-6 text-sm">
               <Stat label="Yetkazish" value="15 daqiqa" />
               <Stat label="Florist" value="8" />
-              <Stat label="Buket" value={products.length > 0 ? `${products.length}+` : "..."}  />
+              <Stat label="Buket" value={products.length > 0 ? `${products.length}+` : "..."} />
             </div>
           </div>
 
@@ -103,10 +104,15 @@ function Home() {
       <section className="mx-auto max-w-7xl px-5 py-20">
         <div className="mb-10 flex items-end justify-between gap-6">
           <div>
-            <div className="text-xs uppercase tracking-widest text-muted-foreground">Kolleksiya</div>
+            <div className="text-xs uppercase tracking-widest text-muted-foreground">
+              Kolleksiya
+            </div>
             <h2 className="mt-2 font-display text-3xl sm:text-4xl">Kategoriyalar</h2>
           </div>
-          <Link to="/catalog" className="text-sm text-muted-foreground underline-offset-4 hover:underline">
+          <Link
+            to="/catalog"
+            className="text-sm text-muted-foreground underline-offset-4 hover:underline"
+          >
             Barchasi →
           </Link>
         </div>
@@ -164,27 +170,23 @@ function Home() {
         </div>
       </section>
 
-
-
       {/* DELIVERY / STUDIO */}
       <section id="hunar" className="mx-auto mt-10 max-w-7xl px-5">
         <div className="grid overflow-hidden rounded-[2rem] bg-card md:grid-cols-2">
           <div className="relative aspect-[4/3] md:aspect-auto flex items-center justify-center p-8">
-            <img
-              src={logoImg}
-              alt="Gagaren Gullari logo"
-              className="h-56 w-56 object-contain"
-            />
+            <img src={logoImg} alt="Gagaren Gullari logo" className="h-56 w-56 object-contain" />
           </div>
           <div className="p-8 sm:p-14">
-            <div className="text-xs uppercase tracking-widest text-muted-foreground">Qanday ishlaymiz</div>
+            <div className="text-xs uppercase tracking-widest text-muted-foreground">
+              Qanday ishlaymiz
+            </div>
             <h2 className="mt-3 font-display text-3xl sm:text-4xl">
               Ertalab kesilgan gul — kechqurun sizda
             </h2>
             <p className="mt-5 text-muted-foreground">
               Gullar har kuni ertalab yangi partiyada keladi. Florist buketni buyurtmangizdan keyin
-              yig'adi, suv va o'ram bilan salqin holatda yetkazamiz. Yetkazish kuni va vaqt oralig'ini
-              buyurtma berayotganda o'zingiz belgilaysiz.
+              yig'adi, suv va o'ram bilan salqin holatda yetkazamiz. Yetkazish kuni va vaqt
+              oralig'ini buyurtma berayotganda o'zingiz belgilaysiz.
             </p>
             <div className="mt-8 grid grid-cols-3 gap-6 text-sm">
               <Step n="01" t="Tanlang" d="Katalogdan buket" />

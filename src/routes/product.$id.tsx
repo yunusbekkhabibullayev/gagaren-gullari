@@ -56,7 +56,9 @@ function ProductPage() {
     return (
       <div className="min-h-screen bg-background">
         <SiteHeader />
-        <div className="mx-auto max-w-7xl px-5 py-24 text-center text-muted-foreground">Yuklanmoqda…</div>
+        <div className="mx-auto max-w-7xl px-5 py-24 text-center text-muted-foreground">
+          Yuklanmoqda…
+        </div>
       </div>
     );
   }
@@ -65,7 +67,9 @@ function ProductPage() {
       <div className="grid min-h-screen place-items-center px-5 text-center">
         <div>
           <div className="font-display text-4xl">Buyum topilmadi</div>
-          <Link to="/catalog" className="mt-6 inline-block underline">Katalogga qaytish</Link>
+          <Link to="/catalog" className="mt-6 inline-block underline">
+            Katalogga qaytish
+          </Link>
         </div>
       </div>
     );
@@ -86,9 +90,13 @@ function ProductPage() {
       <SiteHeader />
 
       <div className="mx-auto max-w-7xl px-5 pt-6 text-sm text-muted-foreground">
-        <Link to="/" className="hover:text-foreground">Bosh</Link>
+        <Link to="/" className="hover:text-foreground">
+          Bosh
+        </Link>
         <span className="mx-2">/</span>
-        <Link to="/catalog" className="hover:text-foreground">Katalog</Link>
+        <Link to="/catalog" className="hover:text-foreground">
+          Katalog
+        </Link>
         <span className="mx-2">/</span>
         <span className="text-foreground">{product.name}</span>
       </div>
@@ -118,7 +126,9 @@ function ProductPage() {
                     key={c}
                     onClick={() => setColor(c)}
                     className={`rounded-full border px-3 py-1.5 text-sm transition ${
-                      color === c ? "border-foreground bg-foreground text-background" : "border-border bg-card hover:bg-secondary"
+                      color === c
+                        ? "border-foreground bg-foreground text-background"
+                        : "border-border bg-card hover:bg-secondary"
                     }`}
                   >
                     {c}
@@ -130,9 +140,13 @@ function ProductPage() {
             <div className="flex items-center gap-4">
               <div className="text-sm font-medium">Miqdor</div>
               <div className="inline-flex items-center rounded-full border border-border bg-card">
-                <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="px-3 py-1.5">−</button>
+                <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="px-3 py-1.5">
+                  −
+                </button>
                 <div className="w-10 text-center text-sm">{qty}</div>
-                <button onClick={() => setQty((q) => q + 1)} className="px-3 py-1.5">+</button>
+                <button onClick={() => setQty((q) => q + 1)} className="px-3 py-1.5">
+                  +
+                </button>
               </div>
             </div>
           </div>
@@ -168,7 +182,12 @@ function ProductPage() {
           {related.map((p: Product) => (
             <Link key={p.id} to="/product/$id" params={{ id: p.slug }} className="group block">
               <div className="aspect-square overflow-hidden rounded-2xl bg-card">
-                <img src={productImage(p)} alt={p.name} loading="lazy" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
+                <img
+                  src={productImage(p)}
+                  alt={p.name}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                />
               </div>
               <div className="mt-3 flex items-center justify-between gap-3">
                 <div className="truncate text-sm">{p.name}</div>
@@ -222,7 +241,7 @@ function Gallery({
       if (!dragging.current) return;
       const dx = x - startX.current;
       const step = Math.round(dx / 40);
-      const next = ((startIdx.current - step) % images.length + images.length) % images.length;
+      const next = (((startIdx.current - step) % images.length) + images.length) % images.length;
       setActive(next);
     };
     const onUp = () => (dragging.current = false);

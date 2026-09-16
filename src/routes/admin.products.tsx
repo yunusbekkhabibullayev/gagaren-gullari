@@ -60,7 +60,7 @@ function AdminProductsPage() {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState<"all" | "in_stock" | "low" | "out">("all");
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
-  const [editing, setEditing] = useState<Partial<Product> & { colorsText?: string } | null>(null);
+  const [editing, setEditing] = useState<(Partial<Product> & { colorsText?: string }) | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // Filtered Products
@@ -108,7 +108,11 @@ function AdminProductsPage() {
         size: draft.size?.trim() || "D 30 sm",
         weight: draft.weight?.trim() || "1.1 kg",
         pattern: draft.pattern?.trim() || "",
-        colors: colors.length ? colors : draft.colors && draft.colors.length > 0 ? draft.colors : ["Oq", "Pushti"],
+        colors: colors.length
+          ? colors
+          : draft.colors && draft.colors.length > 0
+            ? draft.colors
+            : ["Oq", "Pushti"],
         image_url: draft.image_url?.trim() || "/flowers/flower-hero.jpg",
         image_url_2: imageUrl2,
         preparation,
@@ -129,9 +133,17 @@ function AdminProductsPage() {
             await supabase.from("products").update(safeDbRow).eq("id", draft.id);
           }
         } else {
-          const { data, error } = await supabase.from("products").insert(fullDbRow).select().single();
+          const { data, error } = await supabase
+            .from("products")
+            .insert(fullDbRow)
+            .select()
+            .single();
           if (error && error.code === "PGRST204") {
-            const { data: safeData } = await supabase.from("products").insert(safeDbRow).select().single();
+            const { data: safeData } = await supabase
+              .from("products")
+              .insert(safeDbRow)
+              .select()
+              .single();
             if (safeData) resultId = safeData.id;
           } else if (data) {
             resultId = data.id;
@@ -344,7 +356,9 @@ function AdminProductsPage() {
             <button
               onClick={() => setStatusFilter("all")}
               className={`rounded-xl px-3 py-1.5 transition ${
-                statusFilter === "all" ? "bg-[#e0526c] text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
+                statusFilter === "all"
+                  ? "bg-[#e0526c] text-white shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
               Barchasi {products.length}
@@ -352,7 +366,9 @@ function AdminProductsPage() {
             <button
               onClick={() => setStatusFilter("in_stock")}
               className={`rounded-xl px-3 py-1.5 transition ${
-                statusFilter === "in_stock" ? "bg-[#e0526c] text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
+                statusFilter === "in_stock"
+                  ? "bg-[#e0526c] text-white shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
               Mavjud {inStockCount}
@@ -360,7 +376,9 @@ function AdminProductsPage() {
             <button
               onClick={() => setStatusFilter("low")}
               className={`rounded-xl px-3 py-1.5 transition ${
-                statusFilter === "low" ? "bg-[#e0526c] text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
+                statusFilter === "low"
+                  ? "bg-[#e0526c] text-white shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
               Kam {lowStockCount}
@@ -368,7 +386,9 @@ function AdminProductsPage() {
             <button
               onClick={() => setStatusFilter("out")}
               className={`rounded-xl px-3 py-1.5 transition ${
-                statusFilter === "out" ? "bg-[#e0526c] text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
+                statusFilter === "out"
+                  ? "bg-[#e0526c] text-white shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
               Tugagan {outOfStockCount}
@@ -379,7 +399,9 @@ function AdminProductsPage() {
             <button
               onClick={() => setViewMode("grid")}
               className={`rounded-xl p-2 transition ${
-                viewMode === "grid" ? "bg-rose-50 text-[#e0526c]" : "text-slate-400 hover:text-slate-700"
+                viewMode === "grid"
+                  ? "bg-rose-50 text-[#e0526c]"
+                  : "text-slate-400 hover:text-slate-700"
               }`}
             >
               <LayoutGrid className="h-4 w-4" />
@@ -387,7 +409,9 @@ function AdminProductsPage() {
             <button
               onClick={() => setViewMode("table")}
               className={`rounded-xl p-2 transition ${
-                viewMode === "table" ? "bg-rose-50 text-[#e0526c]" : "text-slate-400 hover:text-slate-700"
+                viewMode === "table"
+                  ? "bg-rose-50 text-[#e0526c]"
+                  : "text-slate-400 hover:text-slate-700"
               }`}
             >
               <List className="h-4 w-4" />
@@ -456,9 +480,7 @@ function AdminProductsPage() {
                 <span className="text-xs font-semibold text-slate-400">{p.workshop}</span>
                 <div className="flex items-center gap-1">
                   <button
-                    onClick={() =>
-                      setEditing({ ...p, colorsText: (p.colors || []).join(", ") })
-                    }
+                    onClick={() => setEditing({ ...p, colorsText: (p.colors || []).join(", ") })}
                     className="rounded-xl p-2 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition"
                   >
                     <Edit2 className="h-4 w-4" />
@@ -505,12 +527,16 @@ function AdminProductsPage() {
                       <div className="text-xs font-mono text-slate-400">{p.slug}</div>
                     </td>
                     <td className="px-6 py-3 text-slate-600 font-semibold">{p.category}</td>
-                    <td className="px-6 py-3 font-extrabold text-[#e0526c]">{formatSom(p.price)}</td>
+                    <td className="px-6 py-3 font-extrabold text-[#e0526c]">
+                      {formatSom(p.price)}
+                    </td>
                     <td className="px-6 py-3 font-bold">{p.stock} dona</td>
                     <td className="px-6 py-3">
                       <span
                         className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${
-                          p.active ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400"
+                          p.active
+                            ? "bg-emerald-50 text-emerald-600"
+                            : "bg-slate-100 text-slate-400"
                         }`}
                       >
                         {p.active ? "✓ Faol" : "Nofaol"}
@@ -574,7 +600,12 @@ function AdminProductsPage() {
                   value={editing.name ?? ""}
                   onChange={(e) => {
                     const name = e.target.value;
-                    const autoSlug = name.toLowerCase().replace(/ʻ|ʼ|'/g, "").replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "").replace(/-+/g, "-");
+                    const autoSlug = name
+                      .toLowerCase()
+                      .replace(/ʻ|ʼ|'/g, "")
+                      .replace(/\s+/g, "-")
+                      .replace(/[^a-z0-9-]/g, "")
+                      .replace(/-+/g, "-");
                     setEditing({ ...editing, name, slug: autoSlug });
                   }}
                   className="w-full rounded-2xl border border-slate-200 px-4 py-2.5 font-medium outline-none focus:border-[#e0526c] transition"
@@ -626,7 +657,12 @@ function AdminProductsPage() {
                     type="number"
                     placeholder="450000"
                     value={editing.price ?? ""}
-                    onChange={(e) => setEditing({ ...editing, price: e.target.value ? Number(e.target.value) : undefined })}
+                    onChange={(e) =>
+                      setEditing({
+                        ...editing,
+                        price: e.target.value ? Number(e.target.value) : undefined,
+                      })
+                    }
                     className="w-full rounded-2xl border border-slate-200 px-4 py-2.5 font-medium outline-none focus:border-[#e0526c] transition"
                   />
                 </div>
@@ -639,7 +675,12 @@ function AdminProductsPage() {
                     type="number"
                     placeholder="12"
                     value={editing.stock ?? ""}
-                    onChange={(e) => setEditing({ ...editing, stock: e.target.value ? Number(e.target.value) : undefined })}
+                    onChange={(e) =>
+                      setEditing({
+                        ...editing,
+                        stock: e.target.value ? Number(e.target.value) : undefined,
+                      })
+                    }
                     className="w-full rounded-2xl border border-slate-200 px-4 py-2.5 font-medium outline-none focus:border-[#e0526c] transition"
                   />
                 </div>
@@ -708,7 +749,7 @@ function AdminProductsPage() {
                 <label className="block text-xs font-bold uppercase text-slate-500">
                   Mahsulot rasmlari (2 tagacha rasm)
                 </label>
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {/* Image 1 (Asosiy rasm) */}
                   <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
@@ -749,7 +790,10 @@ function AdminProductsPage() {
                                 const reader = new FileReader();
                                 reader.onload = (evt) => {
                                   if (evt.target?.result) {
-                                    setEditing({ ...editing, image_url: evt.target.result as string });
+                                    setEditing({
+                                      ...editing,
+                                      image_url: evt.target.result as string,
+                                    });
                                   }
                                 };
                                 reader.readAsDataURL(file);
@@ -803,7 +847,10 @@ function AdminProductsPage() {
                                 const reader = new FileReader();
                                 reader.onload = (evt) => {
                                   if (evt.target?.result) {
-                                    setEditing({ ...editing, image_url_2: evt.target.result as string });
+                                    setEditing({
+                                      ...editing,
+                                      image_url_2: evt.target.result as string,
+                                    });
                                   }
                                 };
                                 reader.readAsDataURL(file);

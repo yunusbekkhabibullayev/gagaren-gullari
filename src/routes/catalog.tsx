@@ -11,10 +11,14 @@ export const Route = createFileRoute("/catalog")({
       { title: "Katalog — Gagaren Gullari" },
       {
         name: "description",
-        content: "Buketlar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlari katalogi. Mirzacho'l tumani bo'ylab yetkazib berish.",
+        content:
+          "Buketlar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlari katalogi. Mirzacho'l tumani bo'ylab yetkazib berish.",
       },
       { property: "og:title", content: "Katalog — Gagaren Gullari" },
-      { property: "og:description", content: "Yangi gullar katalogini ko'ring va bugunoq yetkazib oling." },
+      {
+        property: "og:description",
+        content: "Yangi gullar katalogini ko'ring va bugunoq yetkazib oling.",
+      },
     ],
   }),
   component: Catalog,
@@ -139,7 +143,9 @@ function Catalog() {
               )}
 
               <div className="flex items-center gap-2">
-                <label className="text-muted-foreground text-xs sm:text-sm font-medium">Saralash:</label>
+                <label className="text-muted-foreground text-xs sm:text-sm font-medium">
+                  Saralash:
+                </label>
                 <select
                   value={sort}
                   onChange={(e) => setSort(e.target.value as Sort)}
@@ -181,17 +187,23 @@ function Catalog() {
                   <h3 className="line-clamp-1 font-medium text-foreground group-hover:text-[#e0526c] transition">
                     {p.name}
                   </h3>
-                  <p className="line-clamp-1 text-xs text-muted-foreground mt-0.5">
-                    {p.pattern}
-                  </p>
+                  <p className="line-clamp-1 text-xs text-muted-foreground mt-0.5">{p.pattern}</p>
                 </div>
                 <div className="mt-3 flex items-center justify-between pt-2 border-t border-border/30">
-                  <span className="text-sm font-bold text-foreground">
-                    {formatSom(p.price)}
-                  </span>
+                  <span className="text-sm font-bold text-foreground">{formatSom(p.price)}</span>
                   <span className="rounded-full bg-rose-50 dark:bg-rose-950/50 p-1.5 text-[#e0526c] transition group-hover:bg-[#e0526c] group-hover:text-white">
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    <svg
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15"
+                      />
                     </svg>
                   </span>
                 </div>
@@ -203,7 +215,9 @@ function Catalog() {
         {list.length === 0 && !isLoading && (
           <div className="rounded-2xl border border-dashed border-border p-12 text-center text-muted-foreground my-8">
             <div className="text-3xl mb-2">🌸</div>
-            <p className="font-medium text-foreground">Ushbu filtr bo'yicha hech qanday gul topilmadi</p>
+            <p className="font-medium text-foreground">
+              Ushbu filtr bo'yicha hech qanday gul topilmadi
+            </p>
             <p className="text-sm mt-1">Boshqa kategoriyani tanlang yoki filtrlarni tozalang.</p>
             <button
               onClick={() => {

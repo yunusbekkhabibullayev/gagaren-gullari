@@ -43,8 +43,7 @@ export async function autoDetectTelegramChatId(): Promise<string | null> {
     if (json.ok && Array.isArray(json.result) && json.result.length > 0) {
       // Find latest message chat ID
       const lastUpdate = json.result[json.result.length - 1];
-      const chatId =
-        lastUpdate?.message?.chat?.id || lastUpdate?.channel_post?.chat?.id;
+      const chatId = lastUpdate?.message?.chat?.id || lastUpdate?.channel_post?.chat?.id;
       if (chatId) {
         const idStr = String(chatId);
         saveTelegramChatId(idStr);
@@ -76,9 +75,7 @@ export type OrderNotificationPayload = {
   }>;
 };
 
-export async function sendTelegramOrderNotification(
-  payload: OrderNotificationPayload
-) {
+export async function sendTelegramOrderNotification(payload: OrderNotificationPayload) {
   try {
     const token = getBotToken();
     if (!token) {

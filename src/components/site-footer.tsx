@@ -10,7 +10,8 @@ export function SiteFooter() {
           <div className="sm:col-span-1">
             <div className="font-display text-xl font-semibold">Gagaren Gullari</div>
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-              Har kuni yangi kelgan gullardan yig'ilgan mualliflik buketlari. Mirzacho'l tumani bo'ylab 2 soat ichida yetkazib beramiz.
+              Har kuni yangi kelgan gullardan yig'ilgan mualliflik buketlari. Mirzacho'l tumani
+              bo'ylab 2 soat ichida yetkazib beramiz.
             </p>
             {/* Social Media Links */}
             <div className="mt-5 flex items-center gap-3">
@@ -80,12 +81,18 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <Link to="/catalog" className="underline-offset-4 hover:text-foreground hover:underline">
+                <Link
+                  to="/catalog"
+                  className="underline-offset-4 hover:text-foreground hover:underline"
+                >
                   Gullar katalogi
                 </Link>
               </li>
               <li>
-                <Link to="/track" className="underline-offset-4 hover:text-foreground hover:underline">
+                <Link
+                  to="/track"
+                  className="underline-offset-4 hover:text-foreground hover:underline"
+                >
                   Buyurtmani kuzatish
                 </Link>
               </li>
