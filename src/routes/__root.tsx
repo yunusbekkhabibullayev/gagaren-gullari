@@ -82,15 +82,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         property: "og:description",
         content:
-          \"Premium guldastalar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlari. Gagarin bo'ylab 24/7 bepul yetkazib berish.\",
+          "Premium guldastalar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlari. Gagarin bo'ylab 24/7 bepul yetkazib berish.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "NASTARIN GULLARI - Gagarin shaharida gul yetkazib berish" },
       {
-        name: \"twitter:description\",
+        name: "twitter:description",
         content:
-          \"Premium guldastalar, atirgullar va sovg'a to'plamlari — 24/7 bepul yetkazib berish xizmati mavjud.\",
+          "Premium guldastalar, atirgullar va sovg'a to'plamlari - 24/7 bepul yetkazib berish xizmati mavjud.",
       },
     ],
     links: [
