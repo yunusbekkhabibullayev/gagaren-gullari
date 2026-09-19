@@ -47,7 +47,12 @@ export function getLocalProductOverrides(): Record<string, Product> {
   try {
     const raw = localStorage.getItem(PRODUCT_OVERRIDES_KEY);
     return raw ? JSON.parse(raw) : {};
-  } catch {
+  } catch (e) {
+    console.warn("Failed to parse product overrides", e);
+    // Clear corrupted data
+    try {
+      localStorage.removeItem(PRODUCT_OVERRIDES_KEY);
+    } catch {}
     return {};
   }
 }
@@ -69,7 +74,21 @@ export function saveProductOverride(product: Product) {
     overrides[product.id] = product;
     localStorage.setItem(PRODUCT_OVERRIDES_KEY, JSON.stringify(overrides));
   } catch (e) {
-    console.error("Failed to save product override", e);
+    // If QuotaExceededError, clear old overrides and retry
+    if ((e as any)?.name === "QuotaExceededError") {
+      try {
+        console.warn("LocalStorage quota exceeded, clearing old overrides");
+        localStorage.removeItem(PRODUCT_OVERRIDES_KEY);
+        localStorage.removeItem(PRODUCT_DELETED_KEY);
+        // Retry with fresh storage
+        const overrides = { [product.id]: product };
+        localStorage.setItem(PRODUCT_OVERRIDES_KEY, JSON.stringify(overrides));
+      } catch (retryErr) {
+        console.error("Failed to save product override even after cleanup", retryErr);
+      }
+    } else {
+      console.error("Failed to save product override", e);
+    }
   }
 }
 
@@ -86,7 +105,20 @@ export function deleteProductOverride(id: string) {
       localStorage.setItem(PRODUCT_DELETED_KEY, JSON.stringify(deleted));
     }
   } catch (e) {
-    console.error("Failed to delete product override", e);
+    // If QuotaExceededError, clear and retry with minimal data
+    if ((e as any)?.name === "QuotaExceededError") {
+      try {
+        console.warn("LocalStorage quota exceeded during delete, clearing old overrides");
+        localStorage.removeItem(PRODUCT_OVERRIDES_KEY);
+        localStorage.removeItem(PRODUCT_DELETED_KEY);
+        // Retry with just the deleted ID
+        localStorage.setItem(PRODUCT_DELETED_KEY, JSON.stringify([id]));
+      } catch (retryErr) {
+        console.error("Failed to delete product even after cleanup", retryErr);
+      }
+    } else {
+      console.error("Failed to delete product override", e);
+    }
   }
 }
 
