@@ -96,6 +96,12 @@ function AdminProductsPage() {
 
       const imageUrl2 = draft.image_url_2?.trim() || null;
       const preparation = draft.preparation?.trim() || "15–30 daqiqa (tayyor)";
+      
+      // Validate image_url - ensure it's a valid URL or path
+      let imageUrl = draft.image_url?.trim() || "/flowers/flower-hero.jpg";
+      if (!imageUrl.startsWith("http") && !imageUrl.startsWith("/")) {
+        imageUrl = "/flowers/flower-hero.jpg"; // Fallback if invalid
+      }
 
       // Full payload with all columns
       const fullDbRow = {
@@ -113,7 +119,7 @@ function AdminProductsPage() {
           : draft.colors && draft.colors.length > 0
             ? draft.colors
             : ["Oq", "Pushti"],
-        image_url: draft.image_url?.trim() || "/flowers/flower-hero.jpg",
+        image_url: imageUrl,
         image_url_2: imageUrl2,
         preparation,
         story: draft.story?.trim() || "",
@@ -128,9 +134,14 @@ function AdminProductsPage() {
       try {
         if (draft.id) {
           const { error } = await supabase.from("products").update(fullDbRow).eq("id", draft.id);
-          if (error && error.code === "PGRST204") {
-            // Column missing in Supabase schema, save safe payload
-            await supabase.from("products").update(safeDbRow).eq("id", draft.id);
+          if (error) {
+            console.error("Product update error:", error);
+            if (error.code === "PGRST204") {
+              // Column missing in Supabase schema, save safe payload
+              await supabase.from("products").update(safeDbRow).eq("id", draft.id);
+            } else {
+              throw new Error(`Update failed: ${error.message || "Unknown error"}`);
+            }
           }
         } else {
           const { data, error } = await supabase
@@ -138,19 +149,25 @@ function AdminProductsPage() {
             .insert(fullDbRow)
             .select()
             .single();
-          if (error && error.code === "PGRST204") {
-            const { data: safeData } = await supabase
-              .from("products")
-              .insert(safeDbRow)
-              .select()
-              .single();
-            if (safeData) resultId = safeData.id;
+          if (error) {
+            console.error("Product insert error:", error);
+            if (error.code === "PGRST204") {
+              const { data: safeData } = await supabase
+                .from("products")
+                .insert(safeDbRow)
+                .select()
+                .single();
+              if (safeData) resultId = safeData.id;
+            } else {
+              throw new Error(`Insert failed: ${error.message || "Unknown error"}`);
+            }
           } else if (data) {
             resultId = data.id;
           }
         }
       } catch (err) {
-        console.warn("Supabase products save fallback triggered:", err);
+        console.error("Supabase products save error:", err);
+        throw err;
       }
 
       const savedProduct: Product = {
@@ -200,7 +217,15 @@ function AdminProductsPage() {
       qc.invalidateQueries({ queryKey: ["products"] });
       setEditing(null);
     },
-    onError: (err: Error) => alert("Xatolik: " + err.message),
+    onError: (err: Error) => {
+      console.error("Product save error details:", err);
+      const errorMsg = (err as any)?.message || String(err);
+      const errorCode = (err as any)?.code || "UNKNOWN";
+      const errorDetails = (err as any)?.details || "";
+      
+      const fullMessage = `Xatolik: ${errorMsg}${errorCode ? ` (${errorCode})` : ""}${errorDetails ? ` - ${errorDetails}` : ""}`;
+      alert(fullMessage);
+    },
   });
 
   // Delete Mutation
