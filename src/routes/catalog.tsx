@@ -69,46 +69,48 @@ function Catalog() {
       </section>
 
       {/* FILTERS & CATEGORIES TOOLBAR */}
-      <section className="sticky top-[65px] z-30 border-y border-border/60 bg-background/95 backdrop-blur-md">
-        <div className="mx-auto max-w-7xl px-5 py-3 space-y-3">
+      <section className="sticky top-[65px] z-30 border-y border-border/40 bg-gradient-to-b from-background via-background to-background/80 backdrop-blur-lg shadow-sm">
+        <div className="mx-auto max-w-7xl px-5 py-4 space-y-4">
           {/* Main Category Tabs - Horizontally Scrollable on Mobile */}
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5 -mx-5 px-5 sm:mx-0 sm:px-0">
+          <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar pb-1 -mx-5 px-5 sm:mx-0 sm:px-0">
             <button
               onClick={() => setCat(null)}
-              className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all ${
+              className={`shrink-0 rounded-full px-4 py-2.5 text-sm font-semibold transition-all duration-300 relative group ${
                 cat === null
-                  ? "bg-foreground text-background shadow-sm"
-                  : "bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                  ? "bg-gradient-to-r from-rose-500 to-rose-600 text-white shadow-lg shadow-rose-500/30 scale-105"
+                  : "bg-rose-50/40 text-muted-foreground hover:bg-rose-50 hover:text-foreground group-hover:shadow-md"
               }`}
             >
-              🌸 Barcha gullar
+              <span className="inline-block">🌸</span> Barcha
+              {cat === null && <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-1 w-6 bg-white rounded-full"></div>}
             </button>
             {activeCategoryNames.map((c) => (
               <button
                 key={c}
                 onClick={() => setCat(c)}
-                className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                className={`shrink-0 rounded-full px-4 py-2.5 text-sm font-semibold transition-all duration-300 relative ${
                   cat === c
-                    ? "bg-[#e0526c] text-white shadow-sm shadow-rose-500/20"
-                    : "bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    ? "bg-gradient-to-r from-[#e0526c] to-rose-500 text-white shadow-lg shadow-rose-500/30 scale-105"
+                    : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70 hover:text-foreground hover:shadow-md"
                 }`}
               >
                 {c}
+                {cat === c && <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-1 w-6 bg-white rounded-full"></div>}
               </button>
             ))}
           </div>
 
           {/* Secondary Controls: Origin Filter + Sort Dropdown + Reset */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-border/40 text-xs sm:text-sm">
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-border/30 text-xs sm:text-sm">
             {/* Origin pills */}
-            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-              <span className="text-muted-foreground font-medium shrink-0">Kelib chiqishi:</span>
+            <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar">
+              <span className="text-muted-foreground font-semibold shrink-0 uppercase tracking-wide text-[11px]">📍 Manba:</span>
               <button
                 onClick={() => setShop(null)}
-                className={`rounded-lg px-2.5 py-1 transition font-medium ${
+                className={`shrink-0 rounded-full px-3.5 py-1.5 font-medium transition-all duration-300 ${
                   shop === null
-                    ? "bg-foreground/10 text-foreground font-semibold"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-blue-500/20 text-blue-700 font-semibold ring-1.5 ring-blue-300 shadow-sm"
+                    : "bg-slate-100 text-muted-foreground hover:bg-slate-200 hover:text-foreground"
                 }`}
               >
                 Barchasi
@@ -117,10 +119,10 @@ function Catalog() {
                 <button
                   key={w}
                   onClick={() => setShop(w)}
-                  className={`rounded-lg px-2.5 py-1 transition font-medium ${
+                  className={`shrink-0 rounded-full px-3.5 py-1.5 font-medium transition-all duration-300 ${
                     shop === w
-                      ? "bg-foreground/10 text-foreground font-semibold"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-emerald-500/20 text-emerald-700 font-semibold ring-1.5 ring-emerald-300 shadow-sm"
+                      : "bg-slate-100 text-muted-foreground hover:bg-slate-200 hover:text-foreground"
                   }`}
                 >
                   {w}
@@ -136,25 +138,25 @@ function Catalog() {
                     setCat(null);
                     setShop(null);
                   }}
-                  className="text-xs text-[#e0526c] hover:underline font-medium"
+                  className="text-xs font-semibold text-[#e0526c] hover:text-rose-700 hover:bg-rose-50 px-3 py-1.5 rounded-full transition-all"
                 >
-                  Filtrlarni tozalash
+                  ✕ Tozalash
                 </button>
               )}
 
               <div className="flex items-center gap-2">
-                <label className="text-muted-foreground text-xs sm:text-sm font-medium">
-                  Saralash:
+                <label className="text-muted-foreground text-xs sm:text-sm font-semibold uppercase tracking-wide">
+                  📊 Saralash:
                 </label>
                 <select
                   value={sort}
                   onChange={(e) => setSort(e.target.value as Sort)}
-                  className="rounded-xl border border-border bg-card px-3 py-1.5 text-xs sm:text-sm font-medium outline-none focus:border-[#e0526c] transition"
+                  className="rounded-full border border-border/60 bg-white px-4 py-2 text-xs sm:text-sm font-medium outline-none focus:border-[#e0526c] focus:ring-2 focus:ring-rose-200 transition-all shadow-sm hover:border-border"
                 >
                   <option value="popular">🔥 Mashhurlik</option>
                   <option value="new">✨ Yangilari</option>
-                  <option value="priceAsc">💰 Narx: arzon</option>
-                  <option value="priceDesc">💎 Narx: qimmat</option>
+                  <option value="priceAsc">💰 Arzon</option>
+                  <option value="priceDesc">💎 Qimmat</option>
                 </select>
               </div>
             </div>
