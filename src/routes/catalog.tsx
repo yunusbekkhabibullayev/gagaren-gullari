@@ -71,8 +71,8 @@ function Catalog() {
       {/* FILTERS & CATEGORIES TOOLBAR */}
       <section className="sticky top-[65px] z-30 border-b border-border/40 bg-background/95 backdrop-blur-sm">
         <div className="mx-auto max-w-7xl px-5 py-3 space-y-2.5">
-          {/* Main Category Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar -mx-5 px-5 sm:mx-0 sm:px-0">
+          {/* Main Category Tabs - Wrap on mobile, scrollable on desktop */}
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-1.5 sm:overflow-x-auto sm:no-scrollbar -mx-5 px-5 sm:mx-0 sm:px-0">
             <button
               onClick={() => setCat(null)}
               className={`shrink-0 rounded-full px-3 py-1.5 text-xs sm:text-sm font-semibold transition-all ${
@@ -99,9 +99,9 @@ function Catalog() {
           </div>
 
           {/* Secondary Controls: Origin Filter + Sort Dropdown + Reset */}
-          <div className="flex flex-wrap items-center justify-between gap-2.5 text-xs sm:text-sm">
-            {/* Origin pills */}
-            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+          <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 text-xs sm:text-sm">
+            {/* Origin pills - Wrap on mobile */}
+            <div className="flex flex-wrap gap-1.5">
               <span className="text-muted-foreground font-medium shrink-0">📍 Manba:</span>
               <button
                 onClick={() => setShop(null)}
