@@ -11,11 +11,11 @@ export function SiteHeader() {
         <Link to="/" className="flex min-w-0 items-center gap-2.5">
           <img
             src={logoImg}
-            alt="Gagaren Gullari logo"
+            alt="NASTARIN GULLARI logo"
             className="h-10 w-10 shrink-0 object-contain"
           />
           <span className="truncate font-display text-lg font-semibold tracking-tight">
-            Gagaren Gullari
+            NASTARIN GULLARI
           </span>
         </Link>
 
@@ -45,11 +45,11 @@ export function SiteHeader() {
         <div className="flex items-center gap-3">
           {/* Phone button — desktop */}
           <a
-            href="tel:+998990000000"
+            href="tel:+998903949933"
             className="hidden items-center gap-2 rounded-full bg-[color:var(--terracotta)] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 sm:inline-flex"
           >
             <IconPhone />
-            <span>+998 99 000 00 00</span>
+            <span>+998 90 394 99 33</span>
           </a>
 
           {/* Cart button — desktop */}
@@ -69,7 +69,7 @@ export function SiteHeader() {
 
           {/* Phone button — mobile only (shown in header on small screens) */}
           <a
-            href="tel:+998990000000"
+            href="tel:+998903949933"
             aria-label="Qo'ng'iroq qilish"
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[color:var(--terracotta)] text-white shadow-sm transition hover:opacity-90 sm:hidden"
           >

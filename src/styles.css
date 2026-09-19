@@ -70,7 +70,7 @@
 
 :root {
   --radius: 0.625rem;
-  /* Gagaren Gullari — blush cream base with rose, leaf-green, soft gold accents */
+  /* NASTARIN GULLARI — blush cream base with rose, leaf-green, soft gold accents */
   --cream: oklch(0.978 0.008 40);
   --ink: oklch(0.24 0.02 20);
   --terracotta: oklch(0.62 0.17 12); /* rose */

@@ -7,7 +7,7 @@ import { Lock, Mail, Eye, EyeOff, Flower2 } from "lucide-react";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Tizimga Kirish — Gagaren Gullari Manager" },
+      { title: "Tizimga Kirish — NASTARIN GULLARI Manager" },
       { name: "description", content: "Admin panelga kirish." },
       { name: "robots", content: "noindex" },
     ],
@@ -31,10 +31,10 @@ export function SplashLoader() {
 
         <div className="space-y-1">
           <h1 className="text-3xl font-bold font-display tracking-tight text-white drop-shadow-md">
-            Gagaren Gullari
+            NASTARIN GULLARI
           </h1>
           <div className="text-xs font-black tracking-widest text-white/90 uppercase">
-            TOSHKENTDA GUL YETKAZIB BERISH
+            GAGARIN SHAHARIDA GUL YETKAZIB BERISH
           </div>
           <p className="text-xs text-white/80 font-medium">Yangi buketlar va sovg'a to'plamlari</p>
         </div>
@@ -46,7 +46,7 @@ export function SplashLoader() {
           <div className="h-full w-1/2 animate-[pulse_1s_infinite] rounded-full bg-white transition-all duration-500" />
         </div>
         <div className="text-[11px] font-semibold text-white/80 tracking-wider">
-          v2.2.52 • Gagaren Store
+          v2.2.52 • NASTARIN GULLARI
         </div>
       </div>
     </div>
@@ -105,7 +105,7 @@ function AuthPage() {
             Tizimga kirish
           </h1>
           <div className="text-[11px] font-black tracking-widest text-[#e0526c] uppercase">
-            GAGAREN GULLARI MANAGER
+            NASTARIN GULLARI MANAGER
           </div>
         </div>
 

@@ -21,7 +21,7 @@ import {
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "Gagaren Gullari — Do'kon Boshqaruvi" },
+      { title: "NASTARIN GULLARI — Do'kon Boshqaruvi" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -108,7 +108,7 @@ function AdminLayout() {
         </div>
         <div className="min-w-0">
           <div className="truncate font-extrabold text-slate-900 text-base font-display">
-            Gagaren Gullari
+            NASTARIN GULLARI
           </div>
           <div className="text-[10px] font-black tracking-widest text-[#e0526c] uppercase">
             DO'KON BOSHQARUVI

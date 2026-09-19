@@ -1,6 +1,6 @@
-# Gagaren Gullari 🌸 — Mirzacho'l Tumani Gul va Buketlar Do'koni
+# NASTARIN GULLARI 🌸 — Gagarin shahar Gul va Buketlar Do'koni
 
-Gagaren Gullari — Mirzacho'l tumani bo'ylab yangi uzilgan gullar, premium buketlar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlarini 2 soat ichida yetkazib berish bo'yicha zamonaviy onlayn e-commerce platformasi.
+NASTARIN GULLARI — Gagarin bo'ylab yangi uzilgan gullar, premium guldastalar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlarini 24/7 bepul yetkazib berish bo'yicha zamonaviy onlayn e-commerce platformasi.
 
 ---
 

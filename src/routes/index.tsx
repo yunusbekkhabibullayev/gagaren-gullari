@@ -9,17 +9,17 @@ import logoImg from "@/assets/logo.png";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Gagaren Gullari — Mirzacho'l tumani gul yetkazib berish" },
+      { title: "NASTARIN GULLARI — Gagarin shaharida gul yetkazib berish" },
       {
         name: "description",
         content:
-          "Yangi buketlar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlari. Mirzacho'l tumani bo'ylab 2 soatda yetkazamiz.",
+          "Premium guldastalar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlari. Gagarin bo'ylab 24/7 bepul yetkazib berish.",
       },
-      { property: "og:title", content: "Gagaren Gullari — Mirzacho'l tumani gul yetkazib berish" },
+      { property: "og:title", content: "NASTARIN GULLARI — Gagarin shaharida gul yetkazib berish" },
       {
         property: "og:description",
         content:
-          "Har kuni yangi kelgan gullardan yig'ilgan buketlar. 2 soat ichida yetkazib berish.",
+          "Premium yig'ilgan guldastalar. 24/7 bepul yetkazib berish xizmati mavjud.",
       },
     ],
   }),
@@ -174,7 +174,7 @@ function Home() {
       <section id="hunar" className="mx-auto mt-10 max-w-7xl px-5">
         <div className="grid overflow-hidden rounded-[2rem] bg-card md:grid-cols-2">
           <div className="relative aspect-[4/3] md:aspect-auto flex items-center justify-center p-8">
-            <img src={logoImg} alt="Gagaren Gullari logo" className="h-56 w-56 object-contain" />
+            <img src={logoImg} alt="NASTARIN GULLARI logo" className="h-56 w-56 object-contain" />
           </div>
           <div className="p-8 sm:p-14">
             <div className="text-xs uppercase tracking-widest text-muted-foreground">
