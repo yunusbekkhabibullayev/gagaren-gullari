@@ -7,7 +7,7 @@ import { Lock, Mail, Eye, EyeOff, Flower2 } from "lucide-react";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Tizimga Kirish — NASTARIN GULLARI Manager" },
+      { title: "Tizimga Kirish - NASTARIN GULLARI Manager" },
       { name: "description", content: "Admin panelga kirish." },
       { name: "robots", content: "noindex" },
     ],

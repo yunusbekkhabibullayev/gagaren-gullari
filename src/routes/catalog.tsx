@@ -8,13 +8,13 @@ import { useCategories } from "@/lib/categories";
 export const Route = createFileRoute("/catalog")({
   head: () => ({
     meta: [
-      { title: "Katalog — NASTARIN GULLARI" },
+      { title: "Katalog - NASTARIN GULLARI" },
       {
         name: "description",
         content:
           "Premium guldastalar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlari katalogi. Gagarin bo'ylab bepul yetkazib berish.",
       },
-      { property: "og:title", content: "Katalog — NASTARIN GULLARI" },
+      { property: "og:title", content: "Katalog - NASTARIN GULLARI" },
       {
         property: "og:description",
         content: "Yangi gullar katalogini ko'ring va bugunoq yetkazib oling.",

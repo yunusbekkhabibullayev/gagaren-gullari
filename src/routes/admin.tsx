@@ -21,7 +21,7 @@ import {
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "NASTARIN GULLARI — Do'kon Boshqaruvi" },
+      { title: "NASTARIN GULLARI - Do'kon Boshqaruvi" },
       { name: "robots", content: "noindex" },
     ],
   }),

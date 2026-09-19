@@ -9,13 +9,13 @@ import logoImg from "@/assets/logo.png";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "NASTARIN GULLARI — Gagarin shaharida gul yetkazib berish" },
+      { title: "NASTARIN GULLARI - Gagarin shaharida gul yetkazib berish" },
       {
         name: "description",
         content:
           "Premium guldastalar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlari. Gagarin bo'ylab 24/7 bepul yetkazib berish.",
       },
-      { property: "og:title", content: "NASTARIN GULLARI — Gagarin shaharida gul yetkazib berish" },
+      { property: "og:title", content: "NASTARIN GULLARI - Gagarin shaharida gul yetkazib berish" },
       {
         property: "og:description",
         content:
