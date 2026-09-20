@@ -117,25 +117,44 @@ function Home() {
           </Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {categories.map((c) => (
-            <Link
-              key={c.id}
-              to="/catalog"
-              search={{ cat: c.name } as never}
-              className="group relative aspect-[4/5] overflow-hidden rounded-2xl bg-card"
-            >
-              <img
-                src={categoryImages[c.name] || heroImg}
-                alt={c.name}
-                loading="lazy"
-                className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-4 text-white">
-                <div className="font-display text-lg">{c.name}</div>
-              </div>
-            </Link>
-          ))}
+          {categories.map((c) => {
+            const imgUrl = categoryImages[c.name];
+            return (
+              <Link
+                key={c.id}
+                to="/catalog"
+                search={{ cat: c.name } as never}
+                className="group relative aspect-[4/5] overflow-hidden rounded-2xl bg-white border border-[#E5DFC9] shadow-sm transition duration-300 hover:shadow-xl hover:-translate-y-1"
+              >
+                {imgUrl ? (
+                  <img
+                    src={imgUrl}
+                    alt={c.name}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="h-full w-full bg-gradient-to-br from-[#8B3A5C]/10 via-[#F5F1E8] to-white flex flex-col items-center justify-center p-6 text-center">
+                    <div
+                      className="w-14 h-14 rounded-2xl flex items-center justify-center mb-3 shadow-md border border-white/40 backdrop-blur-md"
+                      style={{ backgroundColor: c.color ? `${c.color}20` : '#8B3A5C20', color: c.color || '#8B3A5C' }}
+                    >
+                      <span className="font-display text-2xl font-bold">{c.name.charAt(0)}</span>
+                    </div>
+                    <div className="font-display text-base font-semibold text-[#1F2937]">{c.name}</div>
+                  </div>
+                )}
+                {imgUrl && (
+                  <>
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1F2937]/80 via-[#1F2937]/20 to-transparent" />
+                    <div className="absolute inset-x-0 bottom-0 p-4 text-white">
+                      <div className="font-display text-lg font-medium">{c.name}</div>
+                    </div>
+                  </>
+                )}
+              </Link>
+            );
+          })}
         </div>
       </section>
 

@@ -35,7 +35,7 @@ export function formatSom(n: number) {
 }
 
 export function productImage(p: Pick<Product, "image_url"> | null | undefined) {
-  return p?.image_url || "/flowers/flower-hero.jpg";
+  return p?.image_url || "";
 }
 
 // Local override helpers to prevent edits from reverting
