@@ -7,8 +7,8 @@ import { formatSom } from "@/lib/products";
 export const Route = createFileRoute("/cart")({
   head: () => ({
     meta: [
-      { title: "Savat — Sopol Ustalari" },
-      { name: "description", content: "Sizning tanlagan sopol buyumlaringiz savati." },
+      { title: "Savat — NASTARIN GULLARI" },
+      { name: "description", content: "Sizning tanlagan guldastalaringiz va sovg'alaringiz savati." },
       { name: "robots", content: "noindex" },
     ],
   }),

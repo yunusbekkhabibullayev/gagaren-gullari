@@ -10,6 +10,7 @@ import { type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { CartProvider } from "../lib/cart";
+import { PwaManager } from "../components/PwaManager";
 
 function NotFoundComponent() {
   return (
@@ -70,7 +71,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      {
+        name: "viewport",
+        content:
+          "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+      },
       { title: "NASTARIN GULLARI - Gagarin shaharida gul yetkazib berish" },
       {
         name: "description",
@@ -78,6 +83,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Premium guldastalar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlari. Gagarin bo'ylab 24/7 bepul yetkazib berish.",
       },
       { name: "author", content: "NASTARIN GULLARI" },
+      { name: "theme-color", content: "#9B2C3B" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "NASTARIN" },
       { property: "og:title", content: "NASTARIN GULLARI - Gagarin shaharida gul yetkazib berish" },
       {
         property: "og:description",
@@ -94,12 +104,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
     links: [
+      { rel: "manifest", href: "/manifest.json" },
       {
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/logo.png", type: "image/png" },
-      { rel: "apple-touch-icon", href: "/logo.png" },
+      { rel: "icon", href: "/icon-192x192.png", type: "image/png" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -116,7 +127,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="uz">
       <head>
         <HeadContent />
       </head>
@@ -136,7 +147,9 @@ function RootComponent() {
       <CartProvider>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
+        <PwaManager />
       </CartProvider>
     </QueryClientProvider>
   );
 }
+

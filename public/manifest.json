@@ -1,0 +1,64 @@
+{
+  "name": "NASTARIN GULLARI - Gagarin shahri",
+  "short_name": "NASTARIN",
+  "description": "Gagarin shaharida gul va sovg'alar yetkazib berish xizmati. Premium guldastalar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlari.",
+  "start_url": "/",
+  "scope": "/",
+  "id": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAFAF7",
+  "theme_color": "#9B2C3B",
+  "lang": "uz",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Gul katalogi",
+      "short_name": "Katalog",
+      "description": "Guldastalarni ko'rish va tanlash",
+      "url": "/catalog",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Xaridlar savati",
+      "short_name": "Savat",
+      "description": "Tanlangan gullarni ko'rish",
+      "url": "/cart",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Buyurtmani kuzatish",
+      "short_name": "Kuzatish",
+      "description": "Buyurtma holatini bilish",
+      "url": "/track",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ],
+  "categories": ["shopping", "lifestyle"]
+}

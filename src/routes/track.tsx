@@ -10,12 +10,12 @@ import { trackOrder, type TrackedOrder } from "@/lib/orders.functions";
 export const Route = createFileRoute("/track")({
   head: () => ({
     meta: [
-      { title: "Buyurtmani kuzatish — Sopol Ustalari" },
+      { title: "Buyurtmani kuzatish — NASTARIN GULLARI" },
       {
         name: "description",
         content: "Buyurtma raqami va telefon raqamingiz orqali buyurtmangiz holatini tekshiring.",
       },
-      { property: "og:title", content: "Buyurtmani kuzatish — Sopol Ustalari" },
+      { property: "og:title", content: "Buyurtmani kuzatish — NASTARIN GULLARI" },
       {
         property: "og:description",
         content: "Buyurtmangiz qayerda? Holatini bir daqiqada bilib oling.",

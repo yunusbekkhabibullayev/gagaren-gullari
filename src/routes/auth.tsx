@@ -62,6 +62,8 @@ function AuthPage() {
   const [remember, setRemember] = useState(true);
   const [busy, setBusy] = useState(false);
 
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
   useEffect(() => {
     if (!loading && isAuth) navigate({ to: "/admin" });
   }, [isAuth, loading, navigate]);
@@ -73,21 +75,24 @@ function AuthPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
+    setErrorMsg(null);
 
-    try {
-      // Supabase orqali kirish urinishi
-      await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password: password.trim(),
-      });
-    } catch {
-      /* ignore Supabase rate-limit errors */
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password: password.trim(),
+    });
+
+    setBusy(false);
+
+    if (error) {
+      console.warn("Supabase auth error:", error.message);
+      setErrorMsg("Elektron pochta yoki parol noto'g'ri. Iltimos, qayta tekshirib ko'ring.");
+      return;
     }
 
-    // Local Admin sessiyani o'rnatish (Har doim zudlik bilan Admin panelga kiradi)
-    setLocalAdminSession();
-    setBusy(false);
-    navigate({ to: "/admin" });
+    if (data.session) {
+      navigate({ to: "/admin" });
+    }
   };
 
   return (
@@ -111,6 +116,12 @@ function AuthPage() {
 
         {/* Login Form */}
         <form onSubmit={handleLogin} className="space-y-4 text-left">
+          {errorMsg && (
+            <div className="rounded-2xl bg-rose-50 border border-rose-200 p-3.5 text-xs text-rose-700 font-medium text-center">
+              {errorMsg}
+            </div>
+          )}
+
           {/* Email Input */}
           <div>
             <label className="block text-xs font-bold text-slate-600 mb-1.5">

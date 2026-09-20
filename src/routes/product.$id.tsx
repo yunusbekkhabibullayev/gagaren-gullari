@@ -8,8 +8,8 @@ import { useCart } from "@/lib/cart";
 export const Route = createFileRoute("/product/$id")({
   head: () => ({
     meta: [
-      { title: "Mahsulot — Sopol Ustalari" },
-      { name: "description", content: "Qo'lda ishlangan sopol idish tafsilotlari." },
+      { title: "Guldasta tafsilotlari — NASTARIN GULLARI" },
+      { name: "description", content: "Gagarin shaharida gul va guldasta tafsilotlari hamda yetkazib berish buyurtmasi." },
     ],
   }),
   notFoundComponent: () => (

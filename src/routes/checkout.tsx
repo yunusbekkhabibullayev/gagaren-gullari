@@ -1,17 +1,17 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { z } from "zod";
 import { MobileTabBar, SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { useCart } from "@/lib/cart";
 import { formatSom } from "@/lib/products";
-import { supabase } from "@/integrations/supabase/client";
-import { sendTelegramOrderNotification } from "@/lib/telegram";
+import { placeOrder } from "@/lib/orders.functions";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
-      { title: "Buyurtma berish — Sopol Ustalari" },
+      { title: "Buyurtma berish — NASTARIN GULLARI" },
       { name: "description", content: "Buyurtmangizni rasmiylashtiring va biz bilan bog'laning." },
       { name: "robots", content: "noindex" },
     ],
@@ -32,11 +32,12 @@ const schema = z.object({
   method: z.enum(["cash", "card", "transfer"]),
 });
 
-type Errors = Partial<Record<keyof z.infer<typeof schema>, string>>;
+type Errors = Partial<Record<keyof z.infer<typeof schema> | "submit", string>>;
 
 function CheckoutPage() {
   const { items, subtotal, count, clear, hydrated } = useCart();
   const navigate = useNavigate();
+  const placeOrderFn = useServerFn(placeOrder);
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState<null | { orderId: string; total: number }>(null);
   const [saving, setSaving] = useState(false);
@@ -48,6 +49,14 @@ function CheckoutPage() {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (saving) return;
+
+    if (typeof navigator !== "undefined" && !navigator.onLine) {
+      setErrors({
+        submit: "Internet aloqasi yo'q. Qaytadan ulanib buyurtma bering.",
+      });
+      return;
+    }
+
     const fd = new FormData(e.currentTarget);
     const raw = {
       name: String(fd.get("name") ?? ""),
@@ -69,70 +78,34 @@ function CheckoutPage() {
     setErrors({});
     setSaving(true);
 
-    const payload = {
-      customer_name: parsed.data.name,
-      customer_phone: parsed.data.phone,
-      customer_city: "Mirzacho'l tumani",
-      customer_address: parsed.data.address,
-      note: parsed.data.note || "",
-      payment_method: parsed.data.method,
-      items: items.map((i) => ({
-        slug: i.slug,
-        name: i.name,
-        price: i.price,
-        color: i.color,
-        qty: i.qty,
-        image: i.image,
-      })),
-      subtotal,
-      shipping,
-      total,
-    };
-
-    let orderId = "SO-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-
     try {
-      const { data, error } = await supabase
-        .from("orders")
-        .insert(payload)
-        .select("id, order_number")
-        .maybeSingle();
+      const result = await placeOrderFn({
+        data: {
+          name: parsed.data.name,
+          phone: parsed.data.phone,
+          address: parsed.data.address,
+          note: parsed.data.note,
+          method: parsed.data.method,
+          items: items.map((i) => ({
+            slug: i.slug,
+            qty: i.qty,
+            color: i.color,
+          })),
+        },
+      });
 
-      if (data?.order_number) {
-        orderId = data.order_number;
-      } else if (data?.id) {
-        orderId = "SO-" + String(data.id).slice(0, 6).toUpperCase();
-      } else if (error) {
-        console.warn("Supabase order insert notice:", error);
+      setSaving(false);
+
+      if (result?.success) {
+        setSubmitted({ orderId: result.orderId, total: result.total });
+        clear();
+      } else {
+        setErrors({ submit: result?.error || "Buyurtma saqlashda xatolik yuz berdi" });
       }
-    } catch (err) {
-      console.warn("Supabase orders save fallback triggered:", err);
+    } catch (err: any) {
+      setSaving(false);
+      setErrors({ submit: err?.message || "Buyurtma saqlashda kutilmagan xatolik yuz berdi" });
     }
-
-    setSaving(false);
-
-    // Telegram botga buyurtma xabarini yuborish
-    sendTelegramOrderNotification({
-      orderId,
-      customerName: parsed.data.name,
-      customerPhone: parsed.data.phone,
-      customerCity: "Mirzacho'l tumani",
-      customerAddress: parsed.data.address,
-      paymentMethod: parsed.data.method,
-      note: parsed.data.note,
-      subtotal,
-      shipping,
-      total,
-      items: items.map((i) => ({
-        name: i.name,
-        color: i.color,
-        qty: i.qty,
-        price: i.price,
-      })),
-    });
-
-    setSubmitted({ orderId, total });
-    clear();
   };
 
   if (submitted) {
