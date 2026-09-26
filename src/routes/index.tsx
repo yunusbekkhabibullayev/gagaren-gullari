@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { MobileTabBar, SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { formatSom, productImage, useProducts, type Product } from "@/lib/products";
@@ -132,66 +133,144 @@ const TESTIMONIALS = [
 
 function TestimonialsSlider() {
   const [current, setCurrent] = useState(0);
+  const [visible, setVisible] = useState(3);
   const count = TESTIMONIALS.length;
-  const visible = 3;
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
 
   const startTimer = () => {
     if (timer.current) clearInterval(timer.current);
     timer.current = setInterval(() => {
       setCurrent((c) => (c + 1) % count);
-    }, 3500);
+    }, 4000);
   };
 
   useEffect(() => {
-    startTimer();
-    return () => { if (timer.current) clearInterval(timer.current); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const updateVisible = () => {
+      if (typeof window === "undefined") return;
+      const w = window.innerWidth;
+      if (w >= 1024) setVisible(3);
+      else if (w >= 768) setVisible(2);
+      else setVisible(1);
+    };
 
-  // Show 3 cards, centered on `current`
+    updateVisible();
+    window.addEventListener("resize", updateVisible);
+    startTimer();
+
+    return () => {
+      window.removeEventListener("resize", updateVisible);
+      if (timer.current) clearInterval(timer.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [count]);
+
+  const handlePrev = () => {
+    setCurrent((c) => (c - 1 + count) % count);
+    startTimer();
+  };
+
+  const handleNext = () => {
+    setCurrent((c) => (c + 1) % count);
+    startTimer();
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current === null || touchEndX.current === null) return;
+    const diff = touchStartX.current - touchEndX.current;
+    const minSwipeDistance = 35;
+    if (Math.abs(diff) > minSwipeDistance) {
+      if (diff > 0) {
+        handleNext();
+      } else {
+        handlePrev();
+      }
+    }
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
+
   const indices = Array.from({ length: visible }, (_, i) => (current + i) % count);
 
   return (
-    <div className="mt-10 relative overflow-hidden">
-      <div
-        className="grid gap-6 transition-all duration-700"
-        style={{ gridTemplateColumns: `repeat(${visible}, 1fr)` }}
-      >
-        {indices.map((idx, pos) => {
-          const t = TESTIMONIALS[idx];
-          const isCenter = pos === 0;
-          return (
-            <figure
-              key={`${idx}-${pos}`}
-              className="rounded-2xl border p-6 transition-all duration-700"
-              style={{
-                background: isCenter ? "#8B3A5C" : "#FFFFFF",
-                borderColor: isCenter ? "#8B3A5C" : "#E5DFC9",
-                transform: isCenter ? "scale(1.03)" : "scale(0.97)",
-                opacity: isCenter ? 1 : 0.7,
-                boxShadow: isCenter ? "0 8px 32px rgba(139,58,92,0.18)" : "0 2px 8px rgba(0,0,0,0.06)",
-              }}
-            >
-              <blockquote
-                className="text-[15px] leading-relaxed"
-                style={{ color: isCenter ? "#F5F1E8" : "#1F2937" }}
-              >
-                "{t.quote}"
-              </blockquote>
-              <figcaption
-                className="mt-5 text-sm"
-                style={{ color: isCenter ? "rgba(245,241,232,0.75)" : "#6B7280" }}
-              >
-                — {t.name}, {t.city}
-              </figcaption>
-            </figure>
-          );
-        })}
+    <div className="mt-8 relative">
+      {/* Outer row with prev button, viewport track, and next button */}
+      <div className="flex items-center justify-between gap-2 sm:gap-4 md:gap-6">
+        {/* Prev Button */}
+        <button
+          onClick={handlePrev}
+          className="shrink-0 h-10 w-10 sm:h-11 sm:w-11 rounded-full border border-[#E5DFC9] bg-white shadow-md flex items-center justify-center text-[#8B3A5C] hover:bg-[#8B3A5C] hover:text-white transition-all duration-200 hover:scale-105 active:scale-95 z-10"
+          aria-label="Oldingi"
+        >
+          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+        </button>
+
+        {/* Viewport & Cards Track */}
+        <div
+          className="flex-1 overflow-hidden py-3 px-1"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          <div
+            className="grid gap-4 sm:gap-6 transition-all duration-500 ease-out"
+            style={{ gridTemplateColumns: `repeat(${visible}, minmax(0, 1fr))` }}
+          >
+            {indices.map((idx, pos) => {
+              const t = TESTIMONIALS[idx];
+              const isHighlight = pos === 0;
+              return (
+                <figure
+                  key={`${t.name}-${idx}`}
+                  className="rounded-2xl border p-5 sm:p-6 transition-all duration-500 flex flex-col justify-between min-h-[160px] sm:min-h-[180px]"
+                  style={{
+                    background: isHighlight ? "#8B3A5C" : "#FFFFFF",
+                    borderColor: isHighlight ? "#8B3A5C" : "#E5DFC9",
+                    transform: visible > 1 && isHighlight ? "scale(1.02)" : "scale(1)",
+                    opacity: isHighlight ? 1 : 0.85,
+                    boxShadow: isHighlight ? "0 8px 32px rgba(139,58,92,0.18)" : "0 2px 8px rgba(0,0,0,0.06)",
+                  }}
+                >
+                  <blockquote
+                    className="text-sm sm:text-[15px] leading-relaxed"
+                    style={{ color: isHighlight ? "#F5F1E8" : "#1F2937" }}
+                  >
+                    "{t.quote}"
+                  </blockquote>
+                  <figcaption
+                    className="mt-5 text-xs sm:text-sm font-medium"
+                    style={{ color: isHighlight ? "rgba(245,241,232,0.85)" : "#6B7280" }}
+                  >
+                    — {t.name}, {t.city}
+                  </figcaption>
+                </figure>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Next Button */}
+        <button
+          onClick={handleNext}
+          className="shrink-0 h-10 w-10 sm:h-11 sm:w-11 rounded-full border border-[#E5DFC9] bg-white shadow-md flex items-center justify-center text-[#8B3A5C] hover:bg-[#8B3A5C] hover:text-white transition-all duration-200 hover:scale-105 active:scale-95 z-10"
+          aria-label="Keyingi"
+        >
+          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+        </button>
       </div>
 
       {/* Navigation dots */}
-      <div className="mt-8 flex justify-center gap-2">
+      <div className="mt-6 flex justify-center gap-2">
         {TESTIMONIALS.map((_, i) => (
           <button
             key={i}
@@ -202,21 +281,10 @@ function TestimonialsSlider() {
               background: i === current ? "#8B3A5C" : "#6B7280",
               opacity: i === current ? 1 : 0.35,
             }}
+            aria-label={`Fikr ${i + 1}`}
           />
         ))}
       </div>
-
-      {/* Prev / Next */}
-      <button
-        onClick={() => { setCurrent((c) => (c - 1 + count) % count); startTimer(); }}
-        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 rounded-full border border-[#E5DFC9] bg-white shadow-md h-9 w-9 flex items-center justify-center text-[#8B3A5C] hover:bg-[#8B3A5C] hover:text-white transition-colors"
-        aria-label="Oldingi"
-      >‹</button>
-      <button
-        onClick={() => { setCurrent((c) => (c + 1) % count); startTimer(); }}
-        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 rounded-full border border-[#E5DFC9] bg-white shadow-md h-9 w-9 flex items-center justify-center text-[#8B3A5C] hover:bg-[#8B3A5C] hover:text-white transition-colors"
-        aria-label="Keyingi"
-      >›</button>
     </div>
   );
 }
