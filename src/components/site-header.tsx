@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { useCart } from "@/lib/cart";
 import logoImg from "@/assets/logo.png";
 
@@ -83,9 +83,25 @@ export function SiteHeader() {
 
 export function MobileTabBar() {
   const { count, hydrated } = useCart();
+  const routerState = useRouterState();
+  const isHome = routerState.location.pathname === "/";
+
   const item =
     "flex flex-1 flex-col items-center gap-1 py-2 text-[11px] text-muted-foreground transition";
   const active = "text-foreground";
+
+  function handleAloqa(e: React.MouseEvent) {
+    e.preventDefault();
+    if (isHome) {
+      // Already on homepage — just scroll to footer
+      const el = document.getElementById("aloqa");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    } else {
+      // Navigate to homepage and scroll after load
+      window.location.href = "/#aloqa";
+    }
+  }
+
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)] sm:hidden"
@@ -114,13 +130,14 @@ export function MobileTabBar() {
           </span>
           Savat
         </Link>
-        <a href="#aloqa" className={item}>
+        <a href="/#aloqa" onClick={handleAloqa} className={item}>
           <IconUser /> Aloqa
         </a>
       </div>
     </nav>
   );
 }
+
 
 function IconHome() {
   return (

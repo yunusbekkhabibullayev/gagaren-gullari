@@ -1,89 +1,109 @@
 import { Link } from "@tanstack/react-router";
-import { Instagram, Send, Phone, MapPin, Clock } from "lucide-react";
 
 export function SiteFooter() {
   return (
-    <footer id="aloqa" className="mt-24 border-t border-border/60 bg-background">
-      <div className="mx-auto max-w-7xl px-5 py-14 sm:py-20">
-        <div className="petal-divider mb-10" aria-hidden />
-        <div className="grid gap-10 sm:grid-cols-4">
-          <div className="sm:col-span-1">
-            <div className="font-display text-xl font-semibold">NASTARIN GULLARI</div>
-            <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-              Premium turda yig'ilgan mualliflik guldastalar. Gagarin bo'ylab 24/7 bepul
-              yetkazib berish xizmati mavjud.
+    <footer id="aloqa" className="mt-24" style={{ background: "#1C0D14" }}>
+      {/* Top gradient accent */}
+      <div style={{ height: "3px", background: "linear-gradient(90deg, #8B3A5C 0%, #c06090 50%, #8B3A5C 100%)" }} />
+
+      <div className="mx-auto max-w-7xl px-5 pt-16 pb-10">
+        {/* Main grid */}
+        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
+
+          {/* Brand column */}
+          <div className="lg:col-span-1">
+            <div
+              className="text-xl font-semibold tracking-tight"
+              style={{ color: "#F5F1E8", fontFamily: "'Poppins','Inter',sans-serif" }}
+            >
+              NASTARIN GULLARI
+            </div>
+            <p className="mt-4 text-sm leading-relaxed" style={{ color: "rgba(245,241,232,0.55)" }}>
+              Premium turda yig'ilgan mualliflik guldastalar. Gagarin bo'ylab 24/7 bepul yetkazib berish xizmati mavjud.
             </p>
-            {/* Social Media Links */}
-            <div className="mt-5 flex items-center gap-3">
+
+            {/* Social buttons — text only, no icons */}
+            <div className="mt-6 flex items-center gap-3">
               <a
                 href="https://www.instagram.com/nastarin_gullari.gagarin"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-50 text-[#e0526c] transition hover:bg-[#e0526c] hover:text-white"
-                title="Instagram @nastarin_gullari.gagarin"
+                className="rounded-full px-4 py-2 text-xs font-semibold transition-all duration-200 hover:opacity-80"
+                style={{ background: "rgba(139,58,92,0.20)", color: "#F5F1E8", border: "1px solid rgba(139,58,92,0.40)" }}
               >
-                <Instagram className="h-5 w-5" />
+                Instagram
               </a>
               <a
                 href="https://t.me/nastarin_gullari.gagarin"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-sky-50 text-sky-600 transition hover:bg-sky-600 hover:text-white"
-                title="Telegram @nastarin_gullari.gagarin"
+                className="rounded-full px-4 py-2 text-xs font-semibold transition-all duration-200 hover:opacity-80"
+                style={{ background: "rgba(139,58,92,0.20)", color: "#F5F1E8", border: "1px solid rgba(139,58,92,0.40)" }}
               >
-                <Send className="h-5 w-5" />
+                Telegram
               </a>
             </div>
           </div>
 
+          {/* Contact column */}
           <div>
-            <div className="text-sm font-semibold">Bog'lanish</div>
-            <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2">
-                <Instagram className="h-4 w-4 text-[#e0526c]" />
+            <div
+              className="text-xs uppercase tracking-widest font-semibold mb-6"
+              style={{ color: "#8B3A5C" }}
+            >
+              Bog'lanish
+            </div>
+            <ul className="space-y-4 text-sm" style={{ color: "rgba(245,241,232,0.65)" }}>
+              <li>
                 <a
                   href="https://www.instagram.com/nastarin_gullari.gagarin"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-foreground hover:underline font-medium"
+                  className="transition-all duration-150 hover:opacity-80"
+                  style={{ color: "rgba(245,241,232,0.65)" }}
                 >
                   @nastarin_gullari.gagarin
                 </a>
               </li>
-              <li className="flex items-center gap-2">
-                <Send className="h-4 w-4 text-sky-500" />
+              <li>
                 <a
                   href="https://t.me/nastarin_gullari.gagarin"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-foreground hover:underline font-medium"
+                  className="transition-all duration-150 hover:opacity-80"
+                  style={{ color: "rgba(245,241,232,0.65)" }}
                 >
                   @nastarin_gullari.gagarin
                 </a>
               </li>
-              <li className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-emerald-500" />
-                <span>Har kuni 24/7 xizmati mavjud</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-amber-500" />
-                <span>Soliq binosining yonida - Gagarin</span>
-              </li>
+              <li style={{ color: "rgba(245,241,232,0.65)" }}>Har kuni 24/7 xizmati mavjud</li>
+              <li style={{ color: "rgba(245,241,232,0.65)" }}>Soliq binosining yonida – Gagarin</li>
             </ul>
           </div>
 
+          {/* Navigation column */}
           <div>
-            <div className="text-sm font-semibold">Navigatsiya</div>
-            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+            <div
+              className="text-xs uppercase tracking-widest font-semibold mb-6"
+              style={{ color: "#8B3A5C" }}
+            >
+              Navigatsiya
+            </div>
+            <ul className="space-y-3 text-sm">
               <li>
-                <Link to="/" className="underline-offset-4 hover:text-foreground hover:underline">
+                <Link
+                  to="/"
+                  className="transition-all duration-150 hover:opacity-80"
+                  style={{ color: "rgba(245,241,232,0.65)" }}
+                >
                   Bosh sahifa
                 </Link>
               </li>
               <li>
                 <Link
                   to="/catalog"
-                  className="underline-offset-4 hover:text-foreground hover:underline"
+                  className="transition-all duration-150 hover:opacity-80"
+                  style={{ color: "rgba(245,241,232,0.65)" }}
                 >
                   Gullar katalogi
                 </Link>
@@ -91,7 +111,8 @@ export function SiteFooter() {
               <li>
                 <Link
                   to="/track"
-                  className="underline-offset-4 hover:text-foreground hover:underline"
+                  className="transition-all duration-150 hover:opacity-80"
+                  style={{ color: "rgba(245,241,232,0.65)" }}
                 >
                   Buyurtmani kuzatish
                 </Link>
@@ -99,34 +120,59 @@ export function SiteFooter() {
             </ul>
           </div>
 
+          {/* Guarantee column */}
           <div>
-            <div className="text-sm font-semibold">Kafolat & Xizmat</div>
-            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-              <li>✓ 100% Yangi gullar kafolati</li>
-              <li>✓ 2 soatda tezkor yetkazib berish</li>
-              <li>✓ Rasm va vido hisobot</li>
-              <li>✓ Bepul tabriknoma karta</li>
+            <div
+              className="text-xs uppercase tracking-widest font-semibold mb-6"
+              style={{ color: "#8B3A5C" }}
+            >
+              Kafolat & Xizmat
+            </div>
+            <ul className="space-y-3 text-sm" style={{ color: "rgba(245,241,232,0.65)" }}>
+              <li className="flex items-center gap-2">
+                <span className="w-1 h-1 rounded-full shrink-0" style={{ background: "#8B3A5C" }} />
+                100% Yangi gullar kafolati
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="w-1 h-1 rounded-full shrink-0" style={{ background: "#8B3A5C" }} />
+                2 soatda tezkor yetkazib berish
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="w-1 h-1 rounded-full shrink-0" style={{ background: "#8B3A5C" }} />
+                Rasm va video hisobot
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="w-1 h-1 rounded-full shrink-0" style={{ background: "#8B3A5C" }} />
+                Bepul tabriknoma karta
+              </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-border/40 pt-6 text-xs text-muted-foreground">
-          <div>© {new Date().getFullYear()} NASTARIN GULLARI. Barcha huquqlar himoyalangan.</div>
-          <div className="flex items-center gap-4">
+        {/* Divider */}
+        <div className="mt-14 mb-6" style={{ height: "1px", background: "rgba(245,241,232,0.08)" }} />
+
+        {/* Bottom bar */}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="text-xs" style={{ color: "rgba(245,241,232,0.35)" }}>
+            © {new Date().getFullYear()} NASTARIN GULLARI. Barcha huquqlar himoyalangan.
+          </div>
+          <div className="flex items-center gap-6 text-xs" style={{ color: "rgba(245,241,232,0.35)" }}>
             <a
               href="https://www.instagram.com/nastarin_gullari.gagarin"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:underline"
+              className="hover:opacity-70 transition"
+              style={{ color: "rgba(245,241,232,0.35)" }}
             >
               Instagram
             </a>
-            <span>•</span>
             <a
               href="https://t.me/nastarin_gullari.gagarin"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:underline"
+              className="hover:opacity-70 transition"
+              style={{ color: "rgba(245,241,232,0.35)" }}
             >
               Telegram
             </a>

@@ -52,8 +52,8 @@ function Catalog() {
       <section className="mx-auto max-w-7xl px-5 pt-8 pb-4 sm:pt-12 sm:pb-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-3 py-1 text-xs font-semibold text-[#e0526c] dark:bg-rose-950/40 dark:text-rose-400">
-              🌸 Kolleksiya
+            <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold" style={{ background: "rgba(139,58,92,0.10)", color: "#8B3A5C", border: "1px solid rgba(139,58,92,0.20)" }}>
+              Kolleksiya
             </span>
             <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight sm:text-5xl">
               Yangi gullar katalogi
@@ -75,23 +75,17 @@ function Catalog() {
           <div className="flex flex-wrap sm:flex-nowrap items-center gap-1.5 sm:overflow-x-auto sm:no-scrollbar -mx-5 px-5 sm:mx-0 sm:px-0">
             <button
               onClick={() => setCat(null)}
-              className={`shrink-0 rounded-full px-3 py-1.5 text-xs sm:text-sm font-semibold transition-all ${
-                cat === null
-                  ? "bg-rose-500 text-white shadow-sm"
-                  : "bg-slate-100 text-muted-foreground hover:bg-slate-200 hover:text-foreground"
-              }`}
+              className="shrink-0 rounded-full px-3 py-1.5 text-xs sm:text-sm font-semibold transition-all"
+              style={cat === null ? { background: "#8B3A5C", color: "#F5F1E8" } : { background: "#F0EDE6", color: "#6B7280" }}
             >
-              🌸 Barcha
+              Barcha
             </button>
             {activeCategoryNames.map((c) => (
               <button
                 key={c}
                 onClick={() => setCat(c)}
-                className={`shrink-0 rounded-full px-3 py-1.5 text-xs sm:text-sm font-semibold transition-all ${
-                  cat === c
-                    ? "bg-rose-500 text-white shadow-sm"
-                    : "bg-slate-100 text-muted-foreground hover:bg-slate-200 hover:text-foreground"
-                }`}
+                className="shrink-0 rounded-full px-3 py-1.5 text-xs sm:text-sm font-semibold transition-all"
+                style={cat === c ? { background: "#8B3A5C", color: "#F5F1E8" } : { background: "#F0EDE6", color: "#6B7280" }}
               >
                 {c}
               </button>
@@ -102,14 +96,11 @@ function Catalog() {
           <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 text-xs sm:text-sm">
             {/* Origin pills - Wrap on mobile */}
             <div className="flex flex-wrap gap-1.5">
-              <span className="text-muted-foreground font-medium shrink-0">📍 Manba:</span>
+              <span className="font-medium shrink-0 text-xs" style={{ color: "#6B7280" }}>Manba:</span>
               <button
                 onClick={() => setShop(null)}
-                className={`shrink-0 rounded-full px-2.5 py-1 font-medium transition-all text-xs ${
-                  shop === null
-                    ? "bg-blue-500 text-white shadow-sm"
-                    : "bg-slate-100 text-muted-foreground hover:bg-slate-200"
-                }`}
+                className="shrink-0 rounded-full px-2.5 py-1 font-medium transition-all text-xs"
+                style={shop === null ? { background: "#8B3A5C", color: "#F5F1E8" } : { background: "#F0EDE6", color: "#6B7280" }}
               >
                 Barchasi
               </button>
@@ -117,11 +108,8 @@ function Catalog() {
                 <button
                   key={w}
                   onClick={() => setShop(w)}
-                  className={`shrink-0 rounded-full px-2.5 py-1 font-medium transition-all text-xs ${
-                    shop === w
-                      ? "bg-emerald-500 text-white shadow-sm"
-                      : "bg-slate-100 text-muted-foreground hover:bg-slate-200"
-                  }`}
+                  className="shrink-0 rounded-full px-2.5 py-1 font-medium transition-all text-xs"
+                  style={shop === w ? { background: "#8B3A5C", color: "#F5F1E8" } : { background: "#F0EDE6", color: "#6B7280" }}
                 >
                   {w}
                 </button>
@@ -136,7 +124,8 @@ function Catalog() {
                     setCat(null);
                     setShop(null);
                   }}
-                  className="text-xs font-medium text-rose-500 hover:text-rose-700 px-2 py-1 rounded-full hover:bg-rose-50 transition-all"
+                  className="text-xs font-medium px-2 py-1 rounded-full transition-all"
+                  style={{ color: "#8B3A5C" }}
                 >
                   ✕ Tozalash
                 </button>
@@ -145,12 +134,13 @@ function Catalog() {
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as Sort)}
-                className="rounded-full border border-border/60 bg-white px-2.5 py-1 text-xs font-medium outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-200 transition-all"
+                className="rounded-full border bg-white px-2.5 py-1 text-xs font-medium outline-none transition-all"
+                style={{ borderColor: "rgba(139,58,92,0.30)", color: "#1F2937" }}
               >
-                <option value="popular">🔥 Mashhur</option>
-                <option value="new">✨ Yangi</option>
-                <option value="priceAsc">💰 Arzon</option>
-                <option value="priceDesc">💎 Qimmat</option>
+                <option value="popular">Mashhur</option>
+                <option value="new">Yangi</option>
+                <option value="priceAsc">Arzon</option>
+                <option value="priceDesc">Qimmat</option>
               </select>
             </div>
           </div>
@@ -179,14 +169,14 @@ function Catalog() {
               </div>
               <div className="mt-3 flex flex-1 flex-col justify-between">
                 <div>
-                  <h3 className="line-clamp-1 font-medium text-foreground group-hover:text-[#e0526c] transition">
+                  <h3 className="line-clamp-1 font-medium text-foreground transition" style={{ color: "#1F2937" }}>
                     {p.name}
                   </h3>
                   <p className="line-clamp-1 text-xs text-muted-foreground mt-0.5">{p.pattern}</p>
                 </div>
                 <div className="mt-3 flex items-center justify-between pt-2 border-t border-border/30">
-                  <span className="text-sm font-bold text-foreground">{formatSom(p.price)}</span>
-                  <span className="rounded-full bg-rose-50 dark:bg-rose-950/50 p-1.5 text-[#e0526c] transition group-hover:bg-[#e0526c] group-hover:text-white">
+                  <span className="text-sm font-bold" style={{ color: "#8B3A5C" }}>{formatSom(p.price)}</span>
+                  <span className="rounded-full p-1.5 transition" style={{ background: "rgba(139,58,92,0.10)", color: "#8B3A5C" }}>
                     <svg
                       className="h-4 w-4"
                       fill="none"
@@ -219,7 +209,8 @@ function Catalog() {
                 setCat(null);
                 setShop(null);
               }}
-              className="mt-4 rounded-full bg-[#e0526c] px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#d0425c] transition"
+              className="mt-4 rounded-full px-5 py-2 text-sm font-medium text-white shadow-sm transition hover:opacity-90"
+              style={{ background: "#8B3A5C" }}
             >
               Barcha gullarni ko'rish
             </button>

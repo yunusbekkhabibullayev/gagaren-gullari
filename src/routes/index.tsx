@@ -68,14 +68,7 @@ function HeroSlider({ products }: { products: Product[] }) {
             className="h-full w-full object-cover"
             loading={i === 0 ? "eager" : "lazy"}
           />
-          {/* Slide info badge */}
-          <div
-            className="absolute bottom-5 left-5 rounded-xl px-4 py-3 shadow-lg backdrop-blur-md"
-            style={{ background: "rgba(31,41,55,0.75)" }}
-          >
-            <div className="text-[10px] uppercase tracking-widest" style={{ color: "#F5F1E8", opacity: 0.7 }}>Bugun</div>
-            <div className="mt-0.5 text-sm font-semibold" style={{ color: "#F5F1E8" }}>{p.name}</div>
-          </div>
+
         </div>
       ))}
 
