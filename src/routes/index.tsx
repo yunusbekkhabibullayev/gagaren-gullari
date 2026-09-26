@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { MobileTabBar, SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { HeroSection } from "@/components/HeroSection";
 import { formatSom, productImage, useProducts, type Product } from "@/lib/products";
 import { useCategories } from "@/lib/categories";
 import logoImg from "@/assets/logo.png";
@@ -266,63 +267,7 @@ function Home() {
       <SiteHeader />
 
       {/* ── HERO ─────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden">
-        <div
-          className="mx-auto grid max-w-7xl items-center gap-12 px-5 pt-10 pb-16 sm:pt-20 sm:pb-28 md:grid-cols-2"
-        >
-          {/* Left text */}
-          <div className="relative z-10 animate-fade-in">
-            <div
-              className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs uppercase tracking-widest"
-              style={{ background: "rgba(139,58,92,0.10)", color: "#8B3A5C", border: "1px solid rgba(139,58,92,0.20)" }}
-            >
-              <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#8B3A5C" }} />
-              Mirzacho'l tumani
-            </div>
-            <h1 className="mt-6 font-display text-5xl leading-[1.05] sm:text-6xl md:text-7xl" style={{ color: "#1F2937", fontFamily: "'Poppins','Inter',sans-serif", fontWeight: 600 }}>
-              Gullar bilan
-              <br />
-              <span style={{ color: "#8B3A5C", fontStyle: "italic" }}>aytilgan so'z</span>
-            </h1>
-            <p className="mt-6 max-w-md text-lg" style={{ color: "#6B7280", fontFamily: "'Segoe UI','Helvetica Neue',sans-serif" }}>
-              Har kuni ertalab yangi kelgan gullardan yig'ilgan buketlar. Yetkazish kunini va
-              vaqtini o'zingiz tanlaysiz.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                to="/catalog"
-                className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-all duration-200 hover:opacity-90 hover:scale-105"
-                style={{ background: "#8B3A5C", color: "#F5F1E8", fontFamily: "'Poppins',sans-serif", fontWeight: 500 }}
-              >
-                Buketlarni ko'rish →
-              </Link>
-              <a
-                href="#hunar"
-                className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-all duration-200 hover:scale-105"
-                style={{ background: "#FFFFFF", color: "#1F2937", border: "1px solid #E5DFC9" }}
-              >
-                Yetkazib berish
-              </a>
-            </div>
-
-            <div className="mt-12 grid max-w-md grid-cols-3 gap-6 text-sm">
-              <Stat label="Yetkazish" value="15 daqiqa" />
-              <Stat label="Florist" value="8" />
-              <Stat label="Buket" value={products.length > 0 ? `${products.length}+` : "..."} />
-            </div>
-          </div>
-
-          {/* Right: Hero Slider */}
-          <div className="relative">
-            <div
-              className="absolute -inset-6 -z-10 rounded-full blur-3xl"
-              style={{ background: "rgba(168,80,140,0.15)" }}
-            />
-            <HeroSlider products={products} />
-          </div>
-        </div>
-        <div className="petal-divider" aria-hidden />
-      </section>
+      <HeroSection />
 
       {/* ── CATEGORIES ───────────────────────────────────────── */}
       <section className="mx-auto max-w-7xl px-5 py-20">
