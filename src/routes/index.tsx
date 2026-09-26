@@ -206,10 +206,10 @@ function TestimonialsSlider() {
     <div className="mt-8 relative">
       {/* Outer row with prev button, viewport track, and next button */}
       <div className="flex items-center justify-between gap-2 sm:gap-4 md:gap-6">
-        {/* Prev Button */}
+        {/* Prev Button (hidden on mobile, visible on sm+) */}
         <button
           onClick={handlePrev}
-          className="shrink-0 h-10 w-10 sm:h-11 sm:w-11 rounded-full border border-[#E5DFC9] bg-white shadow-md flex items-center justify-center text-[#8B3A5C] hover:bg-[#8B3A5C] hover:text-white transition-all duration-200 hover:scale-105 active:scale-95 z-10"
+          className="hidden sm:flex shrink-0 h-10 w-10 sm:h-11 sm:w-11 rounded-full border border-[#E5DFC9] bg-white shadow-md items-center justify-center text-[#8B3A5C] hover:bg-[#8B3A5C] hover:text-white transition-all duration-200 hover:scale-105 active:scale-95 z-10"
           aria-label="Oldingi"
         >
           <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -259,10 +259,10 @@ function TestimonialsSlider() {
           </div>
         </div>
 
-        {/* Next Button */}
+        {/* Next Button (hidden on mobile, visible on sm+) */}
         <button
           onClick={handleNext}
-          className="shrink-0 h-10 w-10 sm:h-11 sm:w-11 rounded-full border border-[#E5DFC9] bg-white shadow-md flex items-center justify-center text-[#8B3A5C] hover:bg-[#8B3A5C] hover:text-white transition-all duration-200 hover:scale-105 active:scale-95 z-10"
+          className="hidden sm:flex shrink-0 h-10 w-10 sm:h-11 sm:w-11 rounded-full border border-[#E5DFC9] bg-white shadow-md items-center justify-center text-[#8B3A5C] hover:bg-[#8B3A5C] hover:text-white transition-all duration-200 hover:scale-105 active:scale-95 z-10"
           aria-label="Keyingi"
         >
           <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
