@@ -65,36 +65,36 @@
   --color-ink: var(--ink);
   --color-cream: var(--cream);
   --font-display: "Poppins", "Inter", sans-serif;
-  --font-sans: "Segoe UI", "Helvetica Neue", system-ui, sans-serif;
+  --font-sans: "Poppins", "Inter", sans-serif;
 }
 
 :root {
   --radius: 0.625rem;
   /* NASTARIN GULLARI DESIGN SYSTEM */
-  --cream: #F5F1E8;
+  --cream: #FFFFFF;
   --ink: #1F2937;
-  --terracotta: #8B3A5C; /* Deep Rose */
+  --terracotta: #D84C73; /* Header button & Testimonial highlight color (Image 2) */
   --cobalt: #6B7280; /* Soft Gray */
-  --saffron: #A8508C; /* Deep Rose Hover */
-  --background: #F5F1E8; /* Cream */
+  --saffron: #C03E63; /* Accent hover */
+  --background: #FFFFFF; /* Pure White background */
   --foreground: #1F2937; /* Charcoal */
   --card: #FFFFFF; /* White */
   --card-foreground: #1F2937;
   --popover: #FFFFFF;
   --popover-foreground: #1F2937;
-  --primary: #8B3A5C; /* Deep Rose */
-  --primary-foreground: #F5F1E8; /* Cream text */
-  --secondary: #EBE5D8;
+  --primary: #D84C73; /* Main brand accent color (Image 1) */
+  --primary-foreground: #FFFFFF; /* White text */
+  --secondary: #F8F6F7;
   --secondary-foreground: #1F2937;
-  --muted: #EBE5D8;
+  --muted: #F3EEF0;
   --muted-foreground: #6B7280; /* Soft Gray */
-  --accent: #8B3A5C;
+  --accent: #D84C73;
   --accent-foreground: #FFFFFF;
   --destructive: #EF4444;
   --destructive-foreground: #FFFFFF;
-  --border: #E5DFC9;
-  --input: #E5DFC9;
-  --ring: #8B3A5C;
+  --border: #F0E6EB;
+  --input: #F0E6EB;
+  --ring: #D84C73;
 }
 
 .dark {
@@ -104,19 +104,19 @@
   --card-foreground: #F5F1E8;
   --popover: #111827;
   --popover-foreground: #F5F1E8;
-  --primary: #8B3A5C;
+  --primary: #D84C73;
   --primary-foreground: #F5F1E8;
   --secondary: #374151;
   --secondary-foreground: #F5F1E8;
   --muted: #374151;
   --muted-foreground: #9CA3AF;
-  --accent: #8B3A5C;
+  --accent: #D84C73;
   --accent-foreground: #F5F1E8;
   --destructive: #EF4444;
   --destructive-foreground: #FFFFFF;
   --border: #374151;
   --input: #374151;
-  --ring: #8B3A5C;
+  --ring: #D84C73;
 }
 
 @layer base {
@@ -194,4 +194,5 @@
   width: 100%;
   opacity: 0.65;
 }
+
 

@@ -52,9 +52,6 @@ function Catalog() {
       <section className="mx-auto max-w-7xl px-5 pt-8 pb-4 sm:pt-12 sm:pb-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold" style={{ background: "rgba(139,58,92,0.10)", color: "#8B3A5C", border: "1px solid rgba(139,58,92,0.20)" }}>
-              Kolleksiya
-            </span>
             <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight sm:text-5xl">
               Yangi gullar katalogi
             </h1>
@@ -70,13 +67,12 @@ function Catalog() {
 
       {/* FILTERS & CATEGORIES TOOLBAR */}
       <section className="sticky top-[65px] z-30 border-b border-border/40 bg-background/95 backdrop-blur-sm">
-        <div className="mx-auto max-w-7xl px-5 py-3 space-y-2.5">
-          {/* Main Category Tabs - Wrap on mobile, scrollable on desktop */}
-          <div className="flex flex-wrap sm:flex-nowrap items-center gap-1.5 sm:overflow-x-auto sm:no-scrollbar -mx-5 px-5 sm:mx-0 sm:px-0">
+        <div className="mx-auto max-w-7xl px-5 py-3">
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-1.5 sm:overflow-x-auto sm:no-scrollbar">
             <button
               onClick={() => setCat(null)}
               className="shrink-0 rounded-full px-3 py-1.5 text-xs sm:text-sm font-semibold transition-all"
-              style={cat === null ? { background: "#8B3A5C", color: "#F5F1E8" } : { background: "#F0EDE6", color: "#6B7280" }}
+              style={cat === null ? { background: "#D84C73", color: "#F5F1E8" } : { background: "#F0EDE6", color: "#6B7280" }}
             >
               Barcha
             </button>
@@ -85,57 +81,27 @@ function Catalog() {
                 key={c}
                 onClick={() => setCat(c)}
                 className="shrink-0 rounded-full px-3 py-1.5 text-xs sm:text-sm font-semibold transition-all"
-                style={cat === c ? { background: "#8B3A5C", color: "#F5F1E8" } : { background: "#F0EDE6", color: "#6B7280" }}
+                style={cat === c ? { background: "#D84C73", color: "#F5F1E8" } : { background: "#F0EDE6", color: "#6B7280" }}
               >
                 {c}
               </button>
             ))}
-          </div>
 
-          {/* Secondary Controls: Origin Filter + Sort Dropdown + Reset */}
-          <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 text-xs sm:text-sm">
-            {/* Origin pills - Wrap on mobile */}
-            <div className="flex flex-wrap gap-1.5">
-              <span className="font-medium shrink-0 text-xs" style={{ color: "#6B7280" }}>Manba:</span>
-              <button
-                onClick={() => setShop(null)}
-                className="shrink-0 rounded-full px-2.5 py-1 font-medium transition-all text-xs"
-                style={shop === null ? { background: "#8B3A5C", color: "#F5F1E8" } : { background: "#F0EDE6", color: "#6B7280" }}
-              >
-                Barchasi
-              </button>
-              {workshops.map((w) => (
-                <button
-                  key={w}
-                  onClick={() => setShop(w)}
-                  className="shrink-0 rounded-full px-2.5 py-1 font-medium transition-all text-xs"
-                  style={shop === w ? { background: "#8B3A5C", color: "#F5F1E8" } : { background: "#F0EDE6", color: "#6B7280" }}
-                >
-                  {w}
-                </button>
-              ))}
-            </div>
-
-            {/* Right side controls: Sorting + Clear filters */}
-            <div className="flex items-center gap-2 ml-auto">
+            <div className="flex items-center gap-2 ml-auto shrink-0">
               {(cat !== null || shop !== null) && (
                 <button
-                  onClick={() => {
-                    setCat(null);
-                    setShop(null);
-                  }}
+                  onClick={() => { setCat(null); setShop(null); }}
                   className="text-xs font-medium px-2 py-1 rounded-full transition-all"
-                  style={{ color: "#8B3A5C" }}
+                  style={{ color: "#D84C73" }}
                 >
                   ✕ Tozalash
                 </button>
               )}
-
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as Sort)}
                 className="rounded-full border bg-white px-2.5 py-1 text-xs font-medium outline-none transition-all"
-                style={{ borderColor: "rgba(139,58,92,0.30)", color: "#1F2937" }}
+                style={{ borderColor: "rgba(216,76,115,0.30)", color: "#1F2937" }}
               >
                 <option value="popular">Mashhur</option>
                 <option value="new">Yangi</option>
@@ -175,20 +141,10 @@ function Catalog() {
                   <p className="line-clamp-1 text-xs text-muted-foreground mt-0.5">{p.pattern}</p>
                 </div>
                 <div className="mt-3 flex items-center justify-between pt-2 border-t border-border/30">
-                  <span className="text-sm font-bold" style={{ color: "#8B3A5C" }}>{formatSom(p.price)}</span>
-                  <span className="rounded-full p-1.5 transition" style={{ background: "rgba(139,58,92,0.10)", color: "#8B3A5C" }}>
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 4.5v15m7.5-7.5h-15"
-                      />
+                  <span className="text-sm font-bold" style={{ color: "#D84C73" }}>{formatSom(p.price)}</span>
+                  <span className="rounded-full p-1.5 transition" style={{ background: "rgba(216,76,115,0.10)", color: "#D84C73" }}>
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                   </span>
                 </div>
@@ -205,12 +161,9 @@ function Catalog() {
             </p>
             <p className="text-sm mt-1">Boshqa kategoriyani tanlang yoki filtrlarni tozalang.</p>
             <button
-              onClick={() => {
-                setCat(null);
-                setShop(null);
-              }}
+              onClick={() => { setCat(null); setShop(null); }}
               className="mt-4 rounded-full px-5 py-2 text-sm font-medium text-white shadow-sm transition hover:opacity-90"
-              style={{ background: "#8B3A5C" }}
+              style={{ background: "#D84C73" }}
             >
               Barcha gullarni ko'rish
             </button>
@@ -223,3 +176,4 @@ function Catalog() {
     </div>
   );
 }
+

@@ -5,38 +5,38 @@ import logoImg from "@/assets/logo.png";
 export function SiteHeader() {
   const { count, hydrated } = useCart();
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-gray-100 bg-white/95 backdrop-blur-md">
       <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-5 py-3 sm:flex sm:justify-between">
         {/* Logo */}
-        <Link to="/" className="flex min-w-0 items-center gap-2.5">
+        <Link to="/" className="flex min-w-0 items-center gap-2.5 group">
           <img
             src={logoImg}
             alt="NASTARIN GULLARI logo"
-            className="h-10 w-10 shrink-0 object-contain"
+            className="h-10 w-10 shrink-0 object-contain transition-transform group-hover:scale-105"
           />
-          <span className="truncate font-display text-lg font-semibold tracking-tight">
-            NASTARIN GULLARI
+          <span className="truncate font-sans text-lg font-bold tracking-tight text-gray-900">
+            NASTARIN <span className="text-[#D84C73]">GULLARI</span>
           </span>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-8 text-sm text-muted-foreground sm:flex">
+        <nav className="hidden items-center gap-8 text-sm font-medium text-gray-600 sm:flex">
           <Link
             to="/"
             activeOptions={{ exact: true }}
-            activeProps={{ className: "text-foreground" }}
-            className="transition hover:text-foreground"
+            activeProps={{ className: "text-[#D84C73] font-semibold" }}
+            className="transition hover:text-[#D84C73]"
           >
             Bosh sahifa
           </Link>
           <Link
             to="/catalog"
-            activeProps={{ className: "text-foreground" }}
-            className="transition hover:text-foreground"
+            activeProps={{ className: "text-[#D84C73] font-semibold" }}
+            className="transition hover:text-[#D84C73]"
           >
             Katalog
           </Link>
-          <a href="#hunar" className="transition hover:text-foreground">
+          <a href="#hunar" className="transition hover:text-[#D84C73]">
             Yetkazib berish
           </a>
         </nav>
@@ -46,7 +46,7 @@ export function SiteHeader() {
           {/* Phone button — desktop */}
           <a
             href="tel:+998903949933"
-            className="hidden items-center gap-2 rounded-full bg-[color:var(--terracotta)] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 sm:inline-flex"
+            className="hidden items-center gap-2 rounded-full bg-[#D84C73] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#c43f64] hover:scale-105 active:scale-95 sm:inline-flex"
           >
             <IconPhone />
             <span>+998 90 394 99 33</span>
@@ -56,22 +56,22 @@ export function SiteHeader() {
           <Link
             to="/cart"
             aria-label="Savat"
-            className="relative hidden shrink-0 items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium transition hover:bg-secondary sm:inline-flex"
+            className="relative hidden shrink-0 items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-800 shadow-sm transition hover:bg-pink-50 hover:border-pink-200 sm:inline-flex"
           >
             <IconBag />
             <span>Savat</span>
             {hydrated && count > 0 && (
-              <span className="ml-1 grid h-5 min-w-5 place-items-center rounded-full bg-foreground px-1.5 text-[11px] font-semibold text-background">
+              <span className="ml-1 grid h-5 min-w-5 place-items-center rounded-full bg-[#D84C73] px-1.5 text-[11px] font-bold text-white">
                 {count}
               </span>
             )}
           </Link>
 
-          {/* Phone button — mobile only (shown in header on small screens) */}
+          {/* Phone button — mobile only */}
           <a
             href="tel:+998903949933"
             aria-label="Qo'ng'iroq qilish"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[color:var(--terracotta)] text-white shadow-sm transition hover:opacity-90 sm:hidden"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#D84C73] text-white shadow-sm transition hover:bg-[#c43f64] sm:hidden"
           >
             <IconPhone />
           </a>
@@ -84,59 +84,97 @@ export function SiteHeader() {
 export function MobileTabBar() {
   const { count, hydrated } = useCart();
   const routerState = useRouterState();
-  const isHome = routerState.location.pathname === "/";
-
-  const item =
-    "flex flex-1 flex-col items-center gap-1 py-2 text-[11px] text-muted-foreground transition";
-  const active = "text-foreground";
+  const pathname = routerState.location.pathname;
+  const isHome = pathname === "/";
 
   function handleAloqa(e: React.MouseEvent) {
     e.preventDefault();
     if (isHome) {
-      // Already on homepage — just scroll to footer
       const el = document.getElementById("aloqa");
       if (el) el.scrollIntoView({ behavior: "smooth" });
     } else {
-      // Navigate to homepage and scroll after load
       window.location.href = "/#aloqa";
     }
   }
 
+  const isActive = (path: string) =>
+    path === "/" ? pathname === "/" : pathname.startsWith(path);
+
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)] sm:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 bg-white pb-[env(safe-area-inset-bottom)] sm:hidden"
+      style={{
+        borderTop: "1.5px solid #F0E6EB",
+        borderRadius: "16px 16px 0 0",
+        boxShadow: "0 -4px 24px rgba(216,76,115,0.08)",
+      }}
       aria-label="Mobil navigatsiya"
     >
-      <div className="mx-auto flex max-w-md">
+      <div className="flex items-stretch h-16">
+
+        {/* Bosh */}
         <Link
           to="/"
           activeOptions={{ exact: true }}
-          activeProps={{ className: active }}
-          className={item}
+          className="flex flex-1 flex-col items-center justify-center gap-1"
         >
-          <IconHome /> Bosh
+          <IconHome active={isActive("__home__")} />
+          <span className="text-[11px] font-semibold leading-none"
+            style={{ color: pathname === "/" ? "#D84C73" : "#9CA3AF" }}>
+            Bosh
+          </span>
         </Link>
-        <Link to="/catalog" activeProps={{ className: active }} className={item}>
-          <IconGrid /> Katalog
+
+        {/* Katalog */}
+        <Link
+          to="/catalog"
+          className="flex flex-1 flex-col items-center justify-center gap-1"
+        >
+          <IconGrid active={isActive("/catalog") || pathname.startsWith("/product")} />
+          <span className="text-[11px] font-semibold leading-none"
+            style={{ color: isActive("/catalog") || pathname.startsWith("/product") ? "#D84C73" : "#9CA3AF" }}>
+            Katalog
+          </span>
         </Link>
-        <Link to="/cart" activeProps={{ className: active }} className={`${item} relative`}>
+
+        {/* Savat */}
+        <Link
+          to="/cart"
+          className="flex flex-1 flex-col items-center justify-center gap-1 relative"
+        >
           <span className="relative">
-            <IconBag />
+            <IconBag active={isActive("/cart")} />
             {hydrated && count > 0 && (
-              <span className="absolute -right-2 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-foreground px-1 text-[10px] font-semibold text-background">
+              <span className="absolute -right-2 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold text-white"
+                style={{ background: "#D84C73" }}>
                 {count}
               </span>
             )}
           </span>
-          Savat
+          <span className="text-[11px] font-semibold leading-none"
+            style={{ color: isActive("/cart") ? "#D84C73" : "#9CA3AF" }}>
+            Savat
+          </span>
         </Link>
-        <a href="/#aloqa" onClick={handleAloqa} className={item}>
-          <IconUser /> Aloqa
+
+        {/* Aloqa */}
+        <a
+          href="/#aloqa"
+          onClick={handleAloqa}
+          className="flex flex-1 flex-col items-center justify-center gap-1"
+        >
+          <IconUser active={false} />
+          <span className="text-[11px] font-semibold leading-none" style={{ color: "#9CA3AF" }}>
+            Aloqa
+          </span>
         </a>
+
       </div>
     </nav>
   );
 }
+
+
 
 
 function IconHome() {

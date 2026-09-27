@@ -1,11 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { MobileTabBar, SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { formatSom, productImage, useProducts, type Product } from "@/lib/products";
 import { useCategories } from "@/lib/categories";
 import logoImg from "@/assets/logo.png";
+import flowerAtirgul from "@/assets/flower-atirgul.jpg";
+import flowerBuket from "@/assets/flower-buket.jpg";
+import flowerLola from "@/assets/flower-lola.jpg";
+import flowerSovga from "@/assets/flower-sovga.jpg";
 
 export const Route = createFileRoute("/")(({
   head: () => ({
@@ -27,66 +31,183 @@ export const Route = createFileRoute("/")(({
   component: Home,
 } as Parameters<typeof createFileRoute<"/">>[0]));
 
-/* ─── Hero Slider ─────────────────────────────────────────── */
-function HeroSlider({ products }: { products: Product[] }) {
-  const slides = products.filter((p) => p.image_url).slice(0, 6);
-  const [current, setCurrent] = useState(0);
-  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+/* ─── Default Hero Presets (Matching Image 3 Typography) ────── */
+const DEFAULT_HERO_SLIDES = [
+  {
+    id: "hero-1",
+    name: "21 Qizil Atirgul El Toro",
+    price: 350000,
+    image: flowerAtirgul,
+    slug: "21-qizil-atirgul-el-toro",
+  },
+  {
+    id: "hero-2",
+    name: "Bahoriy Mix Buket",
+    price: 280000,
+    image: flowerBuket,
+    slug: "bahoriy-mix-buket",
+  },
+  {
+    id: "hero-3",
+    name: "Premium Lolalar To'plami",
+    price: 220000,
+    image: flowerLola,
+    slug: "premium-lolalar",
+  },
+  {
+    id: "hero-4",
+    name: "Roza va Sovg'alar To'plami",
+    price: 450000,
+    image: flowerSovga,
+    slug: "roza-va-sovgalar",
+  },
+];
 
-  const startTimer = () => {
-    if (timer.current) clearInterval(timer.current);
-    timer.current = setInterval(() => {
-      setCurrent((c) => (c + 1) % slides.length);
-    }, 4000);
-  };
+/* ─── Hero Section Component (Image 3 Style Format) ────────── */
+function HeroSection({ products }: { products: Product[] }) {
+  const slides = useMemo(() => {
+    if (products && products.length > 0) {
+      const valid = products.filter((p) => p.image_url || p.image_url_2 || productImage(p));
+      if (valid.length > 0) {
+        return valid.map((p) => ({
+          id: p.id,
+          name: p.name,
+          price: p.price,
+          image: productImage(p) || p.image_url || p.image_url_2 || "",
+          slug: p.slug || p.id,
+        }));
+      }
+    }
+    return DEFAULT_HERO_SLIDES;
+  }, [products]);
+
+  const [current, setCurrent] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const activeSlide = slides[current] || slides[0];
 
   useEffect(() => {
-    if (slides.length > 1) startTimer();
-    return () => { if (timer.current) clearInterval(timer.current); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slides.length]);
+    if (isPaused || slides.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrent((c) => (c + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [isPaused, slides.length]);
 
-  if (slides.length === 0) {
-    return (
-      <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-[#F5F1E8] shadow-2xl flex items-center justify-center">
-        <img src={logoImg} alt="Nastarin Gullari" className="h-40 w-40 object-contain opacity-40" />
-      </div>
-    );
-  }
+  const handlePrev = () => {
+    setCurrent((c) => (c - 1 + slides.length) % slides.length);
+  };
+
+  const handleNext = () => {
+    setCurrent((c) => (c + 1) % slides.length);
+  };
 
   return (
-    <div className="relative aspect-square overflow-hidden rounded-[2rem] shadow-2xl">
-      {slides.map((p, i) => (
-        <div
-          key={p.id}
-          className="absolute inset-0 transition-opacity duration-1000"
-          style={{ opacity: i === current ? 1 : 0, zIndex: i === current ? 1 : 0 }}
-        >
-          <img
-            src={p.image_url!}
-            alt={p.name}
-            className="h-full w-full object-cover"
-            loading={i === 0 ? "eager" : "lazy"}
-          />
+    <section
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      className="relative overflow-hidden bg-[#FFFFFF] border-b border-pink-100/60 py-8 sm:py-14 lg:py-20 transition-colors"
+    >
+      <div className="mx-auto max-w-7xl px-5">
+        <div className="grid grid-cols-1 md:grid-cols-12 items-center gap-6 lg:gap-12">
+
+          {/* Left Column: Title, Sub-link, Controls — order-2 on mobile, order-1 on md+ */}
+          <div className="order-2 md:order-1 md:col-span-4 flex flex-col gap-4 text-left">
+            <div className="flex flex-col gap-3">
+              {/* Eyebrow Label */}
+              <div className="text-xs uppercase tracking-widest text-[#6B7280] font-medium">
+                Aksiya / Tavsiya
+              </div>
+
+              {/* Title */}
+              <h1
+                key={activeSlide.id}
+                className="text-2xl sm:text-4xl md:text-5xl lg:text-5xl font-medium text-[#1F2937] leading-[1.2] animate-fade-in line-clamp-3"
+                style={{ fontFamily: "'Poppins','Inter',sans-serif", fontWeight: 500 }}
+              >
+                {activeSlide.name}
+              </h1>
+
+              <Link
+                to="/catalog"
+                className="group inline-flex items-center gap-2 text-xs sm:text-sm font-semibold tracking-wider text-[#D84C73] uppercase transition-colors hover:text-[#B8365B]"
+              >
+                <span>Kataloga o'tish</span>
+                <ChevronRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1 text-[#D84C73]" />
+              </Link>
+            </div>
+
+            {/* Navigation Arrows */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handlePrev}
+                aria-label="Oldingi buket"
+                className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-pink-200 bg-white text-[#D84C73] shadow-sm transition-all hover:bg-[#D84C73] hover:text-white hover:border-[#D84C73] active:scale-95 cursor-pointer"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={handleNext}
+                aria-label="Keyingi buket"
+                className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-pink-200 bg-white text-[#D84C73] shadow-sm transition-all hover:bg-[#D84C73] hover:text-white hover:border-[#D84C73] active:scale-95 cursor-pointer"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Center Column: Pink Backdrop + Bouquet + Price — order-1 on mobile (shows first!) */}
+          <div className="order-1 md:order-2 md:col-span-5 relative flex items-center justify-center py-2 sm:py-8 min-h-[260px] sm:min-h-[420px] lg:min-h-[480px]">
+            {/* Soft pink halo circle */}
+            <div className="absolute h-[220px] w-[220px] sm:h-[360px] sm:w-[360px] lg:h-[440px] lg:w-[440px] rounded-full bg-[#FCE8F0] shadow-inner transition-transform duration-700 ease-out" />
+
+            {/* Bouquet image */}
+            <Link
+              to="/catalog"
+              className="relative z-10 flex items-center justify-center group transition-transform duration-500 hover:scale-105"
+            >
+              <img
+                key={activeSlide.id}
+                src={activeSlide.image}
+                alt={activeSlide.name}
+                className="max-h-[240px] sm:max-h-[390px] lg:max-h-[460px] w-auto object-contain drop-shadow-2xl animate-fade-in"
+              />
+            </Link>
+
+            {/* Floating Price Badge */}
+            <div className="absolute top-2 right-2 sm:top-6 sm:right-6 z-20 flex items-center rounded-full bg-white/95 px-4 py-2 sm:px-5 sm:py-2.5 shadow-xl border border-pink-100 backdrop-blur-md">
+              <span className="text-xs sm:text-sm font-semibold tracking-wide text-gray-800">
+                {formatSom(activeSlide.price)}
+              </span>
+            </div>
+          </div>
+
+          {/* Right Column: Thumbnails — horizontal on mobile (below image), vertical on md+ */}
+          <div className="order-2 md:order-3 md:col-span-3 flex flex-row md:flex-col items-center justify-center gap-3 sm:gap-6 z-10">
+            {slides.map((slide, idx) => {
+              const isActive = idx === current;
+              return (
+                <button
+                  key={slide.id}
+                  onClick={() => setCurrent(idx)}
+                  className={`group relative flex h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 shrink-0 items-center justify-center rounded-full border-2 p-1 transition-all duration-300 bg-white cursor-pointer ${
+                    isActive
+                      ? "border-[#D84C73] ring-4 ring-[#D84C73]/20 scale-105 shadow-lg"
+                      : "border-pink-100 opacity-75 hover:opacity-100 hover:border-pink-300 hover:scale-105"
+                  }`}
+                >
+                  <img
+                    src={slide.image}
+                    alt={slide.name}
+                    className="h-full w-full rounded-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                </button>
+              );
+            })}
+          </div>
 
         </div>
-      ))}
-
-      {/* Dots */}
-      <div className="absolute bottom-5 right-5 z-10 flex gap-1.5">
-        {slides.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => { setCurrent(i); startTimer(); }}
-            className="h-1.5 rounded-full transition-all duration-300"
-            style={{
-              width: i === current ? "1.5rem" : "0.375rem",
-              background: i === current ? "#8B3A5C" : "rgba(245,241,232,0.6)",
-            }}
-          />
-        ))}
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -202,7 +323,7 @@ function TestimonialsSlider() {
         {/* Prev Button (hidden on mobile, visible on sm+) */}
         <button
           onClick={handlePrev}
-          className="hidden sm:flex shrink-0 h-10 w-10 sm:h-11 sm:w-11 rounded-full border border-[#E5DFC9] bg-white shadow-md items-center justify-center text-[#8B3A5C] hover:bg-[#8B3A5C] hover:text-white transition-all duration-200 hover:scale-105 active:scale-95 z-10"
+          className="hidden sm:flex shrink-0 h-10 w-10 sm:h-11 sm:w-11 rounded-full border border-[#E5DFC9] bg-white shadow-md items-center justify-center text-[#D84C73] hover:bg-[#D84C73] hover:text-white transition-all duration-200 hover:scale-105 active:scale-95 z-10"
           aria-label="Oldingi"
         >
           <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -227,11 +348,11 @@ function TestimonialsSlider() {
                   key={`${t.name}-${idx}`}
                   className="rounded-2xl border p-5 sm:p-6 transition-all duration-500 flex flex-col justify-between min-h-[160px] sm:min-h-[180px]"
                   style={{
-                    background: isHighlight ? "#8B3A5C" : "#FFFFFF",
-                    borderColor: isHighlight ? "#8B3A5C" : "#E5DFC9",
+                    background: isHighlight ? "#D84C73" : "#FFFFFF",
+                    borderColor: isHighlight ? "#D84C73" : "#E5DFC9",
                     transform: visible > 1 && isHighlight ? "scale(1.02)" : "scale(1)",
                     opacity: isHighlight ? 1 : 0.85,
-                    boxShadow: isHighlight ? "0 8px 32px rgba(139,58,92,0.18)" : "0 2px 8px rgba(0,0,0,0.06)",
+                    boxShadow: isHighlight ? "0 8px 32px rgba(216,76,115,0.18)" : "0 2px 8px rgba(0,0,0,0.06)",
                   }}
                 >
                   <blockquote
@@ -255,7 +376,7 @@ function TestimonialsSlider() {
         {/* Next Button (hidden on mobile, visible on sm+) */}
         <button
           onClick={handleNext}
-          className="hidden sm:flex shrink-0 h-10 w-10 sm:h-11 sm:w-11 rounded-full border border-[#E5DFC9] bg-white shadow-md items-center justify-center text-[#8B3A5C] hover:bg-[#8B3A5C] hover:text-white transition-all duration-200 hover:scale-105 active:scale-95 z-10"
+          className="hidden sm:flex shrink-0 h-10 w-10 sm:h-11 sm:w-11 rounded-full border border-[#E5DFC9] bg-white shadow-md items-center justify-center text-[#D84C73] hover:bg-[#D84C73] hover:text-white transition-all duration-200 hover:scale-105 active:scale-95 z-10"
           aria-label="Keyingi"
         >
           <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -271,7 +392,7 @@ function TestimonialsSlider() {
             className="h-2 rounded-full transition-all duration-300"
             style={{
               width: i === current ? "1.5rem" : "0.5rem",
-              background: i === current ? "#8B3A5C" : "#6B7280",
+              background: i === current ? "#D84C73" : "#6B7280",
               opacity: i === current ? 1 : 0.35,
             }}
             aria-label={`Fikr ${i + 1}`}
@@ -312,7 +433,7 @@ function Home() {
   const categoriesReady = !categoriesLoading && !productsLoading;
 
   return (
-    <div className="min-h-screen pb-20 sm:pb-0" style={{ background: "#F5F1E8" }}>
+    <div className="min-h-screen pb-20 sm:pb-0" style={{ background: "#FFFFFF" }}>
       <style>{`
         @keyframes shimmer {
           0% { background-position: 200% 0; }
@@ -327,63 +448,7 @@ function Home() {
       <SiteHeader />
 
       {/* ── HERO ─────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden">
-        <div
-          className="mx-auto grid max-w-7xl items-center gap-12 px-5 pt-10 pb-16 sm:pt-20 sm:pb-28 md:grid-cols-2"
-        >
-          {/* Left text */}
-          <div className="relative z-10 animate-fade-in">
-            <div
-              className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs uppercase tracking-widest"
-              style={{ background: "rgba(139,58,92,0.10)", color: "#8B3A5C", border: "1px solid rgba(139,58,92,0.20)" }}
-            >
-              <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#8B3A5C" }} />
-              Mirzacho'l tumani
-            </div>
-            <h1 className="mt-6 font-display text-5xl leading-[1.05] sm:text-6xl md:text-7xl" style={{ color: "#1F2937", fontFamily: "'Poppins','Inter',sans-serif", fontWeight: 600 }}>
-              Gullar bilan
-              <br />
-              <span style={{ color: "#8B3A5C", fontStyle: "italic" }}>aytilgan so'z</span>
-            </h1>
-            <p className="mt-6 max-w-md text-lg" style={{ color: "#6B7280", fontFamily: "'Segoe UI','Helvetica Neue',sans-serif" }}>
-              Har kuni ertalab yangi kelgan gullardan yig'ilgan buketlar. Yetkazish kunini va
-              vaqtini o'zingiz tanlaysiz.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                to="/catalog"
-                className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-all duration-200 hover:opacity-90 hover:scale-105"
-                style={{ background: "#8B3A5C", color: "#F5F1E8", fontFamily: "'Poppins',sans-serif", fontWeight: 500 }}
-              >
-                Buketlarni ko'rish →
-              </Link>
-              <a
-                href="#hunar"
-                className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-all duration-200 hover:scale-105"
-                style={{ background: "#FFFFFF", color: "#1F2937", border: "1px solid #E5DFC9" }}
-              >
-                Yetkazib berish
-              </a>
-            </div>
-
-            <div className="mt-12 grid max-w-md grid-cols-3 gap-6 text-sm">
-              <Stat label="Yetkazish" value="15 daqiqa" />
-              <Stat label="Florist" value="8" />
-              <Stat label="Buket" value={products.length > 0 ? `${products.length}+` : "..."} />
-            </div>
-          </div>
-
-          {/* Right: Hero Slider */}
-          <div className="relative">
-            <div
-              className="absolute -inset-6 -z-10 rounded-full blur-3xl"
-              style={{ background: "rgba(168,80,140,0.15)" }}
-            />
-            <HeroSlider products={products} />
-          </div>
-        </div>
-        <div className="petal-divider" aria-hidden />
-      </section>
+      <HeroSection products={products} />
 
       {/* ── CATEGORIES ───────────────────────────────────────── */}
       <section className="mx-auto max-w-7xl px-5 py-20">
@@ -453,7 +518,7 @@ function Home() {
                   <div className="truncate font-medium" style={{ color: "#1F2937" }}>{p.name}</div>
                   <div className="truncate text-sm" style={{ color: "#6B7280" }}>{p.pattern}</div>
                 </div>
-                <div className="shrink-0 text-sm font-semibold" style={{ color: "#8B3A5C" }}>{formatSom(p.price)}</div>
+                <div className="shrink-0 text-sm font-semibold" style={{ color: "#D84C73" }}>{formatSom(p.price)}</div>
               </div>
             </Link>
           ))}
@@ -499,21 +564,13 @@ function Home() {
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <div className="text-3xl" style={{ fontFamily: "'Poppins','Inter',sans-serif", fontWeight: 600, color: "#1F2937" }}>{value}</div>
-      <div className="mt-1 text-xs uppercase tracking-widest" style={{ color: "#6B7280" }}>{label}</div>
-    </div>
-  );
-}
-
 function Step({ n, t, d }: { n: string; t: string; d: string }) {
   return (
     <div>
-      <div className="text-xl" style={{ fontFamily: "'Poppins','Inter',sans-serif", fontWeight: 600, color: "#8B3A5C" }}>{n}</div>
+      <div className="text-xl" style={{ fontFamily: "'Poppins','Inter',sans-serif", fontWeight: 600, color: "#D84C73" }}>{n}</div>
       <div className="mt-2 font-medium" style={{ color: "#1F2937" }}>{t}</div>
       <div style={{ color: "#6B7280" }}>{d}</div>
     </div>
   );
 }
+
