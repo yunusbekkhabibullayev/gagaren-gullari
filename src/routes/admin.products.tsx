@@ -8,6 +8,7 @@ import {
   saveProductOverride,
   deleteProductOverride,
   mergeProductsWithOverrides,
+  processAndUploadImage,
 } from "@/lib/products";
 import { useAdminCategories } from "@/lib/categories";
 import {
@@ -62,6 +63,8 @@ function AdminProductsPage() {
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
   const [editing, setEditing] = useState<(Partial<Product> & { colorsText?: string }) | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [uploadingImg1, setUploadingImg1] = useState(false);
+  const [uploadingImg2, setUploadingImg2] = useState(false);
 
   // Filtered Products
   const filtered = useMemo(() => {
@@ -94,12 +97,15 @@ function AdminProductsPage() {
           .replace(/\s+/g, "-")
           .replace(/[^a-z0-9-]/g, "");
 
-      const imageUrl2 = draft.image_url_2?.trim() || null;
+      let imageUrl2 = draft.image_url_2?.trim() || null;
+      if (imageUrl2 && !imageUrl2.startsWith("http") && !imageUrl2.startsWith("/") && !imageUrl2.startsWith("data:")) {
+        imageUrl2 = null;
+      }
       const preparation = draft.preparation?.trim() || "15–30 daqiqa (tayyor)";
       
-      // Validate image_url - ensure it's a valid URL or path
+      // Validate image_url - ensure it's a valid URL, path, or data URI
       let imageUrl = draft.image_url?.trim() || "/flowers/flower-hero.jpg";
-      if (!imageUrl.startsWith("http") && !imageUrl.startsWith("/")) {
+      if (!imageUrl.startsWith("http") && !imageUrl.startsWith("/") && !imageUrl.startsWith("data:")) {
         imageUrl = "/flowers/flower-hero.jpg"; // Fallback if invalid
       }
 
@@ -802,26 +808,27 @@ function AdminProductsPage() {
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <label className="inline-flex items-center gap-1.5 rounded-xl bg-[#e0526c] px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-[#ce425b] cursor-pointer transition">
+                        <label className={`inline-flex items-center gap-1.5 rounded-xl bg-[#e0526c] px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-[#ce425b] cursor-pointer transition ${uploadingImg1 ? "opacity-60 pointer-events-none" : ""}`}>
                           <Upload className="h-3.5 w-3.5" />
-                          <span>Rasm 1 tanlash</span>
+                          <span>{uploadingImg1 ? "Yuklanmoqda..." : "Rasm 1 tanlash"}</span>
                           <input
                             type="file"
                             accept="image/*"
                             className="hidden"
-                            onChange={(e) => {
+                            disabled={uploadingImg1}
+                            onChange={async (e) => {
                               const file = e.target.files?.[0];
                               if (file) {
-                                const reader = new FileReader();
-                                reader.onload = (evt) => {
-                                  if (evt.target?.result) {
-                                    setEditing({
-                                      ...editing,
-                                      image_url: evt.target.result as string,
-                                    });
-                                  }
-                                };
-                                reader.readAsDataURL(file);
+                                try {
+                                  setUploadingImg1(true);
+                                  const url = await processAndUploadImage(file);
+                                  setEditing((prev) => (prev ? { ...prev, image_url: url } : prev));
+                                } catch (err) {
+                                  console.error("Image 1 upload error:", err);
+                                  alert("Rasm yuklashda xatolik yuz berdi");
+                                } finally {
+                                  setUploadingImg1(false);
+                                }
                               }
                             }}
                           />
@@ -859,26 +866,27 @@ function AdminProductsPage() {
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <label className="inline-flex items-center gap-1.5 rounded-xl bg-slate-800 px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-slate-900 cursor-pointer transition">
+                        <label className={`inline-flex items-center gap-1.5 rounded-xl bg-slate-800 px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-slate-900 cursor-pointer transition ${uploadingImg2 ? "opacity-60 pointer-events-none" : ""}`}>
                           <Upload className="h-3.5 w-3.5" />
-                          <span>Rasm 2 tanlash</span>
+                          <span>{uploadingImg2 ? "Yuklanmoqda..." : "Rasm 2 tanlash"}</span>
                           <input
                             type="file"
                             accept="image/*"
                             className="hidden"
-                            onChange={(e) => {
+                            disabled={uploadingImg2}
+                            onChange={async (e) => {
                               const file = e.target.files?.[0];
                               if (file) {
-                                const reader = new FileReader();
-                                reader.onload = (evt) => {
-                                  if (evt.target?.result) {
-                                    setEditing({
-                                      ...editing,
-                                      image_url_2: evt.target.result as string,
-                                    });
-                                  }
-                                };
-                                reader.readAsDataURL(file);
+                                try {
+                                  setUploadingImg2(true);
+                                  const url = await processAndUploadImage(file);
+                                  setEditing((prev) => (prev ? { ...prev, image_url_2: url } : prev));
+                                } catch (err) {
+                                  console.error("Image 2 upload error:", err);
+                                  alert("Rasm 2 yuklashda xatolik yuz berdi");
+                                } finally {
+                                  setUploadingImg2(false);
+                                }
                               }
                             }}
                           />
