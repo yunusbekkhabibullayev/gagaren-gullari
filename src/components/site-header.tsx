@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useCart } from "@/lib/cart";
 import logoImg from "@/assets/logo.png";
+import { MapPin, Phone, Clock, Instagram, Send, X } from "lucide-react";
 
 export function SiteHeader() {
   const { count, hydrated } = useCart();
@@ -85,107 +87,205 @@ export function MobileTabBar() {
   const { count, hydrated } = useCart();
   const routerState = useRouterState();
   const pathname = routerState.location.pathname;
-  const isHome = pathname === "/";
+  const [showAloqaModal, setShowAloqaModal] = useState(false);
 
-  function handleAloqa(e: React.MouseEvent) {
-    e.preventDefault();
-    if (isHome) {
-      const el = document.getElementById("aloqa");
-      if (el) el.scrollIntoView({ behavior: "smooth" });
-    } else {
-      window.location.href = "/#aloqa";
-    }
-  }
+  const isActive = (path: string) => {
+    if (path === "/") return pathname === "/";
+    return pathname.startsWith(path);
+  };
 
-  const isActive = (path: string) =>
-    path === "/" ? pathname === "/" : pathname.startsWith(path);
+  const isBoshActive = pathname === "/";
+  const isKatalogActive = isActive("/catalog") || pathname.startsWith("/product");
+  const isSavatActive = isActive("/cart");
 
   return (
-    <nav
-      className="fixed inset-x-0 bottom-0 z-40 bg-white pb-[env(safe-area-inset-bottom)] sm:hidden"
-      style={{
-        borderTop: "1.5px solid #F0E6EB",
-        borderRadius: "16px 16px 0 0",
-        boxShadow: "0 -4px 24px rgba(216,76,115,0.08)",
-      }}
-      aria-label="Mobil navigatsiya"
-    >
-      <div className="flex items-stretch h-16">
+    <>
+      {/* Floating Bottom Navigation Bar with 4-side Margins */}
+      <nav
+        className="fixed bottom-3 left-4 right-4 z-40 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-pink-100/80 sm:hidden"
+        style={{
+          boxShadow: "0 8px 30px rgba(216,76,115,0.18)",
+        }}
+        aria-label="Mobil navigatsiya"
+      >
+        <div className="flex items-center justify-around h-14 px-1">
+          {/* Bosh */}
+          <Link
+            to="/"
+            activeOptions={{ exact: true }}
+            className="flex flex-1 flex-col items-center justify-center gap-0.5"
+          >
+            <IconHome active={isBoshActive} />
+            <span
+              className="text-[11px] font-semibold leading-none"
+              style={{ color: isBoshActive ? "#D84C73" : "#9CA3AF" }}
+            >
+              Bosh
+            </span>
+          </Link>
 
-        {/* Bosh */}
-        <Link
-          to="/"
-          activeOptions={{ exact: true }}
-          className="flex flex-1 flex-col items-center justify-center gap-1"
-        >
-          <IconHome active={isActive("__home__")} />
-          <span className="text-[11px] font-semibold leading-none"
-            style={{ color: pathname === "/" ? "#D84C73" : "#9CA3AF" }}>
-            Bosh
-          </span>
-        </Link>
+          {/* Katalog */}
+          <Link
+            to="/catalog"
+            className="flex flex-1 flex-col items-center justify-center gap-0.5"
+          >
+            <IconGrid active={isKatalogActive} />
+            <span
+              className="text-[11px] font-semibold leading-none"
+              style={{ color: isKatalogActive ? "#D84C73" : "#9CA3AF" }}
+            >
+              Katalog
+            </span>
+          </Link>
 
-        {/* Katalog */}
-        <Link
-          to="/catalog"
-          className="flex flex-1 flex-col items-center justify-center gap-1"
-        >
-          <IconGrid active={isActive("/catalog") || pathname.startsWith("/product")} />
-          <span className="text-[11px] font-semibold leading-none"
-            style={{ color: isActive("/catalog") || pathname.startsWith("/product") ? "#D84C73" : "#9CA3AF" }}>
-            Katalog
-          </span>
-        </Link>
+          {/* Savat */}
+          <Link
+            to="/cart"
+            className="flex flex-1 flex-col items-center justify-center gap-0.5 relative"
+          >
+            <span className="relative">
+              <IconBag active={isSavatActive} />
+              {hydrated && count > 0 && (
+                <span
+                  className="absolute -right-2 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold text-white shadow-sm"
+                  style={{ background: "#D84C73" }}
+                >
+                  {count}
+                </span>
+              )}
+            </span>
+            <span
+              className="text-[11px] font-semibold leading-none"
+              style={{ color: isSavatActive ? "#D84C73" : "#9CA3AF" }}
+            >
+              Savat
+            </span>
+          </Link>
 
-        {/* Savat */}
-        <Link
-          to="/cart"
-          className="flex flex-1 flex-col items-center justify-center gap-1 relative"
-        >
-          <span className="relative">
-            <IconBag active={isActive("/cart")} />
-            {hydrated && count > 0 && (
-              <span className="absolute -right-2 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold text-white"
-                style={{ background: "#D84C73" }}>
-                {count}
-              </span>
-            )}
-          </span>
-          <span className="text-[11px] font-semibold leading-none"
-            style={{ color: isActive("/cart") ? "#D84C73" : "#9CA3AF" }}>
-            Savat
-          </span>
-        </Link>
+          {/* Aloqa */}
+          <button
+            type="button"
+            onClick={() => setShowAloqaModal(true)}
+            className="flex flex-1 flex-col items-center justify-center gap-0.5"
+          >
+            <IconUser active={showAloqaModal} />
+            <span
+              className="text-[11px] font-semibold leading-none"
+              style={{ color: showAloqaModal ? "#D84C73" : "#9CA3AF" }}
+            >
+              Aloqa
+            </span>
+          </button>
+        </div>
+      </nav>
 
-        {/* Aloqa */}
-        <a
-          href="/#aloqa"
-          onClick={handleAloqa}
-          className="flex flex-1 flex-col items-center justify-center gap-1"
-        >
-          <IconUser active={false} />
-          <span className="text-[11px] font-semibold leading-none" style={{ color: "#9CA3AF" }}>
-            Aloqa
-          </span>
-        </a>
+      {/* Mobile Aloqa Modal */}
+      {showAloqaModal && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/60 backdrop-blur-sm p-4 sm:hidden animate-in fade-in duration-200">
+          <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl space-y-4 animate-in slide-in-from-bottom duration-300">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+              <div className="flex items-center gap-3">
+                <img src={logoImg} alt="Logo" className="h-10 w-10 object-contain" />
+                <div>
+                  <h3 className="font-extrabold text-gray-900 text-base">
+                    NASTARIN <span className="text-[#D84C73]">GULLARI</span>
+                  </h3>
+                  <p className="text-xs text-gray-500 font-medium">Do'kon ma'lumotlari</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowAloqaModal(false)}
+                className="rounded-full p-2 text-gray-400 hover:bg-gray-100 transition"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
 
-      </div>
-    </nav>
+            {/* Description */}
+            <p className="text-xs text-gray-600 leading-relaxed bg-pink-50/60 p-3.5 rounded-2xl border border-pink-100">
+              Gagarin shahrida mualliflik guldastalari va yangi gullar do'koni. 24/7 bepul yetkazib berish xizmati mavjud!
+            </p>
+
+            {/* Contact Details List */}
+            <div className="space-y-2.5 text-xs font-medium">
+              {/* Phone */}
+              <a
+                href="tel:+998903949933"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-gray-50 border border-gray-100 hover:bg-pink-50/50 transition"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#D84C73] text-white">
+                    <Phone className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-gray-400 font-semibold uppercase">Telefon raqam</div>
+                    <div className="text-sm font-bold text-gray-900">+998 90 394 99 33</div>
+                  </div>
+                </div>
+                <span className="text-xs font-bold text-[#D84C73]">Qo'ng'iroq ➔</span>
+              </a>
+
+              {/* Location */}
+              <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-gray-50 border border-gray-100">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-pink-100 text-[#D84C73]">
+                  <MapPin className="h-4 w-4" />
+                </div>
+                <div>
+                  <div className="text-[10px] text-gray-400 font-semibold uppercase">Manzil / Joylashuv</div>
+                  <div className="text-xs font-bold text-gray-800">Gagarin sh., Markaziy ko'chasi 14-uy</div>
+                </div>
+              </div>
+
+              {/* Work Hours */}
+              <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-gray-50 border border-gray-100">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
+                  <Clock className="h-4 w-4" />
+                </div>
+                <div>
+                  <div className="text-[10px] text-gray-400 font-semibold uppercase">Ish vaqti</div>
+                  <div className="text-xs font-bold text-gray-800">24/7 (Har kuni tanaffussiz)</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Social Buttons */}
+            <div className="grid grid-cols-2 gap-3 pt-1">
+              <a
+                href="https://www.instagram.com/nastarin_gullari.gagarin"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-3 text-xs font-bold text-white shadow-md transition hover:opacity-90"
+              >
+                <Instagram className="h-4 w-4" />
+                <span>Instagram</span>
+              </a>
+              <a
+                href="https://t.me/nastarin_gullari.gagarin"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 rounded-2xl bg-[#2AABEE] px-4 py-3 text-xs font-bold text-white shadow-md transition hover:opacity-90"
+              >
+                <Send className="h-4 w-4" />
+                <span>Telegram</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
-
-
-
-function IconHome() {
+function IconHome({ active }: { active?: boolean }) {
   return (
     <svg
       width="20"
       height="20"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
+      stroke={active ? "#D84C73" : "#9CA3AF"}
+      strokeWidth={active ? "2.2" : "1.8"}
       strokeLinecap="round"
       strokeLinejoin="round"
     >
@@ -194,15 +294,15 @@ function IconHome() {
     </svg>
   );
 }
-function IconGrid() {
+function IconGrid({ active }: { active?: boolean }) {
   return (
     <svg
       width="20"
       height="20"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
+      stroke={active ? "#D84C73" : "#9CA3AF"}
+      strokeWidth={active ? "2.2" : "1.8"}
       strokeLinecap="round"
       strokeLinejoin="round"
     >
@@ -213,15 +313,15 @@ function IconGrid() {
     </svg>
   );
 }
-function IconUser() {
+function IconUser({ active }: { active?: boolean }) {
   return (
     <svg
       width="20"
       height="20"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
+      stroke={active ? "#D84C73" : "#9CA3AF"}
+      strokeWidth={active ? "2.2" : "1.8"}
       strokeLinecap="round"
       strokeLinejoin="round"
     >
@@ -230,15 +330,15 @@ function IconUser() {
     </svg>
   );
 }
-function IconBag() {
+function IconBag({ active }: { active?: boolean }) {
   return (
     <svg
       width="20"
       height="20"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
+      stroke={active ? "#D84C73" : "#9CA3AF"}
+      strokeWidth={active ? "2.2" : "1.8"}
       strokeLinecap="round"
       strokeLinejoin="round"
     >

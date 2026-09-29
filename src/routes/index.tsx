@@ -169,7 +169,7 @@ function HeroSection({ products }: { products: Product[] }) {
                 key={activeSlide.id}
                 src={activeSlide.image}
                 alt={activeSlide.name}
-                className="max-h-[240px] sm:max-h-[390px] lg:max-h-[460px] w-auto object-cover rounded-3xl shadow-2xl border-4 border-white animate-fade-in"
+                className="h-[240px] w-[240px] sm:h-[360px] sm:w-[360px] lg:h-[420px] lg:w-[420px] aspect-square object-cover rounded-3xl shadow-2xl border-4 border-white animate-fade-in"
                 onError={(e) => {
                   e.currentTarget.src = "/flowers/flower-atirgul.jpg";
                 }}
