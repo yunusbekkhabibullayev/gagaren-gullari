@@ -143,20 +143,19 @@ export function getLocalDeletedProductIds(): string[] {
   }
 }
 
-export function saveProductOverride(product: Product) {
+export function saveProductOverride(product: Product, tempId?: string) {
   if (typeof window === "undefined") return;
   try {
     const overrides = getLocalProductOverrides();
+    if (tempId && tempId !== product.id) {
+      delete overrides[tempId];
+    }
     overrides[product.id] = product;
     localStorage.setItem(PRODUCT_OVERRIDES_KEY, JSON.stringify(overrides));
   } catch (e) {
-    // If QuotaExceededError, clear old overrides and retry
     if ((e as any)?.name === "QuotaExceededError") {
       try {
-        console.warn("LocalStorage quota exceeded, clearing old overrides");
-        localStorage.removeItem(PRODUCT_OVERRIDES_KEY);
-        localStorage.removeItem(PRODUCT_DELETED_KEY);
-        // Retry with fresh storage
+        console.warn("LocalStorage quota exceeded, keeping only current product override");
         const overrides = { [product.id]: product };
         localStorage.setItem(PRODUCT_OVERRIDES_KEY, JSON.stringify(overrides));
       } catch (retryErr) {
@@ -181,13 +180,11 @@ export function deleteProductOverride(id: string) {
       localStorage.setItem(PRODUCT_DELETED_KEY, JSON.stringify(deleted));
     }
   } catch (e) {
-    // If QuotaExceededError, clear and retry with minimal data
     if ((e as any)?.name === "QuotaExceededError") {
       try {
         console.warn("LocalStorage quota exceeded during delete, clearing old overrides");
         localStorage.removeItem(PRODUCT_OVERRIDES_KEY);
         localStorage.removeItem(PRODUCT_DELETED_KEY);
-        // Retry with just the deleted ID
         localStorage.setItem(PRODUCT_DELETED_KEY, JSON.stringify([id]));
       } catch (retryErr) {
         console.error("Failed to delete product even after cleanup", retryErr);
@@ -207,11 +204,16 @@ export function mergeProductsWithOverrides(dbProducts: Product[]): Product[] {
   const resultMap = new Map<string, Product>();
 
   remainingDb.forEach((p) => {
-    resultMap.set(p.id, overrides[p.id] ? { ...p, ...overrides[p.id] } : p);
+    const override = overrides[p.id] || Object.values(overrides).find((o) => o.slug === p.slug);
+    resultMap.set(p.id, override ? { ...p, ...override } : p);
   });
 
   Object.values(overrides).forEach((p) => {
-    if (!deletedIds.has(p.id) && !resultMap.has(p.id)) {
+    if (
+      !deletedIds.has(p.id) &&
+      !resultMap.has(p.id) &&
+      !Array.from(resultMap.values()).some((existing) => existing.slug === p.slug)
+    ) {
       resultMap.set(p.id, p);
     }
   });
@@ -234,7 +236,12 @@ async function fetchProducts(): Promise<Product[]> {
 }
 
 export function useProducts() {
-  return useQuery({ queryKey: ["products"], queryFn: fetchProducts });
+  return useQuery({
+    queryKey: ["products"],
+    queryFn: fetchProducts,
+    staleTime: 1000 * 60 * 10, // Cache for 10 minutes (instant 0ms loading!)
+    gcTime: 1000 * 60 * 60, // Keep in memory for 1 hour
+  });
 }
 
 export function useProduct(slug: string) {
@@ -248,5 +255,6 @@ export function useProduct(slug: string) {
       const { data } = await supabase.from("products").select("*").eq("slug", slug).maybeSingle();
       return (data as Product | null) ?? null;
     },
+    staleTime: 1000 * 60 * 10,
   });
 }
