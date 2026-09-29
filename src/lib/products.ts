@@ -35,7 +35,14 @@ export function formatSom(n: number) {
 }
 
 export function productImage(p: Pick<Product, "image_url"> | null | undefined) {
-  return p?.image_url || "";
+  let url = p?.image_url?.trim();
+  if (!url || url === "/flowers/flower-hero.jpg" || url === "flowers/flower-hero.jpg") {
+    return "/flowers/flower-atirgul.jpg";
+  }
+  if (!url.startsWith("http") && !url.startsWith("/") && !url.startsWith("data:")) {
+    return "/" + url;
+  }
+  return url;
 }
 
 export function compressImage(file: File, maxDimension = 1000, quality = 0.82): Promise<string> {

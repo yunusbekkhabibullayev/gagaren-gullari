@@ -55,7 +55,14 @@ function CartPage() {
                   params={{ id: l.slug }}
                   className="block h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-background sm:h-28 sm:w-28"
                 >
-                  <img src={l.image} alt={l.name} className="h-full w-full object-cover" />
+                  <img
+                    src={l.image}
+                    alt={l.name}
+                    className="h-full w-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = "/flowers/flower-atirgul.jpg";
+                    }}
+                  />
                 </Link>
                 <div className="flex min-w-0 flex-1 flex-col">
                   <div className="flex items-start justify-between gap-3">

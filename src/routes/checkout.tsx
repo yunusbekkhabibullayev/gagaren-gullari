@@ -260,7 +260,14 @@ function CheckoutPage() {
             {items.map((l) => (
               <li key={`${l.slug}-${l.color}`} className="flex items-center gap-3">
                 <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-background">
-                  <img src={l.image} alt="" className="h-full w-full object-cover" />
+                  <img
+                    src={l.image}
+                    alt=""
+                    className="h-full w-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = "/flowers/flower-atirgul.jpg";
+                    }}
+                  />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-[13px] font-medium">{l.name}</div>

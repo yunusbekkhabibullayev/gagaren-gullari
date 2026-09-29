@@ -278,6 +278,9 @@ function Gallery({
           alt={name}
           className="pointer-events-none h-full w-full object-cover transition-opacity duration-300"
           draggable={false}
+          onError={(e) => {
+            e.currentTarget.src = "/flowers/flower-atirgul.jpg";
+          }}
         />
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-background/85 px-3 py-1 text-[11px] uppercase tracking-widest text-muted-foreground">
           Barmoq bilan aylantiring
@@ -292,7 +295,14 @@ function Gallery({
               i === active ? "border-foreground" : "border-border"
             }`}
           >
-            <img src={src} alt="" className="h-full w-full object-cover" />
+            <img
+              src={src}
+              alt=""
+              className="h-full w-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = "/flowers/flower-atirgul.jpg";
+              }}
+            />
           </button>
         ))}
       </div>

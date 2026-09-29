@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 
 export function SiteFooter() {
   return (
-    <footer id="aloqa" className="mt-24" style={{ background: "#D84C73" }}>
+    <footer id="aloqa" className="hidden md:block mt-24" style={{ background: "#D84C73" }}>
       {/* Top accent bar */}
       <div style={{ height: "3px", background: "rgba(255,255,255,0.3)" }} />
 

@@ -104,9 +104,9 @@ function AdminProductsPage() {
       const preparation = draft.preparation?.trim() || "15–30 daqiqa (tayyor)";
       
       // Validate image_url - ensure it's a valid URL, path, or data URI
-      let imageUrl = draft.image_url?.trim() || "/flowers/flower-hero.jpg";
+      let imageUrl = draft.image_url?.trim() || "/flowers/flower-atirgul.jpg";
       if (!imageUrl.startsWith("http") && !imageUrl.startsWith("/") && !imageUrl.startsWith("data:")) {
-        imageUrl = "/flowers/flower-hero.jpg"; // Fallback if invalid
+        imageUrl = "/flowers/flower-atirgul.jpg"; // Fallback if invalid
       }
 
       // Full payload with all columns
@@ -473,9 +473,12 @@ function AdminProductsPage() {
                 {/* Product Image & Badges */}
                 <div className="relative aspect-[4/3] w-full bg-slate-100 overflow-hidden">
                   <img
-                    src={p.image_url || "/flowers/flower-hero.jpg"}
+                    src={p.image_url || "/flowers/flower-atirgul.jpg"}
                     alt={p.name}
                     className="h-full w-full object-cover group-hover:scale-105 transition duration-500"
+                    onError={(e) => {
+                      e.currentTarget.src = "/flowers/flower-atirgul.jpg";
+                    }}
                   />
                   <div className="absolute top-3 left-3 rounded-full bg-slate-900/80 backdrop-blur px-3 py-1 text-[10px] font-extrabold uppercase text-white tracking-wider">
                     {p.category}
@@ -548,9 +551,12 @@ function AdminProductsPage() {
                   <tr key={p.id} className="hover:bg-slate-50/80 transition">
                     <td className="px-6 py-3">
                       <img
-                        src={p.image_url || "/flowers/flower-hero.jpg"}
+                        src={p.image_url || "/flowers/flower-atirgul.jpg"}
                         alt={p.name}
                         className="h-12 w-12 rounded-2xl object-cover border border-slate-200"
+                        onError={(e) => {
+                          e.currentTarget.src = "/flowers/flower-atirgul.jpg";
+                        }}
                       />
                     </td>
                     <td className="px-6 py-3">
@@ -800,7 +806,7 @@ function AdminProductsPage() {
                             alt="1-rasm"
                             className="h-full w-full object-cover"
                             onError={(e) => {
-                              e.currentTarget.src = "/flowers/flower-hero.jpg";
+                              e.currentTarget.src = "/flowers/flower-atirgul.jpg";
                             }}
                           />
                         ) : (

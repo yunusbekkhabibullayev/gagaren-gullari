@@ -128,6 +128,9 @@ function Catalog() {
                   alt={p.name}
                   loading="lazy"
                   className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                  onError={(e) => {
+                    e.currentTarget.src = "/flowers/flower-atirgul.jpg";
+                  }}
                 />
                 <div className="absolute left-2.5 top-2.5 rounded-full bg-background/80 backdrop-blur-md px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-foreground shadow-sm">
                   {p.workshop}
