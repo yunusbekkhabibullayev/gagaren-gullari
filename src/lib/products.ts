@@ -86,31 +86,7 @@ export function compressImage(file: File, maxDimension = 1000, quality = 0.82): 
 }
 
 export async function processAndUploadImage(file: File): Promise<string> {
-  const compressedDataUrl = await compressImage(file, 1000, 0.82);
-
-  try {
-    const fileExt = file.name.split(".").pop() || "jpg";
-    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
-    const filePath = `products/${fileName}`;
-
-    const { data, error } = await supabase.storage
-      .from("product-images")
-      .upload(filePath, file, { cacheControl: "3600", upsert: true });
-
-    if (!error && data) {
-      const { data: publicUrlData } = supabase.storage
-        .from("product-images")
-        .getPublicUrl(filePath);
-
-      if (publicUrlData?.publicUrl) {
-        return publicUrlData.publicUrl;
-      }
-    }
-  } catch (err) {
-    console.warn("Supabase storage upload failed, using compressed data URL:", err);
-  }
-
-  return compressedDataUrl;
+  return await compressImage(file, 1000, 0.82);
 }
 
 

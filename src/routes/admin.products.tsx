@@ -221,6 +221,7 @@ function AdminProductsPage() {
       });
       qc.invalidateQueries({ queryKey: ["admin-products"] });
       qc.invalidateQueries({ queryKey: ["products"] });
+      qc.invalidateQueries({ queryKey: ["product"] });
       setEditing(null);
     },
     onError: (err: Error) => {

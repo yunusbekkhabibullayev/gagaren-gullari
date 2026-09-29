@@ -163,22 +163,18 @@ function HeroSection({ products }: { products: Product[] }) {
             {/* Bouquet image */}
             <Link
               to="/catalog"
-              className="relative z-10 flex items-center justify-center group transition-transform duration-500 hover:scale-105"
+              className="relative z-10 flex items-center justify-center group transition-transform duration-500 hover:scale-105 overflow-hidden rounded-3xl"
             >
               <img
                 key={activeSlide.id}
                 src={activeSlide.image}
                 alt={activeSlide.name}
-                className="max-h-[240px] sm:max-h-[390px] lg:max-h-[460px] w-auto object-contain drop-shadow-2xl animate-fade-in"
+                className="max-h-[240px] sm:max-h-[390px] lg:max-h-[460px] w-auto object-cover rounded-3xl shadow-2xl border-4 border-white animate-fade-in"
+                onError={(e) => {
+                  e.currentTarget.src = "/flowers/flower-atirgul.jpg";
+                }}
               />
             </Link>
-
-            {/* Floating Price Badge */}
-            <div className="absolute top-2 right-2 sm:top-6 sm:right-6 z-20 flex items-center rounded-full bg-white/95 px-4 py-2 sm:px-5 sm:py-2.5 shadow-xl border border-pink-100 backdrop-blur-md">
-              <span className="text-xs sm:text-sm font-semibold tracking-wide text-gray-800">
-                {formatSom(activeSlide.price)}
-              </span>
-            </div>
           </div>
 
           {/* Right Column: Thumbnails — horizontal on mobile (below image), vertical on md+ */}
