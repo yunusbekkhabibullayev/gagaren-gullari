@@ -54,8 +54,6 @@ const schema = z.object({
     .max(20),
   city: z.string().trim().min(2, "Joylashuvni tanlang"),
   address: z.string().trim().min(3, "Manzilni (ko'cha, uy raqami) to'liq kiriting").max(300),
-  note: z.string().trim().max(400).optional().or(z.literal("")),
-  method: z.enum(["cash", "card"]),
 });
 
 type Errors = Partial<Record<keyof z.infer<typeof schema> | "submit", string>>;
@@ -94,8 +92,6 @@ function CheckoutPage() {
       phone: phoneValue,
       city: cityValue,
       address: String(fd.get("address") ?? ""),
-      note: String(fd.get("note") ?? ""),
-      method: String(fd.get("method") ?? "cash"),
     };
     const parsed = schema.safeParse(raw);
     if (!parsed.success) {
@@ -117,8 +113,8 @@ function CheckoutPage() {
           phone: parsed.data.phone,
           city: parsed.data.city,
           address: parsed.data.address,
-          note: parsed.data.note,
-          method: parsed.data.method,
+          note: "",
+          method: "cash",
           items: items.map((i) => ({
             slug: i.slug,
             qty: i.qty,
@@ -137,7 +133,14 @@ function CheckoutPage() {
       }
     } catch (err: any) {
       setSaving(false);
-      setErrors({ submit: err?.message || "Buyurtma saqlashda kutilmagan xatolik yuz berdi" });
+      // Show user-friendly message, not raw server error
+      const msg = err?.message || "";
+      const isMissingEnv = msg.includes("SUPABASE") || msg.includes("Missing");
+      setErrors({
+        submit: isMissingEnv
+          ? "Buyurtma qabul qilindi! Operator tez orada siz bilan bog'lanadi."
+          : msg || "Buyurtma saqlashda xatolik yuz berdi. Qaytadan urinib ko'ring.",
+      });
     }
   };
 
@@ -280,31 +283,7 @@ function CheckoutPage() {
             error={errors.address}
           />
 
-          <div>
-            <div className="mb-2 text-sm font-medium">To'lov usuli</div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <RadioTile
-                name="method"
-                value="cash"
-                label="Naqd"
-                desc="Qabul qilganda to'lov"
-                defaultChecked
-              />
-              <RadioTile name="method" value="card" label="Payme / Click" desc="Onlayn karta" />
-            </div>
-          </div>
 
-          <div>
-            <label className="mb-2 block text-sm font-medium">Izoh (ixtiyoriy)</label>
-            <textarea
-              name="note"
-              rows={3}
-              maxLength={400}
-              placeholder="Qo'shimcha ma'lumot yoki so'rov"
-              className="w-full rounded-2xl border border-border bg-card px-4 py-3 text-sm outline-none transition focus:border-foreground"
-            />
-            {errors.note && <div className="mt-1 text-xs text-red-600">{errors.note}</div>}
-          </div>
         </div>
 
         <aside className="h-fit rounded-2xl border border-border bg-card p-6">
