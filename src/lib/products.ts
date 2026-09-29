@@ -199,6 +199,7 @@ export function deleteProductOverride(id: string) {
 }
 
 export function mergeProductsWithOverrides(dbProducts: Product[]): Product[] {
+  if (typeof window === "undefined") return dbProducts;
   const overrides = getLocalProductOverrides();
   const deletedIds = new Set(getLocalDeletedProductIds());
 

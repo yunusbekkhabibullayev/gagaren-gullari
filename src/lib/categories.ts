@@ -22,8 +22,8 @@ export const DEFAULT_CATEGORIES: Category[] = [
     color: "#e85d4a",
     order_index: 0,
     active: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    created_at: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
   },
   {
     id: "2",
@@ -33,8 +33,8 @@ export const DEFAULT_CATEGORIES: Category[] = [
     color: "#f43f5e",
     order_index: 1,
     active: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    created_at: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
   },
   {
     id: "3",
@@ -44,8 +44,8 @@ export const DEFAULT_CATEGORIES: Category[] = [
     color: "#10b981",
     order_index: 2,
     active: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    created_at: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
   },
   {
     id: "4",
@@ -55,8 +55,8 @@ export const DEFAULT_CATEGORIES: Category[] = [
     color: "#f59e0b",
     order_index: 3,
     active: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    created_at: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
   },
 ];
 
@@ -103,6 +103,7 @@ export function deleteCategoryOverride(id: string) {
 }
 
 export function mergeCategoriesWithOverrides(dbCategories: Category[]): Category[] {
+  if (typeof window === "undefined") return dbCategories.length > 0 ? dbCategories : DEFAULT_CATEGORIES;
   const overrides = getLocalCategoryOverrides();
   let deletedIds = new Set<string>();
   try {
