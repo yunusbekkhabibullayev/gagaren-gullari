@@ -19,17 +19,43 @@ export const Route = createFileRoute("/checkout")({
   component: CheckoutPage,
 });
 
+function formatUzPhone(val: string): string {
+  let digits = val.replace(/\D/g, "");
+  if (digits.startsWith("998")) {
+    digits = digits.slice(3);
+  }
+  digits = digits.slice(0, 9);
+
+  let res = "+998";
+  if (digits.length > 0) res += " " + digits.slice(0, 2);
+  if (digits.length > 2) res += " " + digits.slice(2, 5);
+  if (digits.length > 5) res += " " + digits.slice(5, 7);
+  if (digits.length > 7) res += " " + digits.slice(7, 9);
+  return res;
+}
+
+const CITIES = [
+  "Gagarin sh. (Mirzacho'l)",
+  "Jizzax shahri",
+  "Pahtakor tumani",
+  "Do'stlik tumani",
+  "Zarbdor tumani",
+  "Arnasoy tumani",
+  "Sharof Rashidov tumani",
+  "Boshqa hudud",
+];
+
 const schema = z.object({
   name: z.string().trim().min(2, "Ismingizni to'liq kiriting").max(80),
   phone: z
     .string()
     .trim()
-    .min(9, "Telefon raqam noto'g'ri")
-    .max(25)
-    .regex(/^[+\d\s()-]+$/i, "Faqat raqam va + belgisi"),
-  address: z.string().trim().min(5, "Shahar, tuman va manzilni to'liq kiriting").max(300),
+    .min(17, "Telefon raqam to'liq emas (+998 90 123 45 67)")
+    .max(20),
+  city: z.string().trim().min(2, "Joylashuvni tanlang"),
+  address: z.string().trim().min(3, "Manzilni (ko'cha, uy raqami) to'liq kiriting").max(300),
   note: z.string().trim().max(400).optional().or(z.literal("")),
-  method: z.enum(["cash", "card", "transfer"]),
+  method: z.enum(["cash", "card"]),
 });
 
 type Errors = Partial<Record<keyof z.infer<typeof schema> | "submit", string>>;
@@ -42,9 +68,14 @@ function CheckoutPage() {
   const [submitted, setSubmitted] = useState<null | { orderId: string; total: number }>(null);
   const [saving, setSaving] = useState(false);
   const [phoneValue, setPhoneValue] = useState("+998 ");
+  const [cityValue, setCityValue] = useState(CITIES[0]);
 
   const shipping = subtotal > 0 ? (subtotal >= 500000 ? 0 : 35000) : 0;
   const total = subtotal + shipping;
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhoneValue(formatUzPhone(e.target.value));
+  };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -60,7 +91,8 @@ function CheckoutPage() {
     const fd = new FormData(e.currentTarget);
     const raw = {
       name: String(fd.get("name") ?? ""),
-      phone: String(fd.get("phone") ?? ""),
+      phone: phoneValue,
+      city: cityValue,
       address: String(fd.get("address") ?? ""),
       note: String(fd.get("note") ?? ""),
       method: String(fd.get("method") ?? "cash"),
@@ -83,6 +115,7 @@ function CheckoutPage() {
         data: {
           name: parsed.data.name,
           phone: parsed.data.phone,
+          city: parsed.data.city,
           address: parsed.data.address,
           note: parsed.data.note,
           method: parsed.data.method,
@@ -199,45 +232,65 @@ function CheckoutPage() {
         className="mx-auto grid max-w-5xl gap-10 px-5 py-10 md:grid-cols-[1fr_360px]"
       >
         <div className="space-y-5">
+          {errors.submit && (
+            <div className="rounded-2xl bg-red-50 p-4 text-xs font-medium text-red-600 border border-red-200">
+              {errors.submit}
+            </div>
+          )}
+
           <Field
             label="Ism va familiya"
             name="name"
             placeholder="Alisher Karimov"
             error={errors.name}
           />
+
           <Field
-            label="Telefon raqam"
+            label="Telefon raqam (+998 XX XXX XX XX)"
             name="phone"
             type="tel"
             value={phoneValue}
-            onChange={(e) => setPhoneValue(e.target.value)}
-            placeholder="+998 90 000 00 00"
+            onChange={handlePhoneChange}
+            maxLength={17}
+            placeholder="+998 90 394 99 33"
             error={errors.phone}
           />
+
+          {/* Location Selector */}
+          <div>
+            <label className="mb-2 block text-sm font-medium">Shahar / Tuman (Joylashuv)</label>
+            <select
+              value={cityValue}
+              onChange={(e) => setCityValue(e.target.value)}
+              className="w-full rounded-full border border-border bg-card px-5 py-3 text-sm outline-none transition focus:border-foreground"
+            >
+              {CITIES.map((c) => (
+                <option key={c} value={c}>
+                  📍 {c}
+                </option>
+              ))}
+            </select>
+            {errors.city && <div className="mt-1 px-2 text-xs text-red-600">{errors.city}</div>}
+          </div>
+
           <Field
-            label="Yetkazib berish manzili (Shahar, tuman va manzil)"
+            label="Aniq manzil (Ko'cha, uy / xonadon raqami)"
             name="address"
-            placeholder="Masalan: Mirzacho'l tumani, Gagarin sh., Markaziy 14-uy"
+            placeholder="Markaziy ko'chasi 14-uy"
             error={errors.address}
           />
 
           <div>
             <div className="mb-2 text-sm font-medium">To'lov usuli</div>
-            <div className="grid gap-2 sm:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2">
               <RadioTile
                 name="method"
                 value="cash"
                 label="Naqd"
-                desc="Qabulda to'lov"
+                desc="Qabul qilganda to'lov"
                 defaultChecked
               />
               <RadioTile name="method" value="card" label="Payme / Click" desc="Onlayn karta" />
-              <RadioTile
-                name="method"
-                value="transfer"
-                label="Bank o'tkazma"
-                desc="Yur. shaxslar"
-              />
             </div>
           </div>
 
@@ -321,6 +374,7 @@ function Field({
   placeholder,
   value,
   onChange,
+  maxLength,
   error,
 }: {
   label: string;
@@ -329,6 +383,7 @@ function Field({
   placeholder?: string;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  maxLength?: number;
   error?: string;
 }) {
   return (
@@ -340,6 +395,7 @@ function Field({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        maxLength={maxLength}
         className={`w-full rounded-full border bg-card px-5 py-3 text-sm outline-none transition focus:border-foreground ${
           error ? "border-red-500" : "border-border"
         }`}

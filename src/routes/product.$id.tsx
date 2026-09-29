@@ -56,9 +56,19 @@ function ProductPage() {
     return (
       <div className="min-h-screen bg-background">
         <SiteHeader />
-        <div className="mx-auto max-w-7xl px-5 py-24 text-center text-muted-foreground">
-          Yuklanmoqda…
+        <div className="mx-auto max-w-7xl px-5 py-12">
+          <div className="grid gap-10 md:grid-cols-2 animate-pulse">
+            <div className="aspect-square rounded-3xl bg-gray-200" />
+            <div className="space-y-6 pt-4">
+              <div className="h-4 w-32 rounded bg-gray-200" />
+              <div className="h-10 w-3/4 rounded-lg bg-gray-200" />
+              <div className="h-6 w-24 rounded bg-gray-200" />
+              <div className="h-24 w-full rounded-2xl bg-gray-100" />
+              <div className="h-12 w-48 rounded-full bg-gray-200" />
+            </div>
+          </div>
         </div>
+        <MobileTabBar />
       </div>
     );
   }

@@ -211,9 +211,9 @@ export const placeOrder = createServerFn({ method: "POST" })
 
       const finalOrderId = insertedRow?.order_number || generatedOrderId;
 
-      // 5. Send Telegram Notification
+      // 5. Send Telegram Notification (Awaited for serverless execution)
       try {
-        sendTelegramOrderNotification({
+        const tgOk = await sendTelegramOrderNotification({
           orderId: finalOrderId,
           customerName: data.name,
           customerPhone: data.phone,
@@ -231,6 +231,9 @@ export const placeOrder = createServerFn({ method: "POST" })
             price: i.price,
           })),
         });
+        if (!tgOk) {
+          console.warn("Telegram notification was not sent successfully (returned false)");
+        }
       } catch (tgErr) {
         console.warn("Telegram bot notification error (non-fatal):", tgErr);
       }

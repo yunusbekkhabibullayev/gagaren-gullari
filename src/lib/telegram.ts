@@ -2,24 +2,32 @@
 
 const CHAT_ID_STORAGE_KEY = "admin_telegram_chat_id";
 
-// Helper: Dynamically fetch latest bot token
+// Helper: Dynamically fetch latest bot token (works on client & server)
 function getBotToken(): string {
-  return (import.meta.env.VITE_TELEGRAM_BOT_TOKEN as string) || "";
+  return (
+    (typeof process !== "undefined" && process.env?.TELEGRAM_BOT_TOKEN) ||
+    (typeof process !== "undefined" && process.env?.VITE_TELEGRAM_BOT_TOKEN) ||
+    (import.meta.env?.VITE_TELEGRAM_BOT_TOKEN as string) ||
+    "8898489484:AAFiGx5CYAG7xTobcUMBMr1pVkSIkIUeFJs"
+  );
 }
 
 export function getSavedTelegramChatId(): string | null {
-  // Prefer persisted localStorage chat id in browser, but fall back to
-  // build-time Vite env var on server or if not set in client storage.
   try {
     if (typeof window !== "undefined") {
       const fromStorage = localStorage.getItem(CHAT_ID_STORAGE_KEY);
       if (fromStorage && fromStorage.trim()) return fromStorage.trim();
     }
   } catch (e) {
-    // ignore localStorage errors in restricted environments
+    // ignore localStorage errors
   }
 
-  return (import.meta.env?.VITE_TELEGRAM_CHAT_ID as string) || null;
+  return (
+    (typeof process !== "undefined" && process.env?.TELEGRAM_CHAT_ID) ||
+    (typeof process !== "undefined" && process.env?.VITE_TELEGRAM_CHAT_ID) ||
+    (import.meta.env?.VITE_TELEGRAM_CHAT_ID as string) ||
+    "1165441564"
+  );
 }
 
 export function saveTelegramChatId(chatId: string) {

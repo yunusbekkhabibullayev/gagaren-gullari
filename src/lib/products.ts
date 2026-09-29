@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export type Product = {
@@ -221,16 +221,27 @@ export function useProducts() {
 }
 
 export function useProduct(slug: string) {
+  const qc = useQueryClient();
   return useQuery({
     queryKey: ["product", slug],
     queryFn: async () => {
+      // 1. Try finding in cached products list first
+      const cachedList = qc.getQueryData<Product[]>(["products"]);
+      if (cachedList && cachedList.length > 0) {
+        const found = cachedList.find((p) => p.slug === slug || p.id === slug);
+        if (found) return found;
+      }
+
+      // 2. Fetch full list
       const all = await fetchProducts();
       const match = all.find((p) => p.slug === slug || p.id === slug);
       if (match) return match;
 
+      // 3. Fallback direct DB query
       const { data } = await supabase.from("products").select("*").eq("slug", slug).maybeSingle();
       return (data as Product | null) ?? null;
     },
     staleTime: 1000 * 60 * 10,
+    gcTime: 1000 * 60 * 60,
   });
 }
