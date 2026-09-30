@@ -111,7 +111,7 @@ function HeroSection({ products }: { products: Product[] }) {
         <div className="grid grid-cols-1 md:grid-cols-12 items-center gap-6 lg:gap-12">
 
           {/* Left Column: Title, Sub-link, Controls — order-2 on mobile, order-1 on md+ */}
-          <div className="order-2 md:order-1 md:col-span-4 flex flex-col gap-4 text-left">
+          <div className="order-2 md:order-1 md:col-span-4 flex flex-col gap-4 text-center md:text-left items-center md:items-start">
             <div className="flex flex-col gap-3">
               {/* Eyebrow Label */}
               <div className="text-xs uppercase tracking-widest text-[#6B7280] font-medium">
@@ -137,7 +137,7 @@ function HeroSection({ products }: { products: Product[] }) {
             </div>
 
             {/* Navigation Arrows */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center md:justify-start gap-3">
               <button
                 onClick={handlePrev}
                 aria-label="Oldingi buket"
