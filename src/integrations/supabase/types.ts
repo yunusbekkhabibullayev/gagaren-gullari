@@ -44,6 +44,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      inventory_logs: {
+        Row: {
+          id: string;
+          product_id: string | null;
+          type: "IN" | "OUT";
+          amount: number;
+          previous_stock: number;
+          new_stock: number;
+          note: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          product_id?: string | null;
+          type: "IN" | "OUT";
+          amount: number;
+          previous_stock: number;
+          new_stock: number;
+          note?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          product_id?: string | null;
+          type?: "IN" | "OUT";
+          amount?: number;
+          previous_stock?: number;
+          new_stock?: number;
+          note?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       orders: {
         Row: {
           created_at: string;

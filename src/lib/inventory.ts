@@ -73,6 +73,68 @@ function writeInventoryCache(products: InventoryProduct[]): void {
   }
 }
 
+function readInventoryLogsCache(): StockTransaction[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(INVENTORY_LOGS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeInventoryLogsCache(logs: StockTransaction[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(INVENTORY_LOGS_KEY, JSON.stringify(logs));
+  } catch {
+    // ignore write failures
+  }
+}
+
+async function loadInventoryLogsFromSupabase(): Promise<StockTransaction[]> {
+  try {
+    const { data: productRows, error: productError } = await supabase
+      .from("products")
+      .select("id, name");
+
+    if (productError) throw productError;
+
+    const productNameById = new Map<string, string>();
+    for (const product of productRows ?? []) {
+      if (product?.id) {
+        productNameById.set(product.id, String(product.name ?? "Mahsulot"));
+      }
+    }
+
+    const { data, error } = await supabase
+      .from("inventory_logs")
+      .select("id, product_id, type, amount, previous_stock, new_stock, note, created_at")
+      .order("created_at", { ascending: false });
+
+    if (error || !data) {
+      return readInventoryLogsCache();
+    }
+
+    const mapped: StockTransaction[] = data.map((row) => ({
+      id: String(row.id ?? `${Date.now()}-${Math.random()}`),
+      productId: String(row.product_id ?? ""),
+      productName: productNameById.get(String(row.product_id ?? "")) ?? "Mahsulot",
+      type: row.type === "IN" ? "IN" : "OUT",
+      amount: Number(row.amount ?? 0),
+      previousStock: Number(row.previous_stock ?? 0),
+      newStock: Number(row.new_stock ?? 0),
+      date: String(row.created_at ?? new Date().toISOString()),
+      note: String(row.note ?? ""),
+    }));
+
+    writeInventoryLogsCache(mapped);
+    return mapped;
+  } catch {
+    return readInventoryLogsCache();
+  }
+}
+
 export async function syncInventoryFromSupabase(): Promise<InventoryProduct[]> {
   try {
     const { data, error } = await supabase
@@ -113,31 +175,20 @@ export async function syncInventoryFromSupabase(): Promise<InventoryProduct[]> {
   }
 }
 
-export function getInventoryProducts(): InventoryProduct[] {
-  return readInventoryCache();
+export async function getInventoryProducts(): Promise<InventoryProduct[]> {
+  return syncInventoryFromSupabase();
 }
 
 export function saveInventoryProducts(products: InventoryProduct[]): void {
   writeInventoryCache(products);
 }
 
-export function getInventoryLogs(): StockTransaction[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = localStorage.getItem(INVENTORY_LOGS_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
+export async function getInventoryLogs(): Promise<StockTransaction[]> {
+  return loadInventoryLogsFromSupabase();
 }
 
 export function saveInventoryLogs(logs: StockTransaction[]): void {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(INVENTORY_LOGS_KEY, JSON.stringify(logs));
-  } catch {
-    // ignore write failures
-  }
+  writeInventoryLogsCache(logs);
 }
 
 export async function processStockMovement(
@@ -153,9 +204,9 @@ export async function processStockMovement(
     };
   }
 
-  let products = getInventoryProducts();
+  let products = await syncInventoryFromSupabase();
   if (products.length === 0) {
-    products = await syncInventoryFromSupabase();
+    products = readInventoryCache();
   }
 
   const index = products.findIndex((p) => p.id === productId);
@@ -203,9 +254,6 @@ export async function processStockMovement(
     };
   }
 
-  products[index] = updatedProduct;
-  saveInventoryProducts(products);
-
   const transactionLog: StockTransaction = {
     id: `log-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
     productId: product.id,
@@ -218,8 +266,30 @@ export async function processStockMovement(
     note: note.trim() || (type === "IN" ? "Omborga yangi kirim" : "Sotuv / Chiqim yozuvi"),
   };
 
-  const currentLogs = getInventoryLogs();
-  saveInventoryLogs([transactionLog, ...currentLogs]);
+  try {
+    const { error: logError } = await supabase.from("inventory_logs").insert({
+      product_id: product.id,
+      type,
+      amount,
+      previous_stock: previousStock,
+      new_stock: newStock,
+      note: transactionLog.note,
+    });
+
+    if (!logError) {
+      const realLogs = await loadInventoryLogsFromSupabase();
+      saveInventoryLogs(realLogs);
+    } else {
+      const currentLogs = readInventoryLogsCache();
+      saveInventoryLogs([transactionLog, ...currentLogs]);
+    }
+  } catch {
+    const currentLogs = readInventoryLogsCache();
+    saveInventoryLogs([transactionLog, ...currentLogs]);
+  }
+
+  products[index] = updatedProduct;
+  saveInventoryProducts(products);
 
   const isLowStock = newStock < product.minStock;
 
@@ -251,12 +321,12 @@ export function resetInventoryToDefault(): { products: InventoryProduct[]; logs:
   return { products: [], logs: [] };
 }
 
-export function runBilet029TestCase(): {
+export async function runBilet029TestCase(): Promise<{
   step1: { stock: number; minStock: number; message: string };
   step2: { success: boolean; newStock: number; isLowStock: boolean; message: string };
   step3: { success: boolean; rejectedMessage: string };
-} {
-  const products = getInventoryProducts();
+}> {
+  const products = await syncInventoryFromSupabase();
   if (products.length === 0) {
     return {
       step1: {
@@ -282,7 +352,7 @@ export function runBilet029TestCase(): {
     message: `Boshlang'ich holat: qoldiq = ${prod.stock}, min chegarasi = ${prod.minStock}`,
   };
 
-  const step2Res = processStockMovement(productId, "OUT", 7, "Bilet 029 sinovi");
+  const step2Res = await processStockMovement(productId, "OUT", 7, "Bilet 029 sinovi");
   const step2 = {
     success: step2Res.success,
     newStock: step2Res.product?.stock ?? 0,
@@ -290,7 +360,7 @@ export function runBilet029TestCase(): {
     message: `7 dona chiqarildi -> qoldiq: ${step2Res.product?.stock ?? 0}.`,
   };
 
-  const step3Res = processStockMovement(productId, "OUT", 4, "Bilet 029 sinovi 2-bosqich");
+  const step3Res = await processStockMovement(productId, "OUT", 4, "Bilet 029 sinovi 2-bosqich");
   const step3 = {
     success: step3Res.success,
     rejectedMessage: step3Res.message,

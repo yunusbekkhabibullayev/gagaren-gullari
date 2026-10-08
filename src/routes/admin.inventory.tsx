@@ -56,13 +56,14 @@ function AdminInventoryPage() {
 
   // Test Case Modal State
   const [testModalOpen, setTestModalOpen] = useState(false);
-  const [testResults, setTestResults] = useState<ReturnType<typeof runBilet029TestCase> | null>(null);
+  const [testResults, setTestResults] = useState<Awaited<ReturnType<typeof runBilet029TestCase>> | null>(null);
 
   // Load initial data
   const refreshData = async () => {
     const synced = await syncInventoryFromSupabase();
     setProducts(synced);
-    setLogs(getInventoryLogs());
+    const nextLogs = await getInventoryLogs();
+    setLogs(nextLogs);
   };
 
   useEffect(() => {
@@ -114,7 +115,7 @@ function AdminInventoryPage() {
   };
 
   // Submit Stock Movement
-  const handleMovementSubmit = (e: React.FormEvent) => {
+  const handleMovementSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeModalProduct) return;
 
@@ -124,16 +125,14 @@ function AdminInventoryPage() {
       return;
     }
 
-    // Process movement (with validation!)
-    const result = processStockMovement(
+    const result = await processStockMovement(
       activeModalProduct.id,
       movementType,
       amountNum,
-      movementNote
+      movementNote,
     );
 
     if (!result.success) {
-      // Mavjuddan ortiq chiqim rad etildi!
       toast.error(result.message, {
         duration: 5000,
         className: "bg-red-50 text-red-900 border border-red-200 font-medium",
@@ -141,31 +140,30 @@ function AdminInventoryPage() {
       return;
     }
 
-    // Success
     if (result.isLowStock) {
       toast.warning(result.message, { duration: 6000 });
     } else {
       toast.success(result.message);
     }
 
-    void refreshData();
+    await refreshData();
     setActiveModalProduct(null);
   };
 
   // Run Test Case
-  const handleRunTestCase = () => {
-    const results = runBilet029TestCase();
+  const handleRunTestCase = async () => {
+    const results = await runBilet029TestCase();
     setTestResults(results);
     setTestModalOpen(true);
-    refreshData();
+    await refreshData();
     toast.success("Bilet 029 qabul sinovi muvaffaqiyatli bajarildi!");
   };
 
   // Reset to Default Data
-  const handleResetData = () => {
+  const handleResetData = async () => {
     if (window.confirm("Barcha zaxira ma'lumotlarini va yozuvlar tarixini dastlabki holatga qaytarasizmi?")) {
       resetInventoryToDefault();
-      refreshData();
+      await refreshData();
       toast.info("Zaxira ma'lumotlari dastlabki holatiga keltirildi.");
     }
   };
