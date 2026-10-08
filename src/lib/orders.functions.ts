@@ -30,7 +30,7 @@ export type TrackedOrder = {
 };
 
 export const trackOrder = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => trackSchema.parse(data))
+  .validator((data: unknown) => trackSchema.parse(data))
   .handler(async ({ data }): Promise<{ order: TrackedOrder | null }> => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row, error } = await supabaseAdmin
@@ -99,7 +99,7 @@ const placeOrderSchema = z.object({
 export type PlaceOrderInput = z.infer<typeof placeOrderSchema>;
 
 export const placeOrder = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => placeOrderSchema.parse(data))
+  .validator((data: unknown) => placeOrderSchema.parse(data))
   .handler(
     async ({
       data,

@@ -4,7 +4,7 @@ import { MobileTabBar, SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { formatSom, productImage, useProduct, useProducts, type Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
-import { getInventoryProducts } from "@/lib/inventory";
+import { getLiveProductStock } from "@/lib/stock";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/product/$id")({
@@ -37,17 +37,25 @@ function ProductPage() {
   const { add } = useCart();
   const navigate = useNavigate();
   const [added, setAdded] = useState(false);
+  const [liveStock, setLiveStock] = useState<number | null>(null);
 
-  // Bilet 029: Inventory Stock calculation
-  const invProduct = useMemo(() => {
-    if (!product) return null;
-    const allInv = getInventoryProducts();
-    return allInv.find((p) => p.name === product.name || p.id === product.id) || null;
+  useEffect(() => {
+    let mounted = true;
+    if (!product) return;
+
+    void (async () => {
+      const stock = await getLiveProductStock(product);
+      if (mounted) setLiveStock(stock);
+    })();
+
+    return () => {
+      mounted = false;
+    };
   }, [product]);
 
-  const availableStock = invProduct ? invProduct.stock : (product?.stock ?? 10);
-  const minStock = invProduct ? invProduct.minStock : 5;
-  const isLowStock = availableStock < minStock && availableStock > 0;
+  const availableStock = liveStock ?? product?.stock ?? 0;
+  const minStock = 5;
+  const isLowStock = availableStock > 0 && availableStock < minStock;
   const isOutOfStock = availableStock <= 0;
 
   useEffect(() => {

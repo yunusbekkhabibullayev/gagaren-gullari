@@ -33,8 +33,8 @@ import { formatSom } from "@/lib/products";
 export const Route = createFileRoute("/admin/inventory")({
   head: () => ({
     meta: [
-      { title: "Zaxira Yordamchisi (Bilet 029) - Nastarin Gullari Admin" },
-      { name: "description", content: "Kichik do'konlar uchun zaxira va qoldiq yuritish tizimi" },
+      { title: "Zaxira Yordamchisi — Nastarin Gullari Admin" },
+      { name: "description", content: "Mahsulotlar qoldig'ini yuritish, kirim/chiqim yozuvlarini saqlash tizimi" },
     ],
   }),
   component: AdminInventoryPage,
@@ -173,41 +173,15 @@ function AdminInventoryPage() {
       {/* ─── Header & Title Banner ────────────────────────────── */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-rose-100 pb-6">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-100 px-3 py-1 text-xs font-bold text-[#e0526c]">
-              <Package className="h-3.5 w-3.5" /> Bilet 029 Prototip
-            </span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">
-              <ShieldCheck className="h-3.5 w-3.5" /> B-Daraja • Startap
-            </span>
-          </div>
-          <h1 className="mt-2 text-2xl md:text-3xl font-extrabold text-slate-900">
-            Zaxira Yordamchisi (Inventory Assistant)
+          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">
+            Zaxira Yordamchisi
           </h1>
           <p className="mt-1 text-sm text-slate-600 max-w-2xl">
-            Sotuvchiga mahsulotlar qoldig‘ini yuritish, kirim/chiqim yozuvlarini saqlash va tugayotgan mahsulotlarni vaqtida ko‘rib, zaxirani nazorat qilishga yordam beruvchi avtomatlashtirilgan tizim.
+            Mahsulotlar qoldig'ini yuritish, kirim/chiqim yozuvlarini saqlash va tugayotgan mahsulotlarni vaqtida ko'rish tizimi.
           </p>
         </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={handleRunTestCase}
-            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 hover:from-emerald-700 hover:to-teal-700 transition"
-          >
-            <Play className="h-4 w-4 fill-white" />
-            <span>Hakamlar Sinovini Tekshirish</span>
-          </button>
-
-          <button
-            onClick={handleResetData}
-            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition"
-            title="Demo ma'lumotlarni qayta tiklash"
-          >
-            <RotateCcw className="h-4 w-4 text-slate-500" />
-            <span className="hidden sm:inline">Qayta tiklash</span>
-          </button>
-        </div>
       </div>
+
 
       {/* ─── Key Metrics Cards ───────────────────────────────── */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -223,7 +197,7 @@ function AdminInventoryPage() {
             <span className="text-2xl font-bold text-slate-900">{products.length}</span>
             <span className="text-xs text-slate-500">tur / xil</span>
           </div>
-          <p className="mt-2 text-xs text-slate-500">1-shart: Minimum 6 ta mahsulot saqlangan</p>
+          <p className="mt-2 text-xs text-slate-500">Barcha mahsulot turlari ro'yxati</p>
         </div>
 
         {/* Total Stock Volume */}
@@ -272,7 +246,7 @@ function AdminInventoryPage() {
             <span className="text-xs font-medium text-amber-700">mahsulotda chegara buzilgan</span>
           </div>
           <p className="mt-2 text-xs text-amber-700 font-medium">
-            4-shart: Chegaradan past qoldiqlar ajratilgan
+            Minimal chegaradan past mahsulotlar
           </p>
         </div>
 

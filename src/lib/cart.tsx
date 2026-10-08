@@ -9,7 +9,9 @@ import {
 } from "react";
 import type { Product } from "@/lib/products";
 import { getInventoryProducts } from "@/lib/inventory";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { getLiveProductStock, getLiveProductStockBySlug } from "@/lib/stock";
 
 export type CartItem = {
   slug: string;
@@ -62,32 +64,41 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items, hydrated]);
 
   const add = useCallback((product: Product, color: string, qty = 1) => {
-    // 3-SHART: Mavjuddan ortiq xaridlarni rad etish!
-    try {
-      const invProducts = getInventoryProducts();
-      const invProd = invProducts.find((p) => p.name === product.name || p.id === product.id);
-      const availableStock = invProd ? invProd.stock : (product.stock ?? 10);
+    const normalizedQty = Number.isFinite(qty) ? Math.max(1, Math.round(qty)) : 1;
+    if (normalizedQty <= 0) {
+      toast.error("Miqdor 1 dan kichik bo'lishi mumkin emas.");
+      return;
+    }
+
+    void (async () => {
+      const availableStock = await getLiveProductStock(product);
 
       setItems((prev) => {
-        const idx = prev.findIndex((i) => i.slug === product.slug && i.color === color);
-        const currentQtyInCart = idx >= 0 ? prev[idx].qty : 0;
-        const requestedTotal = currentQtyInCart + qty;
+        const totalQtyForProduct = prev
+          .filter((item) => item.slug === product.slug)
+          .reduce((sum, item) => sum + item.qty, 0);
+        const currentQtyInCart = prev.find((item) => item.slug === product.slug && item.color === color)?.qty ?? 0;
+        const requestedTotal = totalQtyForProduct - currentQtyInCart + normalizedQty;
 
         if (requestedTotal > availableStock) {
           toast.error(
-            `Xarid rad etildi! Omborda bor-yo'g'i ${availableStock} dona mavjud. (Savatda: ${currentQtyInCart} dona, so'raldi: ${qty} dona)`,
-            { duration: 5000 }
+            `Xarid rad etildi! Omborda bor-yo'g'i ${availableStock} dona mavjud. (Savatda: ${totalQtyForProduct} dona, so'raldi: ${normalizedQty} dona)`,
+            { duration: 5000 },
           );
           return prev;
         }
 
-        toast.success(`${product.name} savatga qo'shildi! (Omborda qoldiq: ${availableStock - requestedTotal} dona)`);
+        toast.success(
+          `${product.name} savatga qo'shildi! (Omborda qoldiq: ${Math.max(0, availableStock - requestedTotal)} dona)`,
+        );
 
+        const idx = prev.findIndex((item) => item.slug === product.slug && item.color === color);
         if (idx >= 0) {
           const next = [...prev];
           next[idx] = { ...next[idx], qty: requestedTotal };
           return next;
         }
+
         return [
           ...prev,
           {
@@ -97,43 +108,38 @@ export function CartProvider({ children }: { children: ReactNode }) {
             image: product.image_url || "/flowers/flower-atirgul.jpg",
             workshop: product.workshop,
             color,
-            qty: Math.max(1, qty),
+            qty: Math.max(1, normalizedQty),
           },
         ];
       });
-    } catch {
-      // Fallback normal add
-      setItems((prev) => {
-        const idx = prev.findIndex((i) => i.slug === product.slug && i.color === color);
-        if (idx >= 0) {
-          const next = [...prev];
-          next[idx] = { ...next[idx], qty: Math.min(99, next[idx].qty + qty) };
-          return next;
-        }
-        return [
-          ...prev,
-          {
-            slug: product.slug,
-            name: product.name,
-            price: product.price,
-            image: product.image_url || "/flowers/flower-atirgul.jpg",
-            workshop: product.workshop,
-            color,
-            qty: Math.max(1, qty),
-          },
-        ];
-      });
-    }
+    })();
   }, []);
 
   const setQty = useCallback((slug: string, color: string, qty: number) => {
-    setItems((prev) =>
-      prev
-        .map((i) =>
-          i.slug === slug && i.color === color ? { ...i, qty: Math.max(0, Math.min(99, qty)) } : i,
-        )
-        .filter((i) => i.qty > 0),
-    );
+    const nextQty = Number.isFinite(qty) ? Math.max(0, Math.round(qty)) : 0;
+    if (nextQty === 0) {
+      setItems((prev) => prev.filter((item) => !(item.slug === slug && item.color === color)));
+      return;
+    }
+
+    void (async () => {
+      const availableStock = await getLiveProductStockBySlug(slug);
+
+      setItems((prev) => {
+        const currentProductQty = prev
+          .filter((item) => item.slug === slug)
+          .reduce((sum, item) => sum + item.qty, 0);
+        const currentItemQty = prev.find((item) => item.slug === slug && item.color === color)?.qty ?? 0;
+        const maxAllowed = Math.max(0, availableStock - (currentProductQty - currentItemQty));
+        const safeQty = Math.min(nextQty, maxAllowed || 0);
+
+        return prev
+          .map((item) =>
+            item.slug === slug && item.color === color ? { ...item, qty: Math.max(0, safeQty) } : item,
+          )
+          .filter((item) => item.qty > 0);
+      });
+    })();
   }, []);
 
   const remove = useCallback((slug: string, color: string) => {

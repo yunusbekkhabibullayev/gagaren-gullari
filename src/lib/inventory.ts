@@ -1,4 +1,4 @@
-// Bilet 029 - Kichik do‘kon uchun zaxira yordamchisi (Inventory & Stock Management)
+import { supabase } from "@/integrations/supabase/client";
 
 export type InventoryProduct = {
   id: string;
@@ -16,11 +16,11 @@ export type StockTransaction = {
   id: string;
   productId: string;
   productName: string;
-  type: "IN" | "OUT"; // Kirim (+) yoki Chiqim (-)
+  type: "IN" | "OUT";
   amount: number;
   previousStock: number;
   newStock: number;
-  date: string; // ISO string
+  date: string;
   note: string;
 };
 
@@ -35,89 +35,60 @@ export type ProcessStockResult = {
 const INVENTORY_PRODUCTS_KEY = "bilet029_inventory_products";
 const INVENTORY_LOGS_KEY = "bilet029_inventory_logs";
 
-// 1. Oltita mahsulotga boshlang‘ich qoldiq va eng kam zaxira chegarasini berish (1-shart)
-export const DEFAULT_INVENTORY_PRODUCTS: InventoryProduct[] = [
-  {
-    id: "prod-1",
-    name: "21 Qizil Atirgul El Toro",
-    category: "Atirgullar",
-    unit: "dona",
-    price: 350000,
-    initialStock: 10,
-    stock: 10,
-    minStock: 5,
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "prod-2",
-    name: "Bahoriy Mix Buket",
-    category: "Buketlar",
-    unit: "dona",
-    price: 280000,
-    initialStock: 15,
-    stock: 15,
-    minStock: 4,
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "prod-3",
-    name: "Premium Lolalar To'plami",
-    category: "Buketlar",
-    unit: "dona",
-    price: 220000,
-    initialStock: 8,
-    stock: 3, // Boshlanishida kam zaxira ko'rsatish uchun
-    minStock: 5,
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "prod-4",
-    name: "Roza va Sovg'alar To'plami",
-    category: "Sovg'alar",
-    unit: "to'plam",
-    price: 450000,
-    initialStock: 12,
-    stock: 12,
-    minStock: 3,
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "prod-5",
-    name: "Oq Atirgullar Klassik",
-    category: "Atirgullar",
-    unit: "dona",
-    price: 320000,
-    initialStock: 20,
-    stock: 20,
-    minStock: 6,
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "prod-6",
-    name: "Orxideya Tuvakda Premium",
-    category: "Tuvakdagi o'simliklar",
-    unit: "tuvak",
-    price: 390000,
-    initialStock: 5,
-    stock: 2, // Kam zaxirada
-    minStock: 4,
-    updatedAt: new Date().toISOString(),
-  },
-];
+export async function syncInventoryFromSupabase(): Promise<InventoryProduct[]> {
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select("id, name, category, stock, price, slug, active, created_at")
+      .order("created_at", { ascending: false });
+
+    if (error || !data) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem(INVENTORY_PRODUCTS_KEY);
+      }
+      return [];
+    }
+
+    const mapped = data
+      .filter((product) => product.active !== false)
+      .map((product) => {
+        const stock = Number(product.stock ?? 0);
+        const minStock = Math.max(1, Math.round(stock * 0.3) || 1);
+
+        return {
+          id: product.id,
+          name: product.name,
+          category: product.category || "Umumiy",
+          unit: "dona",
+          price: Number(product.price ?? 0),
+          initialStock: stock,
+          stock,
+          minStock,
+          updatedAt: product.created_at || new Date().toISOString(),
+        };
+      });
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem(INVENTORY_PRODUCTS_KEY, JSON.stringify(mapped));
+    }
+
+    return mapped;
+  } catch {
+    return getInventoryProducts();
+  }
+}
 
 export function getInventoryProducts(): InventoryProduct[] {
-  if (typeof window === "undefined") return DEFAULT_INVENTORY_PRODUCTS;
+  if (typeof window === "undefined") return [];
+
   try {
     const raw = localStorage.getItem(INVENTORY_PRODUCTS_KEY);
-    if (!raw) {
-      localStorage.setItem(INVENTORY_PRODUCTS_KEY, JSON.stringify(DEFAULT_INVENTORY_PRODUCTS));
-      return DEFAULT_INVENTORY_PRODUCTS;
-    }
+    if (!raw) return [];
+
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_INVENTORY_PRODUCTS;
-  } catch (e) {
-    console.error("Failed to load inventory products:", e);
-    return DEFAULT_INVENTORY_PRODUCTS;
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
   }
 }
 
@@ -125,8 +96,8 @@ export function saveInventoryProducts(products: InventoryProduct[]): void {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(INVENTORY_PRODUCTS_KEY, JSON.stringify(products));
-  } catch (e) {
-    console.error("Failed to save inventory products:", e);
+  } catch {
+    // ignore write failures; real DB remains source of truth
   }
 }
 
@@ -135,8 +106,7 @@ export function getInventoryLogs(): StockTransaction[] {
   try {
     const raw = localStorage.getItem(INVENTORY_LOGS_KEY);
     return raw ? JSON.parse(raw) : [];
-  } catch (e) {
-    console.error("Failed to load inventory logs:", e);
+  } catch {
     return [];
   }
 }
@@ -145,17 +115,16 @@ export function saveInventoryLogs(logs: StockTransaction[]): void {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(INVENTORY_LOGS_KEY, JSON.stringify(logs));
-  } catch (e) {
-    console.error("Failed to save inventory logs:", e);
+  } catch {
+    // ignore write failures
   }
 }
 
-// 2 & 3. Kirim va chiqim yozuvlarini qo'shish va mavjuddan ortiq chiqimni rad etish (2 & 3 shart)
 export function processStockMovement(
   productId: string,
   type: "IN" | "OUT",
   amount: number,
-  note = ""
+  note = "",
 ): ProcessStockResult {
   if (amount <= 0 || isNaN(amount)) {
     return {
@@ -170,23 +139,21 @@ export function processStockMovement(
   if (index === -1) {
     return {
       success: false,
-      message: "Mahsulot topilmadi!",
+      message: "Mahsulot topilmadi! Avval Supabase bazasidan ma'lumotni yangilang.",
     };
   }
 
   const product = products[index];
   const previousStock = product.stock;
 
-  // 3-SHART: Mavjuddan ortiq chiqimni RAD ETISH!
   if (type === "OUT" && amount > previousStock) {
     return {
       success: false,
-      message: `Chiqim rad etildi! Mavjud qoldiq: ${previousStock} ${product.unit}, so'ralgan miqdor: ${amount} ${product.unit}. Orticha chiqim kiritish taqiqlanadi!`,
+      message: `Chiqim rad etildi! Mavjud qoldiq: ${previousStock} ${product.unit}, so'ralgan miqdor: ${amount} ${product.unit}.`,
     };
   }
 
   const newStock = type === "IN" ? previousStock + amount : previousStock - amount;
-
   const updatedProduct: InventoryProduct = {
     ...product,
     stock: newStock,
@@ -209,8 +176,7 @@ export function processStockMovement(
   };
 
   const currentLogs = getInventoryLogs();
-  const updatedLogs = [transactionLog, ...currentLogs];
-  saveInventoryLogs(updatedLogs);
+  saveInventoryLogs([transactionLog, ...currentLogs]);
 
   const isLowStock = newStock < product.minStock;
 
@@ -233,55 +199,57 @@ export function processStockMovement(
   };
 }
 
-// Demo ma'lumotlarni qayta tiklash
 export function resetInventoryToDefault(): { products: InventoryProduct[]; logs: StockTransaction[] } {
-  saveInventoryProducts(DEFAULT_INVENTORY_PRODUCTS);
-  saveInventoryLogs([]);
-  return {
-    products: DEFAULT_INVENTORY_PRODUCTS,
-    logs: [],
-  };
+  if (typeof window !== "undefined") {
+    localStorage.removeItem(INVENTORY_PRODUCTS_KEY);
+    localStorage.removeItem(INVENTORY_LOGS_KEY);
+  }
+
+  return { products: [], logs: [] };
 }
 
-// Bilet 029 rasmiy tekshirish sinovini o'tkazuvchi funksiya:
-// Tekshirish sharti: Qoldiq 10, chiqim 7 va chegara 5 bo‘lsa, 3 dona hamda zaxira kamligi ko‘rinsin; yana 4 dona chiqarish rad etilsin.
 export function runBilet029TestCase(): {
   step1: { stock: number; minStock: number; message: string };
   step2: { success: boolean; newStock: number; isLowStock: boolean; message: string };
   step3: { success: boolean; rejectedMessage: string };
 } {
-  // 1. Reset prod-1 to stock=10, minStock=5
   const products = getInventoryProducts();
-  const prodIndex = products.findIndex((p) => p.id === "prod-1") !== -1 ? products.findIndex((p) => p.id === "prod-1") : 0;
-  
-  products[prodIndex] = {
-    ...products[prodIndex],
-    initialStock: 10,
-    stock: 10,
-    minStock: 5,
-    updatedAt: new Date().toISOString(),
-  };
-  saveInventoryProducts(products);
+  if (products.length === 0) {
+    return {
+      step1: {
+        stock: 0,
+        minStock: 0,
+        message: "Real DBdan mahsulotlar topilmadi. Avval Supabase ma'lumotlarini yuklang.",
+      },
+      step2: {
+        success: false,
+        newStock: 0,
+        isLowStock: false,
+        message: "Real DB stock yo'q; testni bajarish uchun bazada mahsulot mavjud bo'lishi kerak.",
+      },
+      step3: { success: false, rejectedMessage: "Real DBga ulanib, mahsulot qoldig'ini yuklang." },
+    };
+  }
 
+  const prod = products[0];
+  const productId = prod.id;
   const step1 = {
-    stock: 10,
-    minStock: 5,
-    message: "Boshlang'ich holat: Qoldiq = 10, Eng kam chegara = 5",
+    stock: prod.stock,
+    minStock: prod.minStock,
+    message: `Boshlang'ich holat: qoldiq = ${prod.stock}, min chegarasi = ${prod.minStock}`,
   };
 
-  // 2. Chiqim 7
-  const step2Res = processStockMovement(products[prodIndex].id, "OUT", 7, "Bilet 029 Sinov Testi (1-bosqich: 7 dona chiqim)");
+  const step2Res = processStockMovement(productId, "OUT", 7, "Bilet 029 sinovi");
   const step2 = {
     success: step2Res.success,
-    newStock: step2Res.product?.stock ?? 3,
-    isLowStock: (step2Res.product?.stock ?? 3) < 5,
-    message: `7 dona chiqarildi -> Joriy qoldiq: ${step2Res.product?.stock ?? 3} dona. Zaxira kamligi ogohlantirishi: AKTIV!`,
+    newStock: step2Res.product?.stock ?? 0,
+    isLowStock: step2Res.product ? step2Res.product.stock < step2Res.product.minStock : false,
+    message: `7 dona chiqarildi -> qoldiq: ${step2Res.product?.stock ?? 0}.`,
   };
 
-  // 3. Yana 4 dona chiqarish -> Rad etilishi kerak!
-  const step3Res = processStockMovement(products[prodIndex].id, "OUT", 4, "Bilet 029 Sinov Testi (2-bosqich: 4 dona chiqim)");
+  const step3Res = processStockMovement(productId, "OUT", 4, "Bilet 029 sinovi 2-bosqich");
   const step3 = {
-    success: step3Res.success, // should be false
+    success: step3Res.success,
     rejectedMessage: step3Res.message,
   };
 
