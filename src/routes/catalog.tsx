@@ -28,7 +28,7 @@ type Sort = "popular" | "priceAsc" | "priceDesc" | "new";
 
 function Catalog() {
   const [page, setPage] = useState(1);
-  const { data: pageProducts = [], isLoading, isFetching } = useProducts(page, 12);
+  const { data: pageProducts = [], isLoading, isFetching } = useProducts(page, 8);
   const { data: dbCategories = [] } = useCategories();
   const activeCategoryNames = useMemo(() => dbCategories.map((c) => c.name), [dbCategories]);
 
@@ -143,6 +143,8 @@ function Catalog() {
                   src={productImage(p)}
                   alt={p.name}
                   loading="lazy"
+                  decoding="async"
+                  fetchPriority="low"
                   className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                   onError={(e) => {
                     e.currentTarget.src = "/flowers/flower-atirgul.jpg";

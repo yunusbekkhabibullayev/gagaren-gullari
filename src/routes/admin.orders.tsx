@@ -74,6 +74,39 @@ function AdminOrdersPage() {
   const [telegramChatId, setTelegramChatId] = useState(() => getSavedTelegramChatId() || "");
   const [telegramTesting, setTelegramTesting] = useState(false);
   const [telegramStatusMsg, setTelegramStatusMsg] = useState<string | null>(null);
+  const [purgeDays, setPurgeDays] = useState(30);
+
+  const deleteOldOrdersMutation = useMutation({
+    mutationFn: async () => {
+      const cutoff = new Date();
+      cutoff.setDate(cutoff.getDate() - purgeDays);
+
+      const { data, error } = await supabase
+        .from("orders")
+        .delete()
+        .lt("created_at", cutoff.toISOString())
+        .select("id");
+
+      if (error) throw error;
+      return data ?? [];
+    },
+    onSuccess: (deletedOrders) => {
+      qc.invalidateQueries({ queryKey: ["admin-orders"] });
+      alert(`${deletedOrders.length} ta eski buyurtma o'chirildi.`);
+    },
+    onError: (err: Error) => {
+      alert("Eski buyurtma tarixini o'chirishda xatolik: " + err.message);
+    },
+  });
+
+  const handleClearOldOrders = () => {
+    const confirmed = window.confirm(
+      `${purgeDays} kundan eski buyurtmalar tarixini o'chirishni xohlaysizmi? Bu amal qaytarib bo'lmaydi.`,
+    );
+
+    if (!confirmed) return;
+    deleteOldOrdersMutation.mutate();
+  };
 
   const handleSaveTelegramChatId = (val: string) => {
     setTelegramChatId(val);
@@ -131,8 +164,10 @@ function AdminOrdersPage() {
         .from("orders")
         .select("*")
         .order("created_at", { ascending: false });
+
       if (error) throw error;
-      return (data ?? []) as Order[];
+
+      return (data ?? []) as unknown as Order[];
     },
   });
 
@@ -151,6 +186,28 @@ function AdminOrdersPage() {
     },
     onError: (err: Error) => alert("Xatolik: " + err.message),
   });
+
+  const counts = useMemo(() => {
+    return {
+      all: orders.length,
+      pending: orders.filter((o) => o.status === "new" || o.status === "pending").length,
+      preparing: orders.filter((o) => o.status === "preparing").length,
+      ready: orders.filter((o) => o.status === "ready").length,
+      delivering: orders.filter((o) => o.status === "delivering").length,
+      completed: orders.filter((o) => o.status === "completed" || o.status === "delivered").length,
+      cancelled: orders.filter((o) => o.status === "cancelled").length,
+    };
+  }, [orders]);
+
+  const statusValues = [
+    ["all", "Barchasi", counts.all],
+    ["new", "Yangi", counts.pending],
+    ["preparing", "Tayyorlanmoqda", counts.preparing],
+    ["ready", "Tayyor", counts.ready],
+    ["delivering", "Yo'lda", counts.delivering],
+    ["completed", "Yetkazildi", counts.completed],
+    ["cancelled", "Bekor qilingan", counts.cancelled],
+  ] as const;
 
   // Filtered Orders (Xavfsiz va crash bermaydigan qilib tuzatilgan)
   const filtered = useMemo(() => {
@@ -174,18 +231,6 @@ function AdminOrdersPage() {
     });
   }, [orders, search, selectedStatus]);
 
-  const counts = useMemo(() => {
-    return {
-      all: orders.length,
-      pending: orders.filter((o) => o.status === "new" || o.status === "pending").length,
-      preparing: orders.filter((o) => o.status === "preparing").length,
-      ready: orders.filter((o) => o.status === "ready").length,
-      delivering: orders.filter((o) => o.status === "delivering").length,
-      completed: orders.filter((o) => o.status === "completed" || o.status === "delivered").length,
-      cancelled: orders.filter((o) => o.status === "cancelled").length,
-    };
-  }, [orders]);
-
   return (
     <div className="space-y-6">
       {/* Header Banner */}
@@ -207,6 +252,40 @@ function AdminOrdersPage() {
             <span className="rounded-2xl bg-slate-100 px-4 py-2 text-xs font-bold text-slate-700">
               Jami buyurtmalar: {orders.length} ta
             </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 className="text-base font-bold text-slate-900">Eski buyurtmalar tarixini tozalash</h2>
+            <p className="text-xs text-slate-500">
+              Tanlangan kundan eski buyurtmalar avtomatik ravishda o'chiriladi.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <select
+              value={purgeDays}
+              onChange={(e) => setPurgeDays(Number(e.target.value))}
+              className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 outline-none focus:border-red-400"
+            >
+              <option value={7}>7 kun</option>
+              <option value={30}>30 kun</option>
+              <option value={60}>60 kun</option>
+              <option value={90}>90 kun</option>
+              <option value={180}>180 kun</option>
+            </select>
+
+            <button
+              type="button"
+              onClick={handleClearOldOrders}
+              disabled={deleteOldOrdersMutation.isPending}
+              className="rounded-xl bg-red-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {deleteOldOrdersMutation.isPending ? "O'chirilmoqda..." : "Eski tarixni o'chirish"}
+            </button>
           </div>
         </div>
       </div>
@@ -258,323 +337,194 @@ function AdminOrdersPage() {
               disabled={telegramTesting}
               className="inline-flex items-center gap-1.5 rounded-2xl bg-sky-500 px-4 py-2 text-xs font-bold text-white shadow-md shadow-sky-200 hover:bg-sky-600 disabled:opacity-50 transition"
             >
-              <Send className="h-3.5 w-3.5" />
-              <span>{telegramTesting ? "Yuborilmoqda..." : "Test Xabar"}</span>
+              {telegramTesting ? "Yuborilmoqda..." : "Test xabar"}
             </button>
           </div>
         </div>
 
         {telegramStatusMsg && (
-          <div className="mt-3 text-xs font-semibold text-sky-900 bg-sky-100/70 rounded-xl px-3.5 py-2">
-            {telegramStatusMsg}
-          </div>
+          <p className="mt-4 text-xs font-medium text-slate-700">{telegramStatusMsg}</p>
         )}
       </div>
 
-      {/* Controls Bar: Search & Status Tabs */}
-      <div className="rounded-3xl border border-slate-200/80 bg-white p-4 shadow-sm space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          {/* Search Input */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+      {/* Filter Tabs */}
+      <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="flex flex-wrap items-center gap-2">
+          {statusValues.map(([value, label, count]) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setSelectedStatus(String(value))}
+              className={`rounded-full px-4 py-2 text-xs font-bold transition ${
+                selectedStatus === value
+                  ? "bg-red-600 text-white shadow-sm"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              {label} ({count})
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Search Bar */}
+      <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
-              type="text"
-              placeholder="Mijoz ismi, ID (#34), telefon yoki manzil..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 pl-10 pr-4 py-2.5 text-sm font-medium outline-none focus:border-red-600 focus:bg-white transition"
+              placeholder="Buyurtma raqami, ism, telefon yoki manzil bo'yicha qidiring"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-sm outline-none transition focus:border-red-400"
             />
           </div>
-
-          {/* Date Filter Pills */}
-          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-600">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider mr-1">Sana:</span>
-            <button className="rounded-xl bg-slate-900 px-3 py-1.5 text-white shadow-sm">
-              Barchasi
-            </button>
-            <button className="rounded-xl bg-slate-100 px-3 py-1.5 hover:bg-slate-200 transition">
-              Bugun
-            </button>
-            <button className="rounded-xl bg-slate-100 px-3 py-1.5 hover:bg-slate-200 transition">
-              Kecha
-            </button>
-            <button className="rounded-xl bg-slate-100 px-3 py-1.5 hover:bg-slate-200 transition">
-              Bu hafta
-            </button>
-          </div>
-        </div>
-
-        {/* Status Filter Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pt-2 border-t border-slate-100 no-scrollbar">
-          <button
-            onClick={() => setSelectedStatus("all")}
-            className={`rounded-2xl px-4 py-2 text-xs font-bold shrink-0 transition ${
-              selectedStatus === "all"
-                ? "bg-red-600 text-white shadow-md shadow-red-200"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-            }`}
-          >
-            Barchasi {counts.all}
-          </button>
-          <button
-            onClick={() => setSelectedStatus("pending")}
-            className={`rounded-2xl px-4 py-2 text-xs font-bold shrink-0 transition ${
-              selectedStatus === "pending"
-                ? "bg-amber-500 text-white shadow-md"
-                : "bg-amber-50 text-amber-600 hover:bg-amber-100"
-            }`}
-          >
-            Kutilmoqda {counts.pending}
-          </button>
-          <button
-            onClick={() => setSelectedStatus("preparing")}
-            className={`rounded-2xl px-4 py-2 text-xs font-bold shrink-0 transition ${
-              selectedStatus === "preparing"
-                ? "bg-blue-600 text-white shadow-md"
-                : "bg-blue-50 text-blue-600 hover:bg-blue-100"
-            }`}
-          >
-            Tayyorlanmoqda {counts.preparing}
-          </button>
-          <button
-            onClick={() => setSelectedStatus("ready")}
-            className={`rounded-2xl px-4 py-2 text-xs font-bold shrink-0 transition ${
-              selectedStatus === "ready"
-                ? "bg-teal-600 text-white shadow-md"
-                : "bg-teal-50 text-teal-600 hover:bg-teal-100"
-            }`}
-          >
-            Tayyorlandi {counts.ready}
-          </button>
-          <button
-            onClick={() => setSelectedStatus("delivering")}
-            className={`rounded-2xl px-4 py-2 text-xs font-bold shrink-0 transition ${
-              selectedStatus === "delivering"
-                ? "bg-purple-600 text-white shadow-md"
-                : "bg-purple-50 text-purple-600 hover:bg-purple-100"
-            }`}
-          >
-            Yo'lda {counts.delivering}
-          </button>
-          <button
-            onClick={() => setSelectedStatus("completed")}
-            className={`rounded-2xl px-4 py-2 text-xs font-bold shrink-0 transition ${
-              selectedStatus === "completed"
-                ? "bg-emerald-600 text-white shadow-md"
-                : "bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
-            }`}
-          >
-            Yetkazildi {counts.completed}
-          </button>
-          <button
-            onClick={() => setSelectedStatus("cancelled")}
-            className={`rounded-2xl px-4 py-2 text-xs font-bold shrink-0 transition ${
-              selectedStatus === "cancelled"
-                ? "bg-red-600 text-white shadow-md"
-                : "bg-red-50 text-red-600 hover:bg-red-100"
-            }`}
-          >
-            Bekor qilingan {counts.cancelled}
-          </button>
         </div>
       </div>
 
-      {/* Orders Table */}
-      <div className="rounded-3xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
-        {ordersQuery.isLoading ? (
-          <div className="grid min-h-[300px] place-items-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-red-600 border-t-transparent" />
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="p-12 text-center">
-            <ShoppingBag className="mx-auto h-12 w-12 text-slate-300" />
-            <h3 className="mt-4 text-base font-bold text-slate-800">Buyurtma topilmadi</h3>
-            <p className="mt-1 text-xs text-slate-500">
-              Ushbu mezon bo'yicha hech qanday buyurtma mavjud emas
-            </p>
+      {/* Orders list */}
+      <div className="grid gap-4">
+        {filtered.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-slate-200 bg-white p-10 text-center shadow-sm">
+            <p className="text-sm font-semibold text-slate-600">Buyurtma topilmadi</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 border-b border-slate-200/80">
-                <tr>
-                  <th className="px-6 py-4">#ID</th>
-                  <th className="px-6 py-4">XARIDOR</th>
-                  <th className="px-6 py-4">YETKAZISH MANZILI</th>
-                  <th className="px-6 py-4">MAHSULOTLAR</th>
-                  <th className="px-6 py-4">JAMI SUMMA</th>
-                  <th className="px-6 py-4">HOLATI</th>
-                  <th className="px-6 py-4 text-right">AMALLAR</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
-                {filtered.map((o) => {
-                  const statusInfo = statusMap[o.status] || {
-                    label: o.status,
-                    bg: "bg-slate-100",
-                    text: "text-slate-600",
-                  };
-                  const itemsSummary = Array.isArray(o.items)
-                    ? o.items
-                        .map((i) => `${i?.name || i?.title || "Tovar"} (${i?.quantity || 1} dona)`)
-                        .join(", ")
-                    : "Maxsus buyurtma";
+          filtered.map((order) => (
+            <div key={order.id} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-bold text-slate-700">
+                      {order.code || order.id.slice(0, 8).toUpperCase()}
+                    </span>
+                    <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${statusMap[order.status]?.bg ?? "bg-slate-100"} ${statusMap[order.status]?.text ?? "text-slate-700"}`}>
+                      {statusMap[order.status]?.label ?? order.status}
+                    </span>
+                    <span className="text-[11px] font-medium text-slate-500">
+                      {new Date(order.created_at).toLocaleString("uz-UZ")}
+                    </span>
+                  </div>
 
-                  return (
-                    <tr key={o.id} className="hover:bg-slate-50/80 transition">
-                      <td className="px-6 py-4">
-                        <span className="rounded-xl bg-slate-900 px-2.5 py-1 text-xs font-mono font-bold text-white shadow-sm">
-                          #{o.code ? o.code.slice(-4) : o.id.slice(0, 4)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="font-bold text-slate-900">
-                          {o.customer_name || "Noma'lum"}
-                        </div>
-                        <div className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
-                          <Phone className="h-3 w-3" />
-                          {o.customer_phone || "Mavjud emas"}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 max-w-xs">
-                        <div className="truncate text-xs font-semibold text-slate-700">
-                          {o.customer_city ? `${o.customer_city}, ` : ""}
-                          {o.customer_address || "Manzil ko'rsatilmagan"}
-                        </div>
-                        {o.customer_address && (
-                          <a
-                            href={`https://maps.google.com/?q=${encodeURIComponent(o.customer_address)}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1 text-[11px] font-bold text-red-600 hover:underline mt-0.5"
-                          >
-                            <span>Xarita</span>
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 max-w-xs">
-                        <div
-                          className="truncate text-xs font-medium text-slate-600"
-                          title={itemsSummary}
-                        >
-                          {itemsSummary}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="font-extrabold text-slate-900">
-                          {formatSom(o.total || 0)}
-                        </div>
-                        <div className="text-[11px] text-slate-400 capitalize">
-                          {o.payment_method === "cash"
-                            ? "Naqd pul"
-                            : o.payment_method === "card"
-                              ? "Karta orqali"
-                              : o.payment_method || "Ko'rsatilmagan"}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${statusInfo.bg} ${statusInfo.text}`}
-                        >
-                          <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                          {statusInfo.label}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <button
-                          onClick={() => setSelectedOrder(o)}
-                          className="inline-flex items-center gap-1.5 rounded-2xl border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition shadow-sm"
-                        >
-                          <Eye className="h-3.5 w-3.5 text-slate-400" />
-                          <span>Batafsil</span>
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                  <div className="flex flex-wrap items-center gap-4 text-sm text-slate-700">
+                    <span className="inline-flex items-center gap-1.5">
+                      <User className="h-4 w-4 text-slate-400" />
+                      {order.customer_name || "Noma'lum"}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Phone className="h-4 w-4 text-slate-400" />
+                      {order.customer_phone || "-"}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-4 text-sm text-slate-700">
+                    <span className="inline-flex items-center gap-1.5">
+                      <MapPin className="h-4 w-4 text-slate-400" />
+                      {order.customer_city || "-"}
+                    </span>
+                    <span className="text-slate-500">{order.customer_address || "Manzil joylashtirilmagan"}</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2 lg:items-end">
+                  <div className="text-right">
+                    <p className="text-xs text-slate-500">Umumiy summa</p>
+                    <p className="text-lg font-extrabold text-slate-900">{order.total.toLocaleString("uz-UZ")} so'm</p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedOrder(order)}
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50"
+                    >
+                      <Eye className="h-3.5 w-3.5" />
+                      Ko'rish
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = prompt("Yangi statusni kiriting (new, preparing, ready, delivering, completed, cancelled):", order.status);
+                        if (!next) return;
+                        updateStatusMutation.mutate({ id: order.id, status: next.trim() });
+                      }}
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50"
+                    >
+                      <Send className="h-3.5 w-3.5" />
+                      Status
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))
         )}
       </div>
 
-      {/* Order Detail Modal */}
       {selectedOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl space-y-5">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white p-5 shadow-2xl">
+            <div className="flex items-center justify-between gap-3">
               <div>
-                <h3 className="font-extrabold text-slate-900 text-lg">
-                  Buyurtma #{selectedOrder.code || selectedOrder.id.slice(0, 6)}
-                </h3>
-                <div className="text-xs text-slate-400">
-                  Sana: {new Date(selectedOrder.created_at).toLocaleString("uz-UZ")}
-                </div>
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-slate-500">Buyurtma tafsilotlari</p>
+                <h3 className="mt-1 text-xl font-extrabold text-slate-900">{selectedOrder.code || selectedOrder.id.slice(0, 8)}</h3>
               </div>
               <button
+                type="button"
                 onClick={() => setSelectedOrder(null)}
-                className="rounded-full p-2 text-slate-400 hover:bg-slate-100"
+                className="rounded-full bg-slate-100 p-2 text-slate-600 transition hover:bg-slate-200"
               >
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4" />
               </button>
             </div>
 
-            {/* Customer Details */}
-            <div className="rounded-2xl bg-slate-50 p-4 border border-slate-100 space-y-2 text-xs">
-              <div className="flex items-center gap-2 font-bold text-slate-900 text-sm">
-                <User className="h-4 w-4 text-slate-500" />
-                {selectedOrder.customer_name || "Noma'lum mijoz"}
+            <div className="mt-5 grid gap-4 md:grid-cols-2">
+              <div className="rounded-2xl bg-slate-50 p-4">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Mijoz</p>
+                <p className="mt-2 text-sm font-semibold text-slate-800">{selectedOrder.customer_name || "Noma'lum"}</p>
+                <p className="mt-1 text-sm text-slate-600">{selectedOrder.customer_phone || "Telefon ko'rsatilmagan"}</p>
               </div>
-              <div className="flex items-center gap-2 text-slate-600 font-semibold">
-                <Phone className="h-4 w-4 text-slate-400" />
-                {selectedOrder.customer_phone || "Mavjud emas"}
-              </div>
-              <div className="flex items-center gap-2 text-slate-600">
-                <MapPin className="h-4 w-4 text-slate-400" />
-                {selectedOrder.customer_city ? `${selectedOrder.customer_city}, ` : ""}
-                {selectedOrder.customer_address || "Manzil yo'q"}
+
+              <div className="rounded-2xl bg-slate-50 p-4">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Manzil</p>
+                <p className="mt-2 text-sm text-slate-700">{selectedOrder.customer_city || "-"}</p>
+                <p className="mt-1 text-sm text-slate-600">{selectedOrder.customer_address || "Manzil ko'rsatilmagan"}</p>
               </div>
             </div>
 
-            {/* Status Changer */}
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
-                Buyurtma Holatini O'zgartirish
-              </label>
-              <select
-                value={selectedOrder.status}
-                onChange={(e) => {
-                  const newStatus = e.target.value;
-                  setSelectedOrder((prev) => (prev ? { ...prev, status: newStatus } : null));
-                  updateStatusMutation.mutate({ id: selectedOrder.id, status: newStatus });
-                }}
-                className="w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-bold outline-none focus:border-red-600"
-              >
-                <option value="new">Kutilmoqda (Yangi)</option>
-                <option value="preparing">Tayyorlanmoqda</option>
-                <option value="ready">Tayyorlandi</option>
-                <option value="delivering">Yo'lda</option>
-                <option value="completed">Yetkazildi (Yakunlandi)</option>
-                <option value="cancelled">Bekor qilingan</option>
-              </select>
+            <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Buyurtma tarkibi</p>
+                <span className="text-sm font-bold text-slate-900">{(selectedOrder.items ?? []).length} ta mahsulot</span>
+              </div>
+
+              <div className="mt-4 space-y-3">
+                {(selectedOrder.items ?? []).map((item, idx) => (
+                  <div key={`${item.name ?? "item"}-${idx}`} className="flex items-center justify-between gap-4 rounded-xl bg-white p-3">
+                    <div>
+                      <p className="text-sm font-bold text-slate-800">{item.name || item.title || "Mahsulot"}</p>
+                      <p className="text-xs text-slate-500">{item.color || "Rang ko'rsatilmagan"}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-slate-500">Miqdor: {item.quantity ?? item.qty ?? 1}</p>
+                      <p className="text-sm font-bold text-slate-900">
+                        {((item.price ?? 0) * (item.quantity ?? item.qty ?? 1)).toLocaleString("uz-UZ")} so'm
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Total Payment Info */}
-            <div className="flex items-center justify-between border-t border-slate-100 pt-4">
-              <span className="text-sm font-bold text-slate-600">Jami summasi:</span>
-              <span className="text-xl font-extrabold text-red-600">
-                {formatSom(selectedOrder.total || 0)}
-              </span>
-            </div>
-
-            <div className="flex justify-end pt-2">
-              <button
-                onClick={() => setSelectedOrder(null)}
-                className="rounded-2xl bg-slate-900 px-6 py-2.5 text-sm font-bold text-white shadow-md hover:bg-slate-800"
-              >
-                Yopish
-              </button>
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-slate-50 p-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">To'lov usuli</p>
+                <p className="mt-1 text-sm font-semibold text-slate-800">{selectedOrder.payment_method || "-"}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-slate-500">Umumiy summa</p>
+                <p className="text-lg font-extrabold text-slate-900">{selectedOrder.total.toLocaleString("uz-UZ")} so'm</p>
+              </div>
             </div>
           </div>
         </div>

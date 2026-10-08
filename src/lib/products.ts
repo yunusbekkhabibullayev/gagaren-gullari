@@ -27,6 +27,12 @@ export const categories = [
   "Sovg'a to'plamlari",
 ] as const;
 
+const PRODUCT_LIST_SELECT =
+  "id, slug, name, pattern, category, workshop, price, image_url, stock, created_at";
+
+const PRODUCT_DETAIL_SELECT =
+  "id, slug, name, pattern, category, workshop, price, size, weight, colors, image_url, image_url_2, stock, story, active, preparation";
+
 // DB'dagi `workshop` ustuni gul do'konida "kelib chiqishi" sifatida ishlatiladi.
 export const workshops = ["Mahalliy", "Golland"] as const;
 
@@ -202,41 +208,40 @@ export function mergeProductsWithOverrides(dbProducts: Product[]): Product[] {
   return Array.from(resultMap.values());
 }
 
-async function fetchProductsPage(page = 1, pageSize = 12): Promise<Product[]> {
+async function fetchProductsPage(page = 1, pageSize = 8): Promise<Product[]> {
   const safePage = Math.max(1, Number(page) || 1);
-  const safePageSize = Math.max(1, Number(pageSize) || 12);
+  const safePageSize = Math.max(1, Number(pageSize) || 8);
   const from = (safePage - 1) * safePageSize;
   const to = from + safePageSize - 1;
 
   try {
     const { data, error } = await supabase
       .from("products")
-      .select(
-        "id, slug, name, pattern, category, workshop, price, size, weight, colors, image_url, stock, story, active, created_at",
-      )
+      .select(PRODUCT_LIST_SELECT)
       .eq("active", true)
       .order("created_at", { ascending: false })
       .range(from, to);
 
     if (error || !data) return mergeProductsWithOverrides([]);
-    return mergeProductsWithOverrides(data as Product[]);
+    return mergeProductsWithOverrides(data as unknown as Product[]);
   } catch {
     return mergeProductsWithOverrides([]);
   }
 }
 
 async function fetchProducts(): Promise<Product[]> {
-  return fetchProductsPage(1, 12);
+  return fetchProductsPage(1, 8);
 }
 
-export function useProducts(page = 1, pageSize = 12) {
+export function useProducts(page = 1, pageSize = 8) {
   return useQuery({
     queryKey: ["products", page, pageSize],
     queryFn: () => fetchProductsPage(page, pageSize),
-    staleTime: 1000 * 60,
-    gcTime: 1000 * 60 * 30,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 15,
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
+    refetchOnMount: false,
   });
 }
 
@@ -245,7 +250,7 @@ export function useProduct(slug: string) {
   return useQuery({
     queryKey: ["product", slug],
     queryFn: async () => {
-      const cachedList = qc.getQueryData<Product[]>(["products", 1, 12]);
+      const cachedList = qc.getQueryData<Product[]>(["products", 1, 8]);
       if (cachedList && cachedList.length > 0) {
         const found = cachedList.find((p) => p.slug === slug || p.id === slug);
         if (found) return found;
@@ -257,15 +262,16 @@ export function useProduct(slug: string) {
 
       const { data } = await supabase
         .from("products")
-        .select(
-          "id, slug, name, pattern, category, workshop, price, size, weight, colors, image_url, stock, story, active, created_at",
-        )
+        .select(PRODUCT_DETAIL_SELECT)
         .eq("slug", slug)
         .maybeSingle();
-      return (data as Product | null) ?? null;
+
+      if (!data) throw new Error("Product not found");
+      return data as unknown as Product;
     },
-    staleTime: 1000 * 60,
-    gcTime: 1000 * 60 * 30,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 15,
     refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
   });
 }

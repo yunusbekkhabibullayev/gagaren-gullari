@@ -30,7 +30,7 @@ export const Route = createFileRoute("/product/$id")({
 function ProductPage() {
   const { id } = Route.useParams();
   const { data: product, isLoading } = useProduct(id);
-  const { data: allProducts = [] } = useProducts();
+  const { data: allProducts = [] } = useProducts(1, 8);
   const [activeImg, setActiveImg] = useState(0);
   const [color, setColor] = useState<string>("");
   const [qty, setQty] = useState(1);
@@ -257,6 +257,8 @@ function ProductPage() {
                   src={productImage(p)}
                   alt={p.name}
                   loading="lazy"
+                  decoding="async"
+                  fetchPriority="low"
                   className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
                 />
               </div>
@@ -347,6 +349,8 @@ function Gallery({
         <img
           src={images[active]}
           alt={name}
+          fetchPriority="high"
+          decoding="sync"
           className="pointer-events-none h-full w-full object-cover transition-opacity duration-300"
           draggable={false}
           onError={(e) => {
@@ -369,6 +373,9 @@ function Gallery({
             <img
               src={src}
               alt=""
+              loading="lazy"
+              decoding="async"
+              fetchPriority="low"
               className="h-full w-full object-cover"
               onError={(e) => {
                 e.currentTarget.src = "/flowers/flower-atirgul.jpg";
