@@ -6,7 +6,8 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-const INSTALL_DISMISS_KEY = "nastarin_pwa_install_dismissed";
+const INSTALL_DISMISS_TIME_KEY = "nastarin_pwa_install_dismissed_time";
+const DISMISS_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 export function PwaManager() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
@@ -16,8 +17,26 @@ export function PwaManager() {
   const [isIos, setIsIos] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
 
+  // Helper: Check if install banner is dismissed (with 24h reset)
+  const isDismissed = (): boolean => {
+    if (typeof window === "undefined") return false;
+    const dismissTime = localStorage.getItem(INSTALL_DISMISS_TIME_KEY);
+    if (!dismissTime) return false;
+    
+    const elapsedMs = Date.now() - parseInt(dismissTime, 10);
+    if (elapsedMs > DISMISS_DURATION_MS) {
+      // Dismiss timer expired, clear it
+      localStorage.removeItem(INSTALL_DISMISS_TIME_KEY);
+      return false;
+    }
+    return true;
+  };
+
   useEffect(() => {
     if (typeof window === "undefined") return;
+
+    let beforeInstallPromptFired = false;
+    let fallbackBannerTimeout: ReturnType<typeof setTimeout> | null = null;
 
     // 1. Service Worker Registratsiyasi
     if ("serviceWorker" in navigator) {
@@ -50,14 +69,13 @@ export function PwaManager() {
     const isIosDevice = /iphone|ipad|ipod/.test(userAgent) && !(window as unknown as { MSStream?: unknown }).MSStream;
     setIsIos(isIosDevice);
 
-    const dismissed = localStorage.getItem(INSTALL_DISMISS_KEY) === "true";
-
     // 4. Install prompt tadbiri (Android/Chrome/Desktop)
     const handleBeforeInstallPrompt = (event: Event) => {
+      beforeInstallPromptFired = true;
       event.preventDefault();
       setDeferredPrompt(event as BeforeInstallPromptEvent);
 
-      if (!dismissed && !isStandalone) {
+      if (!isDismissed() && !isStandalone) {
         const timeout = window.setTimeout(() => {
           setShowInstallBanner(true);
         }, 2500);
@@ -66,20 +84,33 @@ export function PwaManager() {
       }
     };
 
-    // 5. App installed listener
+    // 5. Fallback banner: Show if beforeinstallprompt event never fires (Safari, older browsers, etc.)
+    const setupFallbackBanner = () => {
+      fallbackBannerTimeout = window.setTimeout(() => {
+        if (!beforeInstallPromptFired && !isDismissed() && !isStandalone) {
+          setShowInstallBanner(true);
+          console.log("PWA: beforeinstallprompt event barcha; fallback banner ko'rsatayotgan");
+        }
+      }, 3500) as unknown as ReturnType<typeof setTimeout>;
+    };
+
+    // 6. App installed listener
     const handleAppInstalled = () => {
       setShowInstallBanner(false);
       setDeferredPrompt(null);
       setIsStandalone(true);
-      localStorage.setItem(INSTALL_DISMISS_KEY, "true");
+      localStorage.removeItem(INSTALL_DISMISS_TIME_KEY);
       console.log("PWA ilovasi muvaffaqiyatli o'rnatildi");
     };
 
-    // 6. Offline / Online holatlari
+    // 7. Offline / Online holatlari
     const handleOnline = () => setIsOffline(false);
     const handleOffline = () => setIsOffline(true);
 
     setIsOffline(!navigator.onLine);
+
+    // Setup fallback banner timer
+    setupFallbackBanner();
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
     window.addEventListener("appinstalled", handleAppInstalled);
@@ -87,6 +118,7 @@ export function PwaManager() {
     window.addEventListener("offline", handleOffline);
 
     return () => {
+      if (fallbackBannerTimeout) clearTimeout(fallbackBannerTimeout);
       window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
       window.removeEventListener("appinstalled", handleAppInstalled);
       window.removeEventListener("online", handleOnline);
@@ -103,6 +135,8 @@ export function PwaManager() {
       }
       setDeferredPrompt(null);
       setShowInstallBanner(false);
+      // Mark as dismissed for 24 hours
+      localStorage.setItem(INSTALL_DISMISS_TIME_KEY, Date.now().toString());
       return;
     }
 
@@ -117,7 +151,8 @@ export function PwaManager() {
   const handleDismissBanner = () => {
     setShowInstallBanner(false);
     setShowIosGuide(false);
-    localStorage.setItem(INSTALL_DISMISS_KEY, "true");
+    // Mark as dismissed for 24 hours from now
+    localStorage.setItem(INSTALL_DISMISS_TIME_KEY, Date.now().toString());
   };
 
   return (
