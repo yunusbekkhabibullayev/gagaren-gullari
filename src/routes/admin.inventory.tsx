@@ -86,7 +86,7 @@ function AdminInventoryPage() {
     return Array.from(set);
   }, [products]);
 
-  // Low stock products (Chegaradan past qoldiqlar)
+  // Low stock products (Chegaradan past qoldig'lar)
   const lowStockProducts = useMemo(() => {
     return products.filter((p) => p.stock < p.minStock);
   }, [products]);
@@ -148,8 +148,8 @@ function AdminInventoryPage() {
       toast.success(result.message);
     }
 
+    void refreshData();
     setActiveModalProduct(null);
-    refreshData();
   };
 
   // Run Test Case

@@ -140,12 +140,12 @@ export function saveInventoryLogs(logs: StockTransaction[]): void {
   }
 }
 
-export function processStockMovement(
+export async function processStockMovement(
   productId: string,
   type: "IN" | "OUT",
   amount: number,
   note = "",
-): ProcessStockResult {
+): Promise<ProcessStockResult> {
   if (amount <= 0 || isNaN(amount)) {
     return {
       success: false,
@@ -153,7 +153,11 @@ export function processStockMovement(
     };
   }
 
-  const products = getInventoryProducts();
+  let products = getInventoryProducts();
+  if (products.length === 0) {
+    products = await syncInventoryFromSupabase();
+  }
+
   const index = products.findIndex((p) => p.id === productId);
 
   if (index === -1) {
@@ -179,6 +183,25 @@ export function processStockMovement(
     stock: newStock,
     updatedAt: new Date().toISOString(),
   };
+
+  try {
+    const { error } = await supabase
+      .from("products")
+      .update({ stock: Number(newStock) })
+      .eq("id", productId);
+
+    if (error) {
+      return {
+        success: false,
+        message: `Supabase yozishda xatolik: ${error.message || "unknown error"}`,
+      };
+    }
+  } catch {
+    return {
+      success: false,
+      message: "Supabasega yozib bo'lmadi. Ulanishni tekshiring.",
+    };
+  }
 
   products[index] = updatedProduct;
   saveInventoryProducts(products);
