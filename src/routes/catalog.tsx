@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MobileTabBar, SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { formatSom, productImage, useProducts, workshops } from "@/lib/products";
@@ -27,7 +27,8 @@ export const Route = createFileRoute("/catalog")({
 type Sort = "popular" | "priceAsc" | "priceDesc" | "new";
 
 function Catalog() {
-  const { data: products = [], isLoading } = useProducts();
+  const [page, setPage] = useState(1);
+  const { data: pageProducts = [], isLoading, isFetching } = useProducts(page, 12);
   const { data: dbCategories = [] } = useCategories();
   const activeCategoryNames = useMemo(() => dbCategories.map((c) => c.name), [dbCategories]);
 
@@ -35,15 +36,30 @@ function Catalog() {
   const [shop, setShop] = useState<string | null>(null);
   const [sort, setSort] = useState<Sort>("popular");
 
+  const [visibleProducts, setVisibleProducts] = useState<typeof pageProducts>([]);
+
+  useEffect(() => {
+    setVisibleProducts((prev) => {
+      const merged = page === 1 ? pageProducts : [...prev, ...pageProducts];
+      const seen = new Set<string>();
+      return merged.filter((product) => {
+        const key = `${product.id}-${product.slug}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    });
+  }, [page, pageProducts]);
+
   const list = useMemo(() => {
-    let l = [...products];
+    let l = [...visibleProducts];
     if (cat) l = l.filter((p) => p.category === cat);
     if (shop) l = l.filter((p) => p.workshop === shop);
     if (sort === "priceAsc") l.sort((a, b) => a.price - b.price);
     if (sort === "priceDesc") l.sort((a, b) => b.price - a.price);
     if (sort === "new") l.reverse();
     return l;
-  }, [cat, shop, sort, products]);
+  }, [cat, shop, sort, visibleProducts]);
 
   return (
     <div className="min-h-screen bg-background pb-24 sm:pb-0">
@@ -70,7 +86,7 @@ function Catalog() {
         <div className="mx-auto max-w-7xl px-5 py-3">
           <div className="flex flex-wrap sm:flex-nowrap items-center gap-1.5 sm:overflow-x-auto sm:no-scrollbar">
             <button
-              onClick={() => setCat(null)}
+              onClick={() => { setCat(null); setShop(null); }}
               className="shrink-0 rounded-full px-3 py-1.5 text-xs sm:text-sm font-semibold transition-all"
               style={cat === null ? { background: "#D84C73", color: "#F5F1E8" } : { background: "#F0EDE6", color: "#6B7280" }}
             >
@@ -172,6 +188,16 @@ function Catalog() {
             </button>
           </div>
         )}
+
+        <div className="mt-8 flex justify-center">
+          <button
+            onClick={() => setPage((current) => current + 1)}
+            disabled={isFetching || isLoading}
+            className="rounded-full border border-pink-200 bg-white px-5 py-2.5 text-sm font-semibold text-[#D84C73] shadow-sm transition hover:bg-pink-50 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isFetching ? "Yuklanmoqda..." : "Yana yuklash"}
+          </button>
+        </div>
       </section>
 
       <SiteFooter />

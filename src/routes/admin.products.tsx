@@ -113,7 +113,7 @@ function AdminProductsPage() {
       }
 
       // Full payload with all columns
-      const fullDbRow = {
+      const fullDbRow: any = {
         name: draft.name!.trim(),
         slug,
         category: draft.category || (activeCategories[0]?.name ?? "Buketlar"),
@@ -136,7 +136,9 @@ function AdminProductsPage() {
       };
 
       // Safe payload (without extra columns for backward compatibility)
-      const { image_url_2: _img2, preparation: _prep, ...safeDbRow } = fullDbRow;
+      const safeDbRow: any = { ...fullDbRow };
+      delete safeDbRow.image_url_2;
+      delete safeDbRow.preparation;
 
       let resultId = draft.id;
 

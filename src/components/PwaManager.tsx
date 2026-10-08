@@ -6,6 +6,8 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
+const INSTALL_DISMISS_KEY = "nastarin_pwa_install_dismissed";
+
 export function PwaManager() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isOffline, setIsOffline] = useState(false);
@@ -15,8 +17,10 @@ export function PwaManager() {
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     // 1. Service Worker Registratsiyasi
-    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+    if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker
           .register("/sw.js")
@@ -46,37 +50,39 @@ export function PwaManager() {
     const isIosDevice = /iphone|ipad|ipod/.test(userAgent) && !(window as unknown as { MSStream?: unknown }).MSStream;
     setIsIos(isIosDevice);
 
+    const dismissed = localStorage.getItem(INSTALL_DISMISS_KEY) === "true";
+
     // 4. Install prompt tadbiri (Android/Chrome/Desktop)
-    const handleBeforeInstallPrompt = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
-      // Agar foydalanuvchi avvalroq yopmagan bo'lsa, bannerni ko'rsatish
-      const dismissed = localStorage.getItem("nastarin_pwa_install_dismissed");
-      if (!dismissed) {
-        setShowInstallBanner(true);
+    const handleBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      setDeferredPrompt(event as BeforeInstallPromptEvent);
+
+      if (!dismissed && !isStandalone) {
+        const timeout = window.setTimeout(() => {
+          setShowInstallBanner(true);
+        }, 2500);
+
+        return () => window.clearTimeout(timeout);
       }
     };
-
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
     // 5. App installed listener
     const handleAppInstalled = () => {
       setShowInstallBanner(false);
       setDeferredPrompt(null);
       setIsStandalone(true);
+      localStorage.setItem(INSTALL_DISMISS_KEY, "true");
       console.log("PWA ilovasi muvaffaqiyatli o'rnatildi");
     };
-
-    window.addEventListener("appinstalled", handleAppInstalled);
 
     // 6. Offline / Online holatlari
     const handleOnline = () => setIsOffline(false);
     const handleOffline = () => setIsOffline(true);
 
-    if (typeof navigator !== "undefined") {
-      setIsOffline(!navigator.onLine);
-    }
+    setIsOffline(!navigator.onLine);
 
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleAppInstalled);
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
 
@@ -86,7 +92,7 @@ export function PwaManager() {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
-  }, []);
+  }, [isStandalone]);
 
   const handleInstallClick = async () => {
     if (deferredPrompt) {
@@ -97,14 +103,21 @@ export function PwaManager() {
       }
       setDeferredPrompt(null);
       setShowInstallBanner(false);
-    } else if (isIos) {
-      setShowIosGuide(true);
+      return;
     }
+
+    if (isIos) {
+      setShowIosGuide(true);
+      return;
+    }
+
+    setShowInstallBanner(false);
   };
 
   const handleDismissBanner = () => {
     setShowInstallBanner(false);
-    localStorage.setItem("nastarin_pwa_install_dismissed", "true");
+    setShowIosGuide(false);
+    localStorage.setItem(INSTALL_DISMISS_KEY, "true");
   };
 
   return (
@@ -114,40 +127,40 @@ export function PwaManager() {
         <div
           role="status"
           aria-live="polite"
-          className="fixed top-0 left-0 right-0 z-[100] bg-destructive text-destructive-foreground px-4 py-2.5 text-center text-xs sm:text-sm font-medium flex items-center justify-center gap-2 shadow-md animate-in slide-in-from-top duration-300"
+          className="fixed left-0 right-0 top-0 z-[100] flex items-center justify-center gap-2 bg-destructive px-4 py-2.5 text-center text-xs font-medium text-destructive-foreground shadow-md sm:text-sm"
         >
-          <WifiOff className="w-4 h-4 shrink-0 animate-pulse" />
+          <WifiOff className="h-4 w-4 shrink-0 animate-pulse" />
           <span>Siz oflayn holatdasiz. Davom etish uchun tarmoqqa ulaning.</span>
         </div>
       )}
 
       {/* PWA INSTALL BANNER (Android / Desktop Chrome / Edge) */}
-      {showInstallBanner && !isStandalone && (
-        <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-[90] bg-card border border-border shadow-2xl rounded-2xl p-4 transition-all duration-300 animate-in slide-in-from-bottom duration-500 backdrop-blur-md">
+      {!isStandalone && showInstallBanner && (
+        <div className="fixed bottom-4 left-4 right-4 z-[90] max-w-md rounded-2xl border border-border bg-card p-4 shadow-2xl backdrop-blur-md transition-all duration-300 animate-in slide-in-from-bottom sm:left-auto sm:right-6">
           <div className="flex items-start gap-3">
             <img
               src="/icon-192x192.png"
               alt="NASTARIN GULLARI Icon"
-              className="w-12 h-12 rounded-xl object-cover shadow-sm border border-border/50 shrink-0"
+              className="h-12 w-12 shrink-0 rounded-xl border border-border/50 object-cover shadow-sm"
             />
-            <div className="flex-1 min-w-0">
-              <h4 className="text-sm font-semibold text-foreground tracking-tight">
+            <div className="min-w-0 flex-1">
+              <h4 className="text-sm font-semibold tracking-tight text-foreground">
                 NASTARIN ilovasini o'rnating
               </h4>
-              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+              <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
                 Telefoningiz ekraniga o'rnatib, gul yetkazib berish xizmatidan tez va qulay foydalaning.
               </p>
               <div className="mt-3 flex items-center gap-2">
                 <button
                   onClick={handleInstallClick}
-                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm active:scale-95"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
                 >
-                  <Download className="w-3.5 h-3.5" />
+                  <Download className="h-3.5 w-3.5" />
                   O'rnatish
                 </button>
                 <button
                   onClick={handleDismissBanner}
-                  className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:bg-secondary transition-colors"
+                  className="inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-secondary"
                 >
                   Keyinroq
                 </button>
@@ -156,9 +169,9 @@ export function PwaManager() {
             <button
               onClick={handleDismissBanner}
               aria-label="Bannerni yopish"
-              className="text-muted-foreground hover:text-foreground p-1 rounded-md transition-colors"
+              className="rounded-md p-1 text-muted-foreground transition-colors hover:text-foreground"
             >
-              <X className="w-4 h-4" />
+              <X className="h-4 w-4" />
             </button>
           </div>
         </div>
@@ -166,44 +179,44 @@ export function PwaManager() {
 
       {/* iOS SAFARI INSTALLATION GUIDE DIALOG */}
       {showIosGuide && (
-        <div className="fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-card border border-border w-full max-w-sm rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl space-y-4 animate-in slide-in-from-bottom duration-300">
+        <div className="fixed inset-0 z-[110] flex items-end justify-center bg-black/60 p-4 backdrop-blur-sm sm:items-center">
+          <div className="w-full max-w-sm rounded-t-2xl border border-border bg-card p-6 shadow-2xl sm:rounded-2xl">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
-                <Smartphone className="w-5 h-5 text-primary" />
-                <h3 className="font-semibold text-foreground text-base">iPhone'ga o'rnatish</h3>
+                <Smartphone className="h-5 w-5 text-primary" />
+                <h3 className="text-base font-semibold text-foreground">iPhone'ga o'rnatish</h3>
               </div>
               <button
                 onClick={() => setShowIosGuide(false)}
-                className="text-muted-foreground hover:text-foreground p-1 rounded-md"
+                className="rounded-md p-1 text-muted-foreground hover:text-foreground"
               >
-                <X className="w-5 h-5" />
+                <X className="h-5 w-5" />
               </button>
             </div>
 
-            <p className="text-xs text-muted-foreground leading-relaxed">
+            <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
               Safari brauzerida ushbu ilovani quyidagi 2 qadamda ekraningizga mobil ilova kabi qo'shishingiz mumkin:
             </p>
 
-            <ol className="space-y-3 text-xs text-foreground font-medium">
-              <li className="flex items-start gap-3 bg-secondary/50 p-2.5 rounded-xl border border-border/50">
-                <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold">
+            <ol className="mt-4 space-y-3 text-xs font-medium text-foreground">
+              <li className="flex items-start gap-3 rounded-xl border border-border/50 bg-secondary/50 p-2.5">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
                   1
                 </div>
                 <div className="space-y-0.5">
-                  <p className="font-semibold flex items-center gap-1.5">
-                    Safari menyusida <Share className="w-4 h-4 text-primary inline" /> "Ulashish" (Share) tugmasini bosing
+                  <p className="flex items-center gap-1.5 font-semibold">
+                    Safari menyusida <Share className="h-4 w-4 text-primary" /> "Ulashish" tugmasini bosing
                   </p>
                 </div>
               </li>
 
-              <li className="flex items-start gap-3 bg-secondary/50 p-2.5 rounded-xl border border-border/50">
-                <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold">
+              <li className="flex items-start gap-3 rounded-xl border border-border/50 bg-secondary/50 p-2.5">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
                   2
                 </div>
                 <div className="space-y-0.5">
-                  <p className="font-semibold flex items-center gap-1.5">
-                    Pastga surib, <PlusSquare className="w-4 h-4 text-primary inline" /> "Ekran yuziga qo'shish" (Add to Home Screen) opsiyasini tanlang
+                  <p className="flex items-center gap-1.5 font-semibold">
+                    Pastga surib, <PlusSquare className="h-4 w-4 text-primary" /> "Ekran yuziga qo'shish" opsiyasini tanlang
                   </p>
                 </div>
               </li>
@@ -211,7 +224,7 @@ export function PwaManager() {
 
             <button
               onClick={() => setShowIosGuide(false)}
-              className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-xs shadow-sm hover:bg-primary/90 transition-colors"
+              className="mt-5 w-full rounded-xl bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
             >
               Tushunarli
             </button>

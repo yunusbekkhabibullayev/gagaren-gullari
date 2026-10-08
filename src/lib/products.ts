@@ -202,13 +202,22 @@ export function mergeProductsWithOverrides(dbProducts: Product[]): Product[] {
   return Array.from(resultMap.values());
 }
 
-async function fetchProducts(): Promise<Product[]> {
+async function fetchProductsPage(page = 1, pageSize = 12): Promise<Product[]> {
+  const safePage = Math.max(1, Number(page) || 1);
+  const safePageSize = Math.max(1, Number(pageSize) || 12);
+  const from = (safePage - 1) * safePageSize;
+  const to = from + safePageSize - 1;
+
   try {
     const { data, error } = await supabase
       .from("products")
-      .select("*")
+      .select(
+        "id, slug, name, pattern, category, workshop, price, size, weight, colors, image_url, stock, story, active, created_at",
+      )
       .eq("active", true)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .range(from, to);
+
     if (error || !data) return mergeProductsWithOverrides([]);
     return mergeProductsWithOverrides(data as Product[]);
   } catch {
@@ -216,12 +225,18 @@ async function fetchProducts(): Promise<Product[]> {
   }
 }
 
-export function useProducts() {
+async function fetchProducts(): Promise<Product[]> {
+  return fetchProductsPage(1, 12);
+}
+
+export function useProducts(page = 1, pageSize = 12) {
   return useQuery({
-    queryKey: ["products"],
-    queryFn: fetchProducts,
-    staleTime: 1000 * 60 * 10, // Cache for 10 minutes (instant 0ms loading!)
-    gcTime: 1000 * 60 * 60, // Keep in memory for 1 hour
+    queryKey: ["products", page, pageSize],
+    queryFn: () => fetchProductsPage(page, pageSize),
+    staleTime: 1000 * 60,
+    gcTime: 1000 * 60 * 30,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
   });
 }
 
@@ -230,23 +245,27 @@ export function useProduct(slug: string) {
   return useQuery({
     queryKey: ["product", slug],
     queryFn: async () => {
-      // 1. Try finding in cached products list first
-      const cachedList = qc.getQueryData<Product[]>(["products"]);
+      const cachedList = qc.getQueryData<Product[]>(["products", 1, 12]);
       if (cachedList && cachedList.length > 0) {
         const found = cachedList.find((p) => p.slug === slug || p.id === slug);
         if (found) return found;
       }
 
-      // 2. Fetch full list
       const all = await fetchProducts();
       const match = all.find((p) => p.slug === slug || p.id === slug);
       if (match) return match;
 
-      // 3. Fallback direct DB query
-      const { data } = await supabase.from("products").select("*").eq("slug", slug).maybeSingle();
+      const { data } = await supabase
+        .from("products")
+        .select(
+          "id, slug, name, pattern, category, workshop, price, size, weight, colors, image_url, stock, story, active, created_at",
+        )
+        .eq("slug", slug)
+        .maybeSingle();
       return (data as Product | null) ?? null;
     },
-    staleTime: 1000 * 60 * 10,
-    gcTime: 1000 * 60 * 60,
+    staleTime: 1000 * 60,
+    gcTime: 1000 * 60 * 30,
+    refetchOnWindowFocus: false,
   });
 }
