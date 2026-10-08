@@ -204,7 +204,7 @@ export function MobileTabBar() {
 
             {/* Description */}
             <p className="text-xs text-gray-600 leading-relaxed bg-pink-50/60 p-3.5 rounded-2xl border border-pink-100">
-              Gagarin shahrida mualliflik guldastalari va yangi gullar do'koni. 24/7 bepul yetkazib berish xizmati mavjud!
+              Do'stlik shahrida mualliflik guldastalari va yangi gullar do'koni. 24/7 bepul yetkazib berish xizmati mavjud!
             </p>
 
             {/* Contact Details List */}
@@ -233,7 +233,7 @@ export function MobileTabBar() {
                 </div>
                 <div>
                   <div className="text-[10px] text-gray-400 font-semibold uppercase">Manzil / Joylashuv</div>
-                  <div className="text-xs font-bold text-gray-800">Gagarin sh., Markaziy ko'chasi 14-uy</div>
+                  <div className="text-xs font-bold text-gray-800">Do'stlik sh., Markaziy ko'chasi 14-uy</div>
                 </div>
               </div>
 
@@ -252,7 +252,7 @@ export function MobileTabBar() {
             {/* Social Buttons */}
             <div className="grid grid-cols-2 gap-3 pt-1">
               <a
-                href="https://www.instagram.com/nastarin_gullari.gagarin"
+                href="https://www.instagram.com/nastarin_gullari.dostlik"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-3 text-xs font-bold text-white shadow-md transition hover:opacity-90"
@@ -261,7 +261,7 @@ export function MobileTabBar() {
                 <span>Instagram</span>
               </a>
               <a
-                href="https://t.me/nastarin_gullari.gagarin"
+                href="https://t.me/nastarin_gullari.dostlik"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 rounded-2xl bg-[#2AABEE] px-4 py-3 text-xs font-bold text-white shadow-md transition hover:opacity-90"

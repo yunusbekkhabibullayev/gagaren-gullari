@@ -35,7 +35,7 @@ function formatUzPhone(val: string): string {
 }
 
 const CITIES = [
-  "Gagarin sh. (Mirzacho'l)",
+  "Do'stlik sh.",
   "Jizzax shahri",
   "Pahtakor tumani",
   "Do'stlik tumani",

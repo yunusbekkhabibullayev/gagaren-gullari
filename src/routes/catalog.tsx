@@ -12,7 +12,7 @@ export const Route = createFileRoute("/catalog")({
       {
         name: "description",
         content:
-          "Premium guldastalar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlari katalogi. Gagarin bo'ylab bepul yetkazib berish.",
+          "Premium guldastalar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlari katalogi. Do'stlik bo'ylab bepul yetkazib berish.",
       },
       { property: "og:title", content: "Katalog - NASTARIN GULLARI" },
       {

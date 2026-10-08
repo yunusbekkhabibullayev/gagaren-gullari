@@ -38,13 +38,13 @@ import flowerSovga from "@/assets/flower-sovga.jpg";
 export const Route = createFileRoute("/")(({
   head: () => ({
     meta: [
-      { title: "NASTARIN GULLARI - Gagarin shaharida gul yetkazib berish" },
+      { title: "NASTARIN GULLARI - Do'stlik shaharida gul yetkazib berish" },
       {
         name: "description",
         content:
-          "Premium guldastalar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlari. Gagarin bo'ylab 24/7 bepul yetkazib berish.",
+          "Premium guldastalar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlari. Do'stlik bo'ylab 24/7 bepul yetkazib berish.",
       },
-      { property: "og:title", content: "NASTARIN GULLARI - Gagarin shaharida gul yetkazib berish" },
+      { property: "og:title", content: "NASTARIN GULLARI - Do'stlik shaharida gul yetkazib berish" },
       {
         property: "og:description",
         content:
@@ -234,32 +234,32 @@ function HeroSection({ products }: { products: Product[] }) {
 const TESTIMONIALS = [
   {
     name: "Malika",
-    city: "Mirzacho'l",
+    city: "Do'stlik",
     quote: "Buket aynan so'ragan vaqtimda yetib keldi, gullar juda yangi edi. Opamga sovg'a qildim — xursand bo'ldi.",
   },
   {
     name: "Jasur",
-    city: "Mirzacho'l",
+    city: "Do'stlik",
     quote: "25 ta qizil atirgul buyurtma qildim, rasmdagidan ham chiroyli chiqdi. Kuryer aniq soatda keldi.",
   },
   {
     name: "Nodira",
-    city: "Mirzacho'l",
+    city: "Do'stlik",
     quote: "Tuvakdagi o'simlikni ofisga oldim. O'ramigacha ozoda va chiroyli qilib berishdi.",
   },
   {
     name: "Sherzod",
-    city: "Gagarin",
+    city: "Do'stlik",
     quote: "Xotinimga tug'ilgan kun uchun buyurtma berdim. Gullar yangi, hid ajoyib. Albatta yana buyurtma beraman!",
   },
   {
     name: "Dildora",
-    city: "Mirzacho'l",
+    city: "Do'stlik",
     quote: "Onaginamga sovg'a bo'ldiki, u judayam xursand bo'ldi. Xizmat darajasi a'lo, tavsiya qilaman.",
   },
   {
     name: "Behruz",
-    city: "Gagarin",
+    city: "Do'stlik",
     quote: "Sovg'a to'plami juda chiroyli yig'ilgan edi. Kuryer vaqtida va madaniyatli keldi.",
   },
 ];

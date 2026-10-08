@@ -1,6 +1,6 @@
-# NASTARIN GULLARI 🌸 — Gagarin shahar Gul va Buketlar Do'koni
+# NASTARIN GULLARI 🌸 — Do'stlik Gul va Buketlar Do'koni
 
-NASTARIN GULLARI — Gagarin bo'ylab yangi uzilgan gullar, premium guldastalar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlarini 24/7 bepul yetkazib berish bo'yicha zamonaviy onlayn e-commerce platformasi.
+NASTARIN GULLARI — Do'stlik bo'ylab yangi uzilgan gullar, premium guldastalar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlarini 24/7 bepul yetkazib berish bo'yicha zamonaviy onlayn e-commerce platformasi.
 
 ---
 

@@ -34,7 +34,7 @@ export function SplashLoader() {
             NASTARIN GULLARI
           </h1>
           <div className="text-xs font-black tracking-widest text-white/90 uppercase">
-            GAGARIN SHAHARIDA GUL YETKAZIB BERISH
+            DO'STLIK SHAHARIDA GUL YETKAZIB BERISH
           </div>
           <p className="text-xs text-white/80 font-medium">Yangi buketlar va sovg'a to'plamlari</p>
         </div>

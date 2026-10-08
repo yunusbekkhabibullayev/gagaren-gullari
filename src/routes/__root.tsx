@@ -76,11 +76,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
       },
-      { title: "NASTARIN GULLARI - Gagarin shaharida gul yetkazib berish" },
+      { title: "NASTARIN GULLARI - Do'stlik shaharida gul yetkazib berish" },
       {
         name: "description",
         content:
-          "Premium guldastalar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlari. Gagarin bo'ylab 24/7 bepul yetkazib berish.",
+          "Premium guldastalar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlari. Do'stlik bo'ylab 24/7 bepul yetkazib berish.",
       },
       { name: "author", content: "NASTARIN GULLARI" },
       { name: "theme-color", content: "#D84C73" },
@@ -88,15 +88,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "apple-mobile-web-app-title", content: "NASTARIN" },
-      { property: "og:title", content: "NASTARIN GULLARI - Gagarin shaharida gul yetkazib berish" },
+      { property: "og:title", content: "NASTARIN GULLARI - Do'stlik shaharida gul yetkazib berish" },
       {
         property: "og:description",
         content:
-          "Premium guldastalar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlari. Gagarin bo'ylab 24/7 bepul yetkazib berish.",
+          "Premium guldastalar, atirgullar, tuvakdagi o'simliklar va sovg'a to'plamlari. Do'stlik bo'ylab 24/7 bepul yetkazib berish.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "NASTARIN GULLARI - Gagarin shaharida gul yetkazib berish" },
+      { name: "twitter:title", content: "NASTARIN GULLARI - Do'stlik shaharida gul yetkazib berish" },
       {
         name: "twitter:description",
         content:

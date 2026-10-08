@@ -11,7 +11,7 @@ export const Route = createFileRoute("/product/$id")({
   head: () => ({
     meta: [
       { title: "Guldasta tafsilotlari — NASTARIN GULLARI" },
-      { name: "description", content: "Gagarin shaharida gul va guldasta tafsilotlari hamda yetkazib berish buyurtmasi." },
+      { name: "description", content: "Do'stlik shaharida gul va guldasta tafsilotlari hamda yetkazib berish buyurtmasi." },
     ],
   }),
   notFoundComponent: () => (

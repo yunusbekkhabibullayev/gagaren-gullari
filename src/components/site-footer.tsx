@@ -19,13 +19,13 @@ export function SiteFooter() {
               NASTARIN GULLARI
             </div>
             <p className="mt-4 text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.90)" }}>
-              Premium turda yig'ilgan mualliflik guldastalar. Gagarin bo'ylab 24/7 bepul yetkazib berish xizmati mavjud.
+              Premium turda yig'ilgan mualliflik guldastalar. Do'stlik bo'ylab 24/7 bepul yetkazib berish xizmati mavjud.
             </p>
 
             {/* Social Icon Buttons */}
             <div className="mt-6 flex items-center gap-3">
               <a
-                href="https://www.instagram.com/nastarin_gullari.gagarin"
+                href="https://www.instagram.com/nastarin_gullari.dostlik"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
@@ -47,7 +47,7 @@ export function SiteFooter() {
                 </svg>
               </a>
               <a
-                href="https://t.me/nastarin_gullari.gagarin"
+                href="https://t.me/nastarin_gullari.dostlik"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Telegram"
@@ -80,28 +80,28 @@ export function SiteFooter() {
             <ul className="space-y-4 text-sm" style={{ color: "rgba(255,255,255,0.92)" }}>
               <li>
                 <a
-                  href="https://www.instagram.com/nastarin_gullari.gagarin"
+                  href="https://www.instagram.com/nastarin_gullari.dostlik"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="transition-all duration-150 hover:underline"
                   style={{ color: "#FFFFFF" }}
                 >
-                  @nastarin_gullari.gagarin
+                  @nastarin_gullari.dostlik
                 </a>
               </li>
               <li>
                 <a
-                  href="https://t.me/nastarin_gullari.gagarin"
+                  href="https://t.me/nastarin_gullari.dostlik"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="transition-all duration-150 hover:underline"
                   style={{ color: "#FFFFFF" }}
                 >
-                  @nastarin_gullari.gagarin
+                  @nastarin_gullari.dostlik
                 </a>
               </li>
               <li style={{ color: "#FFFFFF" }}>Har kuni 24/7 xizmati mavjud</li>
-              <li style={{ color: "#FFFFFF" }}>Soliq binosining yonida – Gagarin</li>
+              <li style={{ color: "#FFFFFF" }}>Soliq binosining yonida – Do'stlik</li>
             </ul>
           </div>
 
