@@ -10,7 +10,6 @@ import {
   mergeProductsWithOverrides,
   processAndUploadImage,
 } from "@/lib/products";
-import { getInventoryProducts } from "@/lib/inventory";
 import { useAdminCategories } from "@/lib/categories";
 import {
   Package,
@@ -58,12 +57,8 @@ function AdminProductsPage() {
   });
 
   const products = list.data ?? [];
-  // Bilet 029: Load inventory data to show alongside DB stock
-  const invProducts = useMemo(() => getInventoryProducts(), []);
-  const getInvStock = (p: Product) => {
-    const inv = invProducts.find((i) => i.name === p.name || i.id === p.id);
-    return inv ? { stock: inv.stock, minStock: inv.minStock, unit: inv.unit } : null;
-  };
+  // DB is the single source of truth; inventory local cache is intentionally ignored here.
+  const getInvStock = (p: Product) => null;
 
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");

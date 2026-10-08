@@ -46,7 +46,7 @@ export async function syncInventoryFromSupabase(): Promise<InventoryProduct[]> {
       if (typeof window !== "undefined") {
         localStorage.removeItem(INVENTORY_PRODUCTS_KEY);
       }
-      return [];
+      return getInventoryProducts();
     }
 
     const mapped = data
@@ -86,7 +86,7 @@ export function getInventoryProducts(): InventoryProduct[] {
     if (!raw) return [];
 
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    return Array.isArray(parsed) ? parsed.filter((item) => item && typeof item.id === "string") : [];
   } catch {
     return [];
   }

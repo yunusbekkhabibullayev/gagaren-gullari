@@ -25,6 +25,7 @@ import {
   processStockMovement,
   resetInventoryToDefault,
   runBilet029TestCase,
+  syncInventoryFromSupabase,
   type InventoryProduct,
   type StockTransaction,
 } from "@/lib/inventory";
@@ -58,13 +59,14 @@ function AdminInventoryPage() {
   const [testResults, setTestResults] = useState<ReturnType<typeof runBilet029TestCase> | null>(null);
 
   // Load initial data
-  const refreshData = () => {
-    setProducts(getInventoryProducts());
+  const refreshData = async () => {
+    const synced = await syncInventoryFromSupabase();
+    setProducts(synced);
     setLogs(getInventoryLogs());
   };
 
   useEffect(() => {
-    refreshData();
+    void refreshData();
   }, []);
 
   // Filtered Products
