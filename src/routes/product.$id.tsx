@@ -4,6 +4,8 @@ import { MobileTabBar, SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { formatSom, productImage, useProduct, useProducts, type Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
+import { getInventoryProducts } from "@/lib/inventory";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/product/$id")({
   head: () => ({
@@ -35,6 +37,18 @@ function ProductPage() {
   const { add } = useCart();
   const navigate = useNavigate();
   const [added, setAdded] = useState(false);
+
+  // Bilet 029: Inventory Stock calculation
+  const invProduct = useMemo(() => {
+    if (!product) return null;
+    const allInv = getInventoryProducts();
+    return allInv.find((p) => p.name === product.name || p.id === product.id) || null;
+  }, [product]);
+
+  const availableStock = invProduct ? invProduct.stock : (product?.stock ?? 10);
+  const minStock = invProduct ? invProduct.minStock : 5;
+  const isLowStock = availableStock < minStock && availableStock > 0;
+  const isOutOfStock = availableStock <= 0;
 
   useEffect(() => {
     if (product && !color) setColor(product.colors[0] ?? "");
@@ -125,6 +139,24 @@ function ProductPage() {
 
           <div className="mt-6 font-display text-3xl">{formatSom(product.price)}</div>
 
+          {/* STOCK STATUS BADGE (Bilet 029 Integration) */}
+          <div className="mt-4 flex items-center gap-3">
+            <span className="text-xs font-semibold uppercase text-slate-500">Ombor Holati:</span>
+            {isOutOfStock ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-100 px-3 py-1 text-xs font-bold text-rose-800 border border-rose-300">
+                ❌ Zaxira Tugagan (0 dona)
+              </span>
+            ) : isLowStock ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-900 border border-amber-300 animate-pulse">
+                ⚠️ Zaxira Kam: Bor-yo'g'i {availableStock} dona qoldi! (Chegara: {minStock})
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800 border border-emerald-200">
+                ✓ Omborda bor: {availableStock} dona mavjud
+              </span>
+            )}
+          </div>
+
           <p className="mt-6 leading-relaxed text-muted-foreground">{product.story}</p>
 
           <div className="mt-8 space-y-5">
@@ -147,30 +179,51 @@ function ProductPage() {
               </div>
             </div>
 
+            {/* QUANTITY SELECTOR WITH STRICT MAX STOCK LIMIT */}
             <div className="flex items-center gap-4">
               <div className="text-sm font-medium">Miqdor</div>
               <div className="inline-flex items-center rounded-full border border-border bg-card">
-                <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="px-3 py-1.5">
+                <button
+                  onClick={() => setQty((q) => Math.max(1, q - 1))}
+                  disabled={qty <= 1 || isOutOfStock}
+                  className="px-3.5 py-1.5 font-bold disabled:opacity-30 disabled:cursor-not-allowed"
+                >
                   −
                 </button>
-                <div className="w-10 text-center text-sm">{qty}</div>
-                <button onClick={() => setQty((q) => q + 1)} className="px-3 py-1.5">
+                <div className="w-10 text-center text-sm font-bold">{qty}</div>
+                <button
+                  onClick={() => {
+                    if (qty >= availableStock) {
+                      toast.error(`Omborda maksimal ${availableStock} dona mavjud! Orticha xarid rad etiladi.`);
+                      return;
+                    }
+                    setQty((q) => q + 1);
+                  }}
+                  disabled={qty >= availableStock || isOutOfStock}
+                  className="px-3.5 py-1.5 font-bold disabled:opacity-30 disabled:cursor-not-allowed"
+                >
                   +
                 </button>
               </div>
+              <span className="text-xs text-muted-foreground">
+                (Maksimal: {availableStock} dona)
+              </span>
             </div>
           </div>
 
+          {/* ACTION BUTTONS WITH STOCK VALIDATION */}
           <div className="mt-8 flex flex-wrap gap-3">
             <button
               onClick={handleAdd}
-              className="flex-1 rounded-full bg-foreground px-6 py-3.5 text-sm font-medium text-background transition hover:opacity-90 sm:flex-none"
+              disabled={isOutOfStock}
+              className="flex-1 rounded-full bg-foreground px-6 py-3.5 text-sm font-medium text-background transition hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed sm:flex-none"
             >
-              {added ? "Savatga qo'shildi ✓" : "Savatga qo'shish"}
+              {isOutOfStock ? "Omborda tugagan" : added ? "Savatga qo'shildi ✓" : "Savatga qo'shish"}
             </button>
             <button
               onClick={handleBuyNow}
-              className="flex-1 rounded-full border border-foreground px-6 py-3.5 text-sm font-medium transition hover:bg-secondary sm:flex-none"
+              disabled={isOutOfStock}
+              className="flex-1 rounded-full border border-foreground px-6 py-3.5 text-sm font-medium transition hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed sm:flex-none"
             >
               Hoziroq sotib olish
             </button>

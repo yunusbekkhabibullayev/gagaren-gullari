@@ -22,7 +22,7 @@ export function SiteHeader() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-6 text-sm font-medium text-gray-600 sm:flex">
+        <nav className="hidden items-center gap-8 text-sm font-medium text-gray-600 sm:flex">
           <Link
             to="/"
             activeOptions={{ exact: true }}
@@ -38,13 +38,9 @@ export function SiteHeader() {
           >
             Katalog
           </Link>
-          <Link
-            to="/admin/inventory"
-            activeProps={{ className: "text-[#D84C73] font-semibold" }}
-            className="transition flex items-center gap-1 text-[#e0526c] font-bold bg-rose-50 px-3 py-1 rounded-full hover:bg-rose-100"
-          >
-            <span>📦 Zaxira Yordamchisi (Bilet 029)</span>
-          </Link>
+          <a href="#hunar" className="transition hover:text-[#D84C73]">
+            Yetkazib berish
+          </a>
         </nav>
 
         {/* Right side: phone + cart */}
