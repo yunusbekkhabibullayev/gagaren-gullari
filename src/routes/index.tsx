@@ -185,11 +185,10 @@ function HeroSection({ products }: { products: Product[] }) {
                 <button
                   key={slide.id}
                   onClick={() => setCurrent(idx)}
-                  className={`group relative flex h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 shrink-0 items-center justify-center rounded-full border-2 p-1 transition-all duration-300 bg-white cursor-pointer ${
-                    isActive
+                  className={`group relative flex h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 shrink-0 items-center justify-center rounded-full border-2 p-1 transition-all duration-300 bg-white cursor-pointer ${isActive
                       ? "border-[#D84C73] ring-4 ring-[#D84C73]/20 scale-105 shadow-lg"
                       : "border-pink-100 opacity-75 hover:opacity-100 hover:border-pink-300 hover:scale-105"
-                  }`}
+                    }`}
                 >
                   <img
                     src={slide.image}
@@ -563,7 +562,7 @@ function Home() {
 function Step({ n, t, d }: { n: string; t: string; d: string }) {
   return (
     <div>
-      <div className="text-xl" style={{ fontFamily: "'Poppins','Inter',sans-serif", fontWeight: 600, color: "#D84C73" }}>{n}</div>
+      <div className="text-xl" style={{ fontFamily: "'pins','Inter',sans-serif", fontWeight: 600, color: "#D84C73" }}>{n}</div>
       <div className="mt-2 font-medium" style={{ color: "#1F2937" }}>{t}</div>
       <div style={{ color: "#6B7280" }}>{d}</div>
     </div>

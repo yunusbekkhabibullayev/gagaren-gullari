@@ -91,10 +91,11 @@ function AdminLayout() {
       ],
     },
     {
-      title: "KATALOG & MARKETING",
+      title: "KATALOG & ZAXIRA (BILET 029)",
       items: [
         { label: "Mahsulotlar", to: "/admin/products", icon: Package },
         { label: "Kategoriyalar", to: "/admin/categories", icon: Tag },
+        { label: "Zaxira Yordamchisi (Bilet 029)", to: "/admin/inventory", icon: Package },
       ],
     },
   ];
