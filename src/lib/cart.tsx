@@ -8,6 +8,8 @@ import {
   type ReactNode,
 } from "react";
 import type { Product } from "@/lib/products";
+import { getInventoryProducts } from "@/lib/inventory";
+import { toast } from "sonner";
 
 export type CartItem = {
   slug: string;
@@ -60,26 +62,68 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items, hydrated]);
 
   const add = useCallback((product: Product, color: string, qty = 1) => {
-    setItems((prev) => {
-      const idx = prev.findIndex((i) => i.slug === product.slug && i.color === color);
-      if (idx >= 0) {
-        const next = [...prev];
-        next[idx] = { ...next[idx], qty: Math.min(99, next[idx].qty + qty) };
-        return next;
-      }
-      return [
-        ...prev,
-        {
-          slug: product.slug,
-          name: product.name,
-          price: product.price,
-          image: product.image_url || "/products/hero-plate.jpg",
-          workshop: product.workshop,
-          color,
-          qty: Math.max(1, qty),
-        },
-      ];
-    });
+    // 3-SHART: Mavjuddan ortiq xaridlarni rad etish!
+    try {
+      const invProducts = getInventoryProducts();
+      const invProd = invProducts.find((p) => p.name === product.name || p.id === product.id);
+      const availableStock = invProd ? invProd.stock : (product.stock ?? 10);
+
+      setItems((prev) => {
+        const idx = prev.findIndex((i) => i.slug === product.slug && i.color === color);
+        const currentQtyInCart = idx >= 0 ? prev[idx].qty : 0;
+        const requestedTotal = currentQtyInCart + qty;
+
+        if (requestedTotal > availableStock) {
+          toast.error(
+            `Xarid rad etildi! Omborda bor-yo'g'i ${availableStock} dona mavjud. (Savatda: ${currentQtyInCart} dona, so'raldi: ${qty} dona)`,
+            { duration: 5000 }
+          );
+          return prev;
+        }
+
+        toast.success(`${product.name} savatga qo'shildi! (Omborda qoldiq: ${availableStock - requestedTotal} dona)`);
+
+        if (idx >= 0) {
+          const next = [...prev];
+          next[idx] = { ...next[idx], qty: requestedTotal };
+          return next;
+        }
+        return [
+          ...prev,
+          {
+            slug: product.slug,
+            name: product.name,
+            price: product.price,
+            image: product.image_url || "/flowers/flower-atirgul.jpg",
+            workshop: product.workshop,
+            color,
+            qty: Math.max(1, qty),
+          },
+        ];
+      });
+    } catch {
+      // Fallback normal add
+      setItems((prev) => {
+        const idx = prev.findIndex((i) => i.slug === product.slug && i.color === color);
+        if (idx >= 0) {
+          const next = [...prev];
+          next[idx] = { ...next[idx], qty: Math.min(99, next[idx].qty + qty) };
+          return next;
+        }
+        return [
+          ...prev,
+          {
+            slug: product.slug,
+            name: product.name,
+            price: product.price,
+            image: product.image_url || "/flowers/flower-atirgul.jpg",
+            workshop: product.workshop,
+            color,
+            qty: Math.max(1, qty),
+          },
+        ];
+      });
+    }
   }, []);
 
   const setQty = useCallback((slug: string, color: string, qty: number) => {
