@@ -34,6 +34,44 @@ export type ProcessStockResult = {
 
 const INVENTORY_PRODUCTS_KEY = "bilet029_inventory_products";
 const INVENTORY_LOGS_KEY = "bilet029_inventory_logs";
+const INVENTORY_CACHE_TTL_MS = 5 * 60 * 1000;
+
+function readInventoryCache(): InventoryProduct[] {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const raw = localStorage.getItem(INVENTORY_PRODUCTS_KEY);
+    if (!raw) return [];
+
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((item) => item && typeof item.id === "string");
+    }
+
+    if (parsed && Array.isArray(parsed.products)) {
+      const ageMs = Date.now() - Number(parsed.updatedAt || 0);
+      if (ageMs <= INVENTORY_CACHE_TTL_MS) {
+        return parsed.products.filter((item: unknown) => item && typeof (item as any).id === "string");
+      }
+    }
+
+    return [];
+  } catch {
+    return [];
+  }
+}
+
+function writeInventoryCache(products: InventoryProduct[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(
+      INVENTORY_PRODUCTS_KEY,
+      JSON.stringify({ updatedAt: Date.now(), products }),
+    );
+  } catch {
+    // ignore write failures; database remains the source of truth
+  }
+}
 
 export async function syncInventoryFromSupabase(): Promise<InventoryProduct[]> {
   try {
@@ -46,7 +84,7 @@ export async function syncInventoryFromSupabase(): Promise<InventoryProduct[]> {
       if (typeof window !== "undefined") {
         localStorage.removeItem(INVENTORY_PRODUCTS_KEY);
       }
-      return getInventoryProducts();
+      return readInventoryCache();
     }
 
     const mapped = data
@@ -68,37 +106,19 @@ export async function syncInventoryFromSupabase(): Promise<InventoryProduct[]> {
         };
       });
 
-    if (typeof window !== "undefined") {
-      localStorage.setItem(INVENTORY_PRODUCTS_KEY, JSON.stringify(mapped));
-    }
-
+    writeInventoryCache(mapped);
     return mapped;
   } catch {
-    return getInventoryProducts();
+    return readInventoryCache();
   }
 }
 
 export function getInventoryProducts(): InventoryProduct[] {
-  if (typeof window === "undefined") return [];
-
-  try {
-    const raw = localStorage.getItem(INVENTORY_PRODUCTS_KEY);
-    if (!raw) return [];
-
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.filter((item) => item && typeof item.id === "string") : [];
-  } catch {
-    return [];
-  }
+  return readInventoryCache();
 }
 
 export function saveInventoryProducts(products: InventoryProduct[]): void {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(INVENTORY_PRODUCTS_KEY, JSON.stringify(products));
-  } catch {
-    // ignore write failures; real DB remains source of truth
-  }
+  writeInventoryCache(products);
 }
 
 export function getInventoryLogs(): StockTransaction[] {

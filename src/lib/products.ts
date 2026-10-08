@@ -181,16 +181,21 @@ export function mergeProductsWithOverrides(dbProducts: Product[]): Product[] {
 
   remainingDb.forEach((p) => {
     const override = overrides[p.id] || Object.values(overrides).find((o) => o.slug === p.slug);
-    resultMap.set(p.id, override ? { ...p, ...override } : p);
+    const merged = override ? { ...p, ...override } : p;
+    merged.stock = p.stock;
+    resultMap.set(p.id, merged);
   });
 
   Object.values(overrides).forEach((p) => {
-    if (
-      !deletedIds.has(p.id) &&
-      !resultMap.has(p.id) &&
-      !Array.from(resultMap.values()).some((existing) => existing.slug === p.slug)
-    ) {
-      resultMap.set(p.id, p);
+    if (deletedIds.has(p.id)) return;
+
+    const dbMatch = remainingDb.find((existing) => existing.id === p.id || existing.slug === p.slug);
+    if (dbMatch) return;
+
+    const alreadyPresent = Array.from(resultMap.values()).some((existing) => existing.id === p.id || existing.slug === p.slug);
+    if (!alreadyPresent) {
+      const safeProduct = { ...p, stock: p.stock };
+      resultMap.set(p.id, safeProduct);
     }
   });
 

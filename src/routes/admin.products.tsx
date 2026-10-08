@@ -469,9 +469,8 @@ function AdminProductsPage() {
       ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {filtered.map((p) => {
-            const inv = getInvStock(p);
-            const effectiveStock = inv ? inv.stock : p.stock;
-            const minStock = inv?.minStock ?? 5;
+            const effectiveStock = p.stock;
+            const minStock = 5;
             const isLow = effectiveStock > 0 && effectiveStock < minStock;
             const isOut = effectiveStock <= 0;
             return (
@@ -495,18 +494,11 @@ function AdminProductsPage() {
                   <div className="absolute top-3 left-3 rounded-full bg-slate-900/80 backdrop-blur px-3 py-1 text-[10px] font-extrabold uppercase text-white tracking-wider">
                     {p.category}
                   </div>
-                  {/* Bilet 029: Inventory + DB Stock Badge */}
                   <div className={`absolute bottom-3 left-3 rounded-full backdrop-blur px-3 py-1 text-[11px] font-bold shadow-sm ${
                     isOut ? "bg-rose-600 text-white" : isLow ? "bg-amber-500 text-white" : "bg-white/90 text-slate-800"
                   }`}>
                     {isOut ? "❌ Tugagan" : isLow ? `⚠️ ${effectiveStock} dona` : `${effectiveStock} dona`}
                   </div>
-                  {/* DB stock vs Inventory stock indicator */}
-                  {inv && (
-                    <div className="absolute bottom-3 right-3 rounded-full bg-slate-900/70 backdrop-blur px-2 py-0.5 text-[10px] font-bold text-white">
-                      DB: {p.stock} | Inv: {inv.stock}
-                    </div>
-                  )}
                   <div className="absolute top-3 right-3">
                     <span
                       className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-extrabold shadow-sm ${
@@ -524,22 +516,10 @@ function AdminProductsPage() {
                   <div className="mt-1.5 font-extrabold text-[#e0526c] text-lg">
                     {formatSom(p.price)}
                   </div>
-                  {/* Bilet 029: Stock status row */}
                   <div className="mt-2 flex items-center gap-2 text-[11px] font-semibold">
                     <span className="text-slate-400">DB Zaxira:</span>
                     <span className="text-slate-700">{p.stock} dona</span>
-                    {inv && (
-                      <>
-                        <span className="text-slate-300">|</span>
-                        <span className="text-slate-400">Bilet 029:</span>
-                        <span className={`font-bold ${isOut ? "text-rose-600" : isLow ? "text-amber-700" : "text-emerald-700"}`}>
-                          {inv.stock} {inv.unit}
-                        </span>
-                        <span className="text-slate-400">/ Min: {inv.minStock}</span>
-                      </>
-                    )}
                   </div>
-                  {/* Low stock warning */}
                   {(isLow || isOut) && (
                     <div className={`mt-2 rounded-lg px-2.5 py-1 text-[10px] font-bold ${
                       isOut ? "bg-rose-50 text-rose-700 border border-rose-200" : "bg-amber-50 text-amber-800 border border-amber-200"
@@ -557,14 +537,6 @@ function AdminProductsPage() {
               <div className="px-5 pb-5 pt-2 flex items-center justify-between border-t border-slate-100">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-semibold text-slate-400">{p.workshop}</span>
-                  {inv && (
-                    <Link
-                      to="/admin/inventory"
-                      className="rounded-full bg-rose-50 border border-rose-200 px-2 py-0.5 text-[10px] font-bold text-[#e0526c] hover:bg-rose-100 transition"
-                    >
-                      📦 Kirim/Chiqim
-                    </Link>
-                  )}
                 </div>
                 <div className="flex items-center gap-1">
                   <button
