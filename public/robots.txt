@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# Admin sahifalarini qidiruvdan yopish
+Disallow: /admin
+Disallow: /admin/

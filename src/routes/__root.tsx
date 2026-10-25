@@ -1,4 +1,4 @@
-﻿import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
@@ -77,6 +77,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
       },
       { title: "NASTARIN GULLARI - Do'stlik shaharida gul yetkazib berish" },
+      {
+        name: "google-site-verification",
+        content: "O4HgIHh_ntPSNka-ey3fp6WN2GnPwmuITPfpgHIbjE8",
+      },
       {
         name: "description",
         content:
