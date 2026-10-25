@@ -171,7 +171,7 @@ export function PwaManager() {
 
       {/* PWA INSTALL BANNER (Android / Desktop Chrome / Edge) */}
       {!isStandalone && showInstallBanner && (
-        <div className="fixed bottom-4 left-4 right-4 z-[90] max-w-md rounded-2xl border border-border bg-card p-4 shadow-2xl backdrop-blur-md transition-all duration-300 animate-in slide-in-from-bottom sm:left-auto sm:right-6">
+        <div className="fixed bottom-24 left-4 right-4 z-40 max-w-md rounded-2xl border border-border bg-card p-4 shadow-2xl backdrop-blur-md transition-all duration-300 animate-in slide-in-from-bottom sm:bottom-6 sm:right-6 sm:left-auto">
           <div className="flex items-start gap-3">
             <img
               src="/icon-192x192.png"

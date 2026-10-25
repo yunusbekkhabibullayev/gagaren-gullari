@@ -100,119 +100,177 @@ export function MobileTabBar() {
 
   return (
     <>
-      {/* Floating Bottom Navigation Bar with 4-side Margins */}
+      {/* Floating Bottom Navigation Bar (Styled after 5th image reference) */}
       <nav
-        className="fixed bottom-3 left-4 right-4 z-40 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-pink-100/80 sm:hidden"
-        style={{
-          boxShadow: "0 8px 30px rgba(216,76,115,0.18)",
-        }}
+        className="fixed bottom-3 inset-x-3 z-40 max-w-md mx-auto sm:hidden select-none"
         aria-label="Mobil navigatsiya"
       >
-        <div className="flex items-center justify-around h-14 px-1">
-          {/* Bosh */}
-          <Link
-            to="/"
-            activeOptions={{ exact: true }}
-            className="flex flex-1 flex-col items-center justify-center gap-0.5"
+        <div className="relative h-16 w-full">
+          {/* Smooth Concave Curved Notch SVG Background */}
+          <svg
+            className="absolute inset-0 w-full h-full drop-shadow-[0_8px_25px_rgba(216,76,115,0.18)]"
+            viewBox="0 0 360 64"
+            preserveAspectRatio="none"
+            fill="#FFFFFF"
           >
-            <IconHome active={isBoshActive} />
-            <span
-              className="text-[11px] font-semibold leading-none"
-              style={{ color: isBoshActive ? "#D84C73" : "#9CA3AF" }}
-            >
-              Bosh
-            </span>
-          </Link>
+            <path
+              d="M 28 0 
+                 L 128 0 
+                 C 140 0 146 6 151 16 
+                 C 157 30 167 38 180 38 
+                 C 193 38 203 30 209 16 
+                 C 214 6 220 0 232 0 
+                 L 332 0 
+                 C 347.46 0 360 12.54 360 28 
+                 L 360 36 
+                 C 360 51.46 347.46 64 332 64 
+                 L 28 64 
+                 C 12.54 64 0 51.46 0 36 
+                 L 0 28 
+                 C 0 12.54 12.54 0 28 0 Z"
+            />
+          </svg>
 
-          {/* Katalog */}
-          <Link
-            to="/catalog"
-            className="flex flex-1 flex-col items-center justify-center gap-0.5"
-          >
-            <IconGrid active={isKatalogActive} />
-            <span
-              className="text-[11px] font-semibold leading-none"
-              style={{ color: isKatalogActive ? "#D84C73" : "#9CA3AF" }}
+          {/* Elevated Center Button nestled in the concave notch */}
+          <div className="absolute left-1/2 -top-4 -translate-x-1/2 z-10 flex flex-col items-center">
+            <Link
+              to="/catalog"
+              aria-label="Katalog"
+              className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-tr from-[#D84C73] to-[#E86288] text-white shadow-[0_6px_18px_rgba(216,76,115,0.40)] border-[3px] border-white active:scale-95 transition-transform"
             >
-              Katalog
-            </span>
-          </Link>
+              <CenterFlowerIcon className="w-5 h-5 text-white" />
+            </Link>
+            <span
+              className={`w-1.5 h-1.5 rounded-full mt-2 transition-opacity duration-200 ${
+                isKatalogActive ? "bg-[#D84C73] opacity-100" : "opacity-0"
+              }`}
+            />
+          </div>
 
-          {/* Savat */}
-          <Link
-            to="/cart"
-            className="flex flex-1 flex-col items-center justify-center gap-0.5 relative"
-          >
-            <span className="relative">
-              <IconBag active={isSavatActive} />
-              {hydrated && count > 0 && (
-                <span
-                  className="absolute -right-2 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold text-white shadow-sm"
-                  style={{ background: "#D84C73" }}
-                >
-                  {count}
-                </span>
-              )}
-            </span>
-            <span
-              className="text-[11px] font-semibold leading-none"
-              style={{ color: isSavatActive ? "#D84C73" : "#9CA3AF" }}
+          {/* 5 Navigation Item Slots: Slot 1 (Bosh), Slot 2 (Katalog), Slot 3 (Spacer), Slot 4 (Savat), Slot 5 (Aloqa) */}
+          <div className="relative z-0 grid grid-cols-5 h-full items-center px-1">
+            {/* 1. Bosh */}
+            <Link
+              to="/"
+              activeOptions={{ exact: true }}
+              aria-label="Bosh sahifa"
+              className="flex flex-col items-center justify-center py-2"
             >
-              Savat
-            </span>
-          </Link>
+              <IconHome active={isBoshActive} />
+              <span
+                className={`w-1.5 h-1.5 rounded-full mt-1 transition-all duration-200 ${
+                  isBoshActive ? "bg-[#D84C73] opacity-100 scale-100" : "opacity-0 scale-50"
+                }`}
+              />
+            </Link>
 
-          {/* Aloqa */}
-          <button
-            type="button"
-            onClick={() => setShowAloqaModal(true)}
-            className="flex flex-1 flex-col items-center justify-center gap-0.5"
-          >
-            <IconUser active={showAloqaModal} />
-            <span
-              className="text-[11px] font-semibold leading-none"
-              style={{ color: showAloqaModal ? "#D84C73" : "#9CA3AF" }}
+            {/* 2. Katalog */}
+            <Link
+              to="/catalog"
+              aria-label="Katalog"
+              className="flex flex-col items-center justify-center py-2"
             >
-              Aloqa
-            </span>
-          </button>
+              <IconGrid active={isKatalogActive} />
+              <span
+                className={`w-1.5 h-1.5 rounded-full mt-1 transition-all duration-200 ${
+                  isKatalogActive ? "bg-[#D84C73] opacity-100 scale-100" : "opacity-0 scale-50"
+                }`}
+              />
+            </Link>
+
+            {/* 3. Empty spacer for the center elevated button */}
+            <div className="pointer-events-none" />
+
+            {/* 4. Savat */}
+            <Link
+              to="/cart"
+              aria-label="Savat"
+              className="flex flex-col items-center justify-center py-2 relative"
+            >
+              <span className="relative">
+                <IconBag active={isSavatActive} />
+                {hydrated && count > 0 && (
+                  <span
+                    className="absolute -right-2 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold text-white shadow-sm"
+                    style={{ background: "#D84C73" }}
+                  >
+                    {count}
+                  </span>
+                )}
+              </span>
+              <span
+                className={`w-1.5 h-1.5 rounded-full mt-1 transition-all duration-200 ${
+                  isSavatActive ? "bg-[#D84C73] opacity-100 scale-100" : "opacity-0 scale-50"
+                }`}
+              />
+            </Link>
+
+            {/* 5. Aloqa */}
+            <button
+              type="button"
+              onClick={() => setShowAloqaModal(true)}
+              aria-label="Do'kon ma'lumotlari"
+              className="flex flex-col items-center justify-center py-2 cursor-pointer"
+            >
+              <IconUser active={showAloqaModal} />
+              <span
+                className={`w-1.5 h-1.5 rounded-full mt-1 transition-all duration-200 ${
+                  showAloqaModal ? "bg-[#D84C73] opacity-100 scale-100" : "opacity-0 scale-50"
+                }`}
+              />
+            </button>
+          </div>
         </div>
       </nav>
 
-      {/* Mobile Aloqa Modal */}
+      {/* Mobile Aloqa Bottom Sheet Modal (Styled after 4th image reference) */}
       {showAloqaModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
-            {/* Header */}
-            <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-              <div className="flex items-center gap-3">
-                <img src={logoImg} alt="Logo" className="h-10 w-10 object-contain" />
-                <div>
-                  <h3 className="font-extrabold text-gray-900 text-base">
-                    NASTARIN <span className="text-[#D84C73]">GULLARI</span>
-                  </h3>
-                  <p className="text-xs text-gray-500 font-medium">Do'kon ma'lumotlari</p>
-                </div>
-              </div>
+        <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4">
+          {/* Backdrop blur overlay */}
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity animate-in fade-in duration-200"
+            onClick={() => setShowAloqaModal(false)}
+          />
+
+          {/* Bottom Sheet Card */}
+          <div className="relative w-full max-w-lg rounded-t-[32px] sm:rounded-3xl bg-white p-6 pb-8 shadow-2xl space-y-4 animate-in slide-in-from-bottom duration-300 z-10">
+            {/* Drag Handle Bar on top (like iOS bottom sheet) */}
+            <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto sm:hidden mb-2" />
+
+            {/* Header: Title in center, Done/Yopish button on the right */}
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div className="w-14" />
+              <h3 className="font-bold text-gray-900 text-base sm:text-lg text-center">
+                Do'kon ma'lumotlari
+              </h3>
               <button
+                type="button"
                 onClick={() => setShowAloqaModal(false)}
-                className="rounded-full p-2 text-gray-400 hover:bg-gray-100 transition"
+                className="text-sm font-bold text-[#D84C73] hover:opacity-80 transition py-1 px-2"
               >
-                <X className="h-5 w-5" />
+                Yopish
               </button>
             </div>
 
-            {/* Description */}
-            <p className="text-xs text-gray-600 leading-relaxed bg-pink-50/60 p-3.5 rounded-2xl border border-pink-100">
-              Do'stlik shahrida mualliflik guldastalari va yangi gullar do'koni. 24/7 bepul yetkazib berish xizmati mavjud!
-            </p>
+            {/* Shop summary */}
+            <div className="flex items-center gap-3 bg-pink-50/60 p-3.5 rounded-2xl border border-pink-100">
+              <img src={logoImg} alt="Logo" className="h-10 w-10 object-contain rounded-lg" />
+              <div>
+                <h4 className="font-bold text-gray-900 text-sm">
+                  NASTARIN <span className="text-[#D84C73]">GULLARI</span>
+                </h4>
+                <p className="text-xs text-gray-600">
+                  Do'stlik shahrida 24/7 mualliflik guldastalari va yangi gullar yetkazib berish.
+                </p>
+              </div>
+            </div>
 
             {/* Contact Details List */}
             <div className="space-y-2.5 text-xs font-medium">
               {/* Phone */}
               <a
                 href="tel:+998903949933"
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-gray-50 border border-gray-100 hover:bg-pink-50/50 transition"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-gray-50 border border-gray-100 hover:bg-pink-50/50 transition active:scale-[0.99]"
               >
                 <div className="flex items-center gap-3">
                   <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#D84C73] text-white">
@@ -255,7 +313,7 @@ export function MobileTabBar() {
                 href="https://www.instagram.com/nastarin_gullari.dostlik"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-3 text-xs font-bold text-white shadow-md transition hover:opacity-90"
+                className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-3 text-xs font-bold text-white shadow-md transition hover:opacity-90 active:scale-95"
               >
                 <Instagram className="h-4 w-4" />
                 <span>Instagram</span>
@@ -264,7 +322,7 @@ export function MobileTabBar() {
                 href="https://t.me/nastarin_gullari.dostlik"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 rounded-2xl bg-[#2AABEE] px-4 py-3 text-xs font-bold text-white shadow-md transition hover:opacity-90"
+                className="flex items-center justify-center gap-2 rounded-2xl bg-[#2AABEE] px-4 py-3 text-xs font-bold text-white shadow-md transition hover:opacity-90 active:scale-95"
               >
                 <Send className="h-4 w-4" />
                 <span>Telegram</span>
@@ -363,3 +421,24 @@ function IconPhone() {
     </svg>
   );
 }
+
+function CenterFlowerIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className || "w-6 h-6"}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {/* 3 Petals / Leaves radiating outward matching reference image 5 */}
+      <path d="M12 3c-2.2 3.2-3 7 0 10.5 3-3.5 2.2-7.3 0-10.5z" />
+      <path d="M10.5 13.5C7.5 12.2 4.5 13 3.5 16c3.2.5 6-.5 7-2.5z" />
+      <path d="M13.5 13.5C16.5 12.2 19.5 13 20.5 16c-3.2.5-6-.5-7-2.5z" />
+      <circle cx="12" cy="18" r="1.5" fill="currentColor" />
+    </svg>
+  );
+}
+

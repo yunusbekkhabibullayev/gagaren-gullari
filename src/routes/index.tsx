@@ -187,13 +187,13 @@ function HeroSection({ products }: { products: Product[] }) {
             {/* Bouquet image */}
             <Link
               to="/catalog"
-              className="relative z-10 flex items-center justify-center group transition-transform duration-500 hover:scale-105 overflow-hidden rounded-3xl"
+              className="relative z-10 flex items-center justify-center group transition-transform duration-500 hover:scale-105 overflow-hidden rounded-[32px] sm:rounded-[44px]"
             >
               <img
                 key={activeSlide.id}
                 src={activeSlide.image}
                 alt={activeSlide.name}
-                className="h-[240px] w-[240px] sm:h-[360px] sm:w-[360px] lg:h-[420px] lg:w-[420px] aspect-square object-cover rounded-3xl shadow-2xl border-4 border-white animate-fade-in"
+                className="h-[230px] w-[230px] sm:h-[360px] sm:w-[360px] lg:h-[420px] lg:w-[420px] aspect-square object-cover rounded-[32px] sm:rounded-[44px] shadow-2xl border-4 border-white animate-fade-in"
                 onError={(e) => {
                   e.currentTarget.src = "/flowers/flower-atirgul.jpg";
                 }}
@@ -365,26 +365,69 @@ function TestimonialsSlider() {
               return (
                 <figure
                   key={`${t.name}-${idx}`}
-                  className="rounded-2xl border p-5 sm:p-6 transition-all duration-500 flex flex-col justify-between min-h-[160px] sm:min-h-[180px]"
+                  className="rounded-3xl border p-6 sm:p-7 transition-all duration-500 flex flex-col justify-between min-h-[200px]"
                   style={{
                     background: isHighlight ? "#D84C73" : "#FFFFFF",
                     borderColor: isHighlight ? "#D84C73" : "#E5DFC9",
                     transform: visible > 1 && isHighlight ? "scale(1.02)" : "scale(1)",
-                    opacity: isHighlight ? 1 : 0.85,
-                    boxShadow: isHighlight ? "0 8px 32px rgba(216,76,115,0.18)" : "0 2px 8px rgba(0,0,0,0.06)",
+                    opacity: isHighlight ? 1 : 0.9,
+                    boxShadow: isHighlight ? "0 12px 36px rgba(216,76,115,0.25)" : "0 4px 12px rgba(0,0,0,0.06)",
                   }}
                 >
-                  <blockquote
-                    className="text-sm sm:text-[15px] leading-relaxed"
-                    style={{ color: isHighlight ? "#F5F1E8" : "#1F2937" }}
-                  >
-                    "{t.quote}"
-                  </blockquote>
+                  <div>
+                    {/* 5 Golden Stars */}
+                    <div className="flex items-center gap-1 mb-3.5">
+                      {[0, 1, 2, 3, 4].map((star) => (
+                        <svg
+                          key={star}
+                          className={`w-4 h-4 sm:w-5 sm:h-5 ${isHighlight ? "text-amber-200 fill-amber-200" : "text-amber-400 fill-amber-400"}`}
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      ))}
+                    </div>
+
+                    <blockquote
+                      className="text-base sm:text-lg md:text-xl font-medium leading-relaxed"
+                      style={{ color: isHighlight ? "#FFFFFF" : "#1F2937" }}
+                    >
+                      "{t.quote}"
+                    </blockquote>
+                  </div>
+
                   <figcaption
-                    className="mt-5 text-xs sm:text-sm font-medium"
-                    style={{ color: isHighlight ? "rgba(245,241,232,0.85)" : "#6B7280" }}
+                    className="mt-5 flex items-center justify-between pt-4 border-t"
+                    style={{ borderColor: isHighlight ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.06)" }}
                   >
-                    — {t.name}, {t.city}
+                    <div className="flex items-center gap-2.5">
+                      <div
+                        className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold"
+                        style={{
+                          background: isHighlight ? "rgba(255,255,255,0.25)" : "rgba(216,76,115,0.12)",
+                          color: isHighlight ? "#FFFFFF" : "#D84C73",
+                        }}
+                      >
+                        {t.name.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold" style={{ color: isHighlight ? "#FFFFFF" : "#1F2937" }}>
+                          {t.name}
+                        </div>
+                        <div className="text-xs" style={{ color: isHighlight ? "rgba(255,255,255,0.8)" : "#6B7280" }}>
+                          {t.city}
+                        </div>
+                      </div>
+                    </div>
+                    <span
+                      className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full"
+                      style={{
+                        background: isHighlight ? "rgba(255,255,255,0.2)" : "rgba(16,185,129,0.1)",
+                        color: isHighlight ? "#FFFFFF" : "#059669",
+                      }}
+                    >
+                      ✓ Xaridor
+                    </span>
                   </figcaption>
                 </figure>
               );
@@ -484,7 +527,7 @@ function Home() {
         {!categoriesReady ? (
           <CategorySkeleton />
         ) : categories.length === 0 ? null : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             {categories.map((c) => {
               const imgUrl = categoryImages[c.name];
               if (!imgUrl) return null; // faqat real rasim bo'lsa ko'rsatamiz
@@ -503,8 +546,8 @@ function Home() {
                     className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(31,41,55,0.80) 0%, rgba(31,41,55,0.15) 50%, transparent 100%)" }} />
-                  <div className="absolute inset-x-0 bottom-0 p-4">
-                    <div className="text-lg font-medium" style={{ color: "#FFFFFF", fontFamily: "'Poppins','Inter',sans-serif" }}>{c.name}</div>
+                  <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
+                    <div className="text-sm sm:text-lg font-medium" style={{ color: "#FFFFFF", fontFamily: "'Poppins','Inter',sans-serif" }}>{c.name}</div>
                   </div>
                 </Link>
               );
@@ -521,23 +564,40 @@ function Home() {
             <h2 className="mt-2 text-3xl sm:text-4xl" style={{ fontFamily: "'Poppins','Inter',sans-serif", fontWeight: 500, color: "#1F2937" }}>Floristlar tanlagan</h2>
           </div>
         </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
           {featured.map((p: Product) => (
-            <Link key={p.id} to="/product/$id" params={{ id: p.slug }} className="group block">
-              <div className="aspect-square overflow-hidden rounded-2xl" style={{ background: "#FFFFFF" }}>
+            <Link
+              key={p.id}
+              to="/product/$id"
+              params={{ id: p.slug }}
+              className="group flex flex-col overflow-hidden rounded-2xl border border-pink-100/70 bg-white p-2.5 sm:p-3 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+            >
+              <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-pink-50/40">
                 <img
                   src={productImage(p)}
                   alt={p.name}
                   loading="lazy"
-                  className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                  className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                  onError={(e) => {
+                    e.currentTarget.src = "/flowers/flower-atirgul.jpg";
+                  }}
                 />
               </div>
-              <div className="mt-4 flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="truncate font-medium" style={{ color: "#1F2937" }}>{p.name}</div>
-                  <div className="truncate text-sm" style={{ color: "#6B7280" }}>{p.pattern}</div>
+              <div className="mt-2.5 flex flex-1 flex-col justify-between">
+                <div>
+                  <h3 className="line-clamp-1 text-xs sm:text-sm font-semibold text-gray-900 group-hover:text-[#D84C73] transition">
+                    {p.name}
+                  </h3>
+                  <p className="line-clamp-1 text-[11px] sm:text-xs text-gray-500 mt-0.5">{p.pattern}</p>
                 </div>
-                <div className="shrink-0 text-sm font-semibold" style={{ color: "#D84C73" }}>{formatSom(p.price)}</div>
+                <div className="mt-2 flex items-center justify-between pt-1.5 border-t border-gray-100">
+                  <span className="text-xs sm:text-sm font-bold text-[#D84C73]">{formatSom(p.price)}</span>
+                  <span className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-full bg-pink-50 text-[#D84C73] group-hover:bg-[#D84C73] group-hover:text-white transition">
+                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                  </span>
+                </div>
               </div>
             </Link>
           ))}
