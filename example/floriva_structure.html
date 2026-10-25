@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Floriva – iPhone UI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#fdecef;--bg2:#ebe6fb;--bg3:#def5ee;--pink:#ee4b6a;--ink:#17171c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#2b1b21;--bg2:#1f1c33;--bg3:#16292b}}
+:root[data-theme="dark"]{--bg1:#2b1b21;--bg2:#1f1c33;--bg3:#16292b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"SF Pro Text",Inter,system-ui,sans-serif;min-height:100vh;background:linear-gradient(120deg,var(--bg1),var(--bg2) 55%,var(--bg3)) fixed;-webkit-font-smoothing:antialiased}
+.stage{display:flex;flex-wrap:wrap;gap:40px;justify-content:center;align-items:flex-start;padding:40px 12px}
+@media (min-width:1380px){.pw:nth-child(1){margin-top:130px}.pw:nth-child(3){margin-top:94px}}
+.phone{position:relative;width:422px;height:872px;border-radius:64px;background:linear-gradient(145deg,#3b2d5c,#1d1530 60%,#2a2045);box-shadow:inset 0 0 0 3px #7d6aa6,inset 0 0 0 7px #15101f,0 40px 70px rgba(70,40,110,.3);transform-origin:0 0}
+.phone:before{content:"";position:absolute;left:-3px;top:150px;width:4px;height:70px;border-radius:2px;background:#5b4a7a}
+.phone:after{content:"";position:absolute;right:-3px;top:210px;width:4px;height:95px;border-radius:2px;background:#5b4a7a}
+.scr{position:absolute;left:18px;top:17px;width:386px;height:840px;border-radius:46px;overflow:hidden;background:#fff;color:var(--ink)}
+.a{position:absolute}.im{position:absolute;display:block;object-fit:cover}
+.i{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.isl{left:128px;top:12px;width:126px;height:38px;border-radius:20px;background:#000;z-index:30}
+.tm{left:34px;top:19px;font:600 17px/22px -apple-system,"SF Pro Text",Inter,sans-serif;color:#000;z-index:25}
+.ri{right:27px;top:24px;display:flex;gap:6px;align-items:center;height:13px;z-index:25}
+.hi{left:125px;top:826px;width:137px;height:5px;border-radius:3px;background:#0d0d0d;z-index:30}
+/* welcome */
+.bub{background:#fff;border-radius:10px;box-shadow:0 3px 10px rgba(120,60,80,.08);display:flex;align-items:center;justify-content:center;gap:5px;text-align:center;font:italic 13px/15px "Instrument Serif",Georgia,serif;color:#222}
+.bub i{font-style:normal;color:var(--pink);font-size:10px}
+.w1{left:0;width:386px;text-align:center}
+.btn{background:linear-gradient(90deg,#f04b6e,#e8466a);color:#fff;border:0;border-radius:25px;font:600 17px -apple-system,"SF Pro Text",Inter,sans-serif;cursor:pointer}
+/* home */
+.ic{width:40px;height:40px;border-radius:50%;background:#fff;display:grid;place-items:center;color:#222}
+.bg{border-radius:50%;background:var(--pink);color:#fff;font:600 10px/16px inherit;width:16px;height:16px;text-align:center}
+.h2{font:600 17px/22px -apple-system,"SF Pro Display",Inter,sans-serif;letter-spacing:-.4px}
+.cat{width:79px}.cat img{width:79px;height:75px;border-radius:8px;display:block}
+.cat p,.pt p{font-size:13px;line-height:16px;color:#8e8e93;text-align:center}.cat p{margin-top:8px}
+.pt{width:91px}.pt img{width:91px;height:90px;border-radius:10px;display:block}.pt p{margin-top:13px}
+.tabb{left:0;top:740px;width:386px;height:100px;background:#fff;border-top:1px solid #efeff2;z-index:10}
+.ti{position:absolute;top:0;width:80px;text-align:center;font-size:13px;color:#7c7c82;cursor:pointer}
+.tic{display:grid;place-items:center;width:34px;height:34px;margin:8px auto 0;border-radius:50%;position:relative;color:#3a3a40}
+.ti b{display:block;font-weight:400;margin-top:-1px;line-height:18px}
+.ti.on .tic{background:var(--pink);color:#fff}.ti.on b{color:var(--pink)}
+.bd2{position:absolute;left:20px;top:3px;width:16px;height:16px;border-radius:50%;background:#1c1c1e;color:#fff;font:600 10px/16px inherit;font-style:normal}
+/* product */
+.sheet{left:0;top:282px;width:386px;height:560px;background:#f3f3f5}
+.wb{background:#fff;left:0;width:386px}
+.rb{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.95);display:grid;place-items:center;color:#111;z-index:20;cursor:pointer}
+.chip{height:28px;border:1px solid #e5e5ea;border-radius:14px;padding:0 9px;display:flex;align-items:center;gap:5px;font:500 13px -apple-system,"SF Pro Text",Inter,sans-serif;background:#fff}
+.ul{background:#fcf7e3;border-radius:4px;padding:5px 0 0 27px;font-size:13px;line-height:25px;list-style:disc;color:#222}
+.ds{border:1px solid #e8e8ed;border-radius:6px;padding:12px;font-size:14px;line-height:18.5px;color:#2c2c30;background:#fff}
+.bar{left:0;top:749px;width:386px;height:91px;background:#fff;box-shadow:0 -2px 8px rgba(0,0,0,.05);z-index:12}
+.qty{left:15px;top:7px;width:106px;height:41px;border:1px solid #e5e5ea;border-radius:21px;display:flex;align-items:center;justify-content:space-between;padding:0 7px;font-size:14px}
+.qty button{width:24px;height:24px;border-radius:50%;border:1px solid #e0e0e5;background:#fff;color:#999;display:grid;place-items:center;cursor:pointer}
+.qty button.p{color:var(--pink);border-color:var(--pink)}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="sig" viewBox="0 0 18 12"><g fill="#000"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></g></symbol>
+<symbol id="wifi" viewBox="0 0 17 12"><path d="M1.5 4.3a10 10 0 0 1 14 0M4 7a6.4 6.4 0 0 1 9 0M6.4 9.6a3 3 0 0 1 4.2 0" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round"/><circle cx="8.5" cy="11" r="1" fill="#000"/></symbol>
+<symbol id="bat" viewBox="0 0 27 13"><rect x=".5" y=".5" width="22" height="12" rx="3.5" fill="none" stroke="#000" opacity=".4"/><rect x="2" y="2" width="19" height="9" rx="2.2" fill="#000"/><path d="M24 4.5v4c1-.3 1.6-1.1 1.6-2s-.6-1.7-1.6-2z" fill="#000" opacity=".5"/></symbol>
+<symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></symbol>
+<symbol id="cart" viewBox="0 0 24 24"><path d="M3 4h2.2l2.1 10.2a1 1 0 0 0 1 .8h8.4a1 1 0 0 0 1-.8L19.2 8H6"/><circle cx="9.5" cy="19.5" r="1.1"/><circle cx="16.5" cy="19.5" r="1.1"/></symbol>
+<symbol id="bell" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.6 2H4.4z"/><path d="M10 21a2 2 0 0 0 4 0"/></symbol>
+<symbol id="home" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 3.5 3.5 11v9a.8.8 0 0 0 .8.8H9v-6h6v6h4.7a.8.8 0 0 0 .8-.8v-9z"/></symbol>
+<symbol id="msg" viewBox="0 0 24 24"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-4 4v-4H6a2 2 0 0 1-2-2z"/><path d="M9 10h.01M15 10h.01" stroke-width="2.2"/></symbol>
+<symbol id="heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.6-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.4-7 10-7 10z"/></symbol>
+<symbol id="grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><path d="M17 14v6M14 17h6"/></symbol>
+<symbol id="user" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.5 18.5c1.2-2.4 3.2-3.5 5.5-3.5s4.3 1.1 5.5 3.5"/></symbol>
+<symbol id="back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+<symbol id="share" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+<symbol id="chat" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-3.9A8 8 0 1 1 20 12z"/></symbol>
+<symbol id="star" viewBox="0 0 24 24"><path fill="#f5a623" stroke="none" d="m12 2.8 2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></symbol>
+<symbol id="fire" viewBox="0 0 24 24"><path fill="#f5821f" stroke="none" d="M12 2c1 4 5.5 5.5 5.5 11a5.5 5.5 0 0 1-11 0c0-2 1-3.4 2.2-4.4.1 2 .9 3 2 3.2C10.200 8 10.500 5 12 2z"/></symbol>
+<symbol id="off" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#ee4b6a" stroke="none"/><path d="m8 16 8-8" stroke="#fff" stroke-width="2"/><circle cx="8.600" cy="8.600" r="1.600" fill="#fff" stroke="none"/><circle cx="15.400" cy="15.400" r="1.600" fill="#fff" stroke="none"/></symbol>
+<symbol id="minus" viewBox="0 0 24 24"><path d="M6 12h12" stroke-width="2"/></symbol>
+<symbol id="plus" viewBox="0 0 24 24"><path d="M12 6v12M6 12h12" stroke-width="2"/></symbol>
+</defs></svg>
+
+<div class="stage">
+
+<!-- 1 · Welcome -->
+<div class="pw"><div class="phone"><div class="scr" style="background:linear-gradient(180deg,rgb(252,245,245) 6.0%,rgb(253,241,242) 10.7%,rgb(253,241,242) 15.5%,rgb(255,243,247) 20.2%,rgb(255,253,254) 25.0%,rgb(232,223,224) 29.8%,rgb(255,250,253) 34.5%,rgb(254,245,246) 39.3%,rgb(253,244,245) 44.0%,rgb(253,232,237) 48.8%,rgb(251,227,233) 53.6%,rgb(253,232,237) 58.3%,rgb(253,234,238) 63.1%,rgb(255,236,240) 67.9%,rgb(251,240,241) 72.6%,rgb(254,242,244) 77.4%,rgb(254,245,248) 82.1%,rgb(254,249,250) 86.9%,rgb(255,250,252) 91.7%)">
+<div class="a isl"></div><div class="a tm">9:41</div>
+<div class="a ri"><svg width="18" height="12"><use href="#sig"/></svg><svg width="17" height="12"><use href="#wifi"/></svg><svg width="27" height="13"><use href="#bat"/></svg></div>
+<img class="im" src="[BASE64_IMAGE]" alt="" style="left:0;top:80px;width:386px;height:370px;-webkit-mask-image:linear-gradient(transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(transparent,#000 14%,#000 86%,transparent)">
+<div class="a bub" style="left:209px;top:287px;width:142px;height:43px"><span>Wishing you a day as<br>special as you are!</span></div>
+<div class="a bub" style="left:222px;top:340px;width:117px;height:34px;font-size:12px"><i>✿</i><span>Premium flowers</span></div>
+<div class="a w1" style="top:556px;font:700 30px/40px -apple-system,'SF Pro Display',Inter,sans-serif;letter-spacing:-1px">Welcome to Floriva</div>
+<div class="a w1" style="top:598px;font-size:14px;line-height:18px;color:#8d8d92;white-space:nowrap">Send a gift with a heartfelt message to create a truly<br>unique customize gift</div>
+<div class="a" style="left:172px;top:649px;width:21px;height:6px;border-radius:3px;background:var(--pink)"></div>
+<div class="a" style="left:198px;top:649px;width:6px;height:6px;border-radius:3px;background:#f3cdd4"></div>
+<div class="a" style="left:210px;top:649px;width:6px;height:6px;border-radius:3px;background:#f1dcc0"></div>
+<button class="a btn" style="left:16px;top:713px;width:354px;height:49px">Get Started</button>
+<div class="a w1" style="top:778px;font-size:14px;line-height:20px">Already have an account? <b style="color:var(--pink);font-weight:600">Sign In</b></div>
+<div class="a hi"></div>
+</div></div></div>
+
+<!-- 2 · Home -->
+<div class="pw"><div class="phone"><div class="scr" style="background:linear-gradient(180deg,rgb(175,167,172) 3.8%,rgb(253,238,243) 8.6%,rgb(254,233,240) 13.3%,rgb(253,229,238) 18.1%,rgb(253,227,233) 22.9%,rgb(252,230,238) 27.6%,rgb(251,235,238) 32.4%,rgb(250,240,243) 37.1%,rgb(252,244,247) 41.9%,rgb(251,249,247) 46.7%,rgb(250,250,250) 51.4%,rgb(250,250,250) 56.2%,rgb(250,250,250) 61.0%,rgb(250,250,250) 65.7%,rgb(250,250,250) 70.5%,rgb(250,250,250) 75.2%,rgb(250,250,250) 80.0%,rgb(250,250,250) 84.8%)">
+<div class="a isl"></div><div class="a tm">9:41</div>
+<div class="a ri"><svg width="18" height="12"><use href="#sig"/></svg><svg width="17" height="12"><use href="#wifi"/></svg><svg width="27" height="13"><use href="#bat"/></svg></div>
+<img class="im" src="[BASE64_IMAGE]" alt="" style="left:16px;top:63px;width:48px;height:48px;border-radius:50%">
+<div class="a ic" style="left:281px;top:67px"><svg class="i" width="21" height="21"><use href="#cart"/></svg></div>
+<div class="a bg" style="left:304px;top:66px">2</div>
+<div class="a ic" style="left:330px;top:67px"><svg class="i" width="21" height="21"><use href="#bell"/></svg></div>
+<div class="a" style="left:357px;top:69px;width:9px;height:9px;border-radius:50%;background:var(--pink);border:1.5px solid #fff"></div>
+<div class="a" style="left:16px;top:135px;width:352px;height:40px;border-radius:20px;background:#fff;display:flex;align-items:center;gap:8px;padding:0 14px;font-size:14px;color:#222"><svg class="i" width="19" height="19"><use href="#search"/></svg>Search bouquet, giftset</div>
+<div class="a h2" style="left:13px;top:203px">Trending Categories</div>
+<div class="a" style="right:18px;top:204px;font-size:14px;line-height:20px;color:#333">View All &nbsp;›</div>
+<div class="a cat" style="left:13px;top:237px"><img src="[BASE64_IMAGE]" alt=""><p>Flowers in<br>Boxes</p></div>
+<div class="a cat" style="left:104px;top:237px"><img src="[BASE64_IMAGE]" alt=""><p>Hand<br>Bouquets</p></div>
+<div class="a cat" style="left:196px;top:237px"><img src="[BASE64_IMAGE]" alt=""><p>Flowers in<br>Vases</p></div>
+<div class="a cat" style="left:287px;top:237px"><img src="[BASE64_IMAGE]" alt=""><p>Premium<br>Giftset</p></div>
+<div class="a" style="left:15px;top:382px;width:354px;height:144px;border-radius:10px;overflow:hidden">
+ <img class="im" src="[BASE64_IMAGE]" alt="" style="left:0;top:0;width:354px;height:144px">
+ <div class="a" style="left:17px;top:25px;font:600 18px/26px -apple-system,'SF Pro Display',Inter,sans-serif;letter-spacing:-.3px">Floriva <span style="font:italic 22px/26px 'Instrument Serif',Georgia,serif;color:var(--pink);font-weight:400">Special</span></div>
+ <div class="a" style="left:17px;top:50px;font-size:12.5px;line-height:17px;color:#777;width:130px">Customisable flower arrangements!</div>
+ <div class="a" style="left:17px;top:97px;width:81px;height:28px;border-radius:8px;background:#111;color:#fff;font:500 12px/28px -apple-system,Inter,sans-serif;text-align:center">Shop Now</div>
+</div>
+<div class="a" style="left:169px;top:534px;width:6px;height:6px;border-radius:3px;background:#d4d4d8"></div>
+<div class="a" style="left:177px;top:534px;width:30px;height:6px;border-radius:3px;background:var(--pink)"></div>
+<div class="a" style="left:214px;top:534px;width:6px;height:6px;border-radius:3px;background:#d4d4d8"></div>
+<div class="a h2" style="left:15px;top:568px">Presents for All Celebrations</div>
+<div class="a pt" style="left:15px;top:602px"><img src="[BASE64_IMAGE]" alt=""><p>Weeding</p></div>
+<div class="a pt" style="left:118px;top:602px"><img src="[BASE64_IMAGE]" alt=""><p>New baby</p></div>
+<div class="a pt" style="left:221px;top:602px"><img src="[BASE64_IMAGE]" alt=""><p>Graduations</p></div>
+<div class="a pt" style="left:324px;top:602px"><img src="[BASE64_IMAGE]" alt="" style="width:62px;border-radius:10px 0 0 10px"><p>Birthday</p></div>
+<div class="a tabb" id="tab">
+ <div class="ti on" style="left:3px"><span class="tic"><svg class="i" width="22" height="22"><use href="#home"/></svg></span><b>Home</b></div>
+ <div class="ti" style="left:77px"><span class="tic"><svg class="i" width="22" height="22"><use href="#msg"/></svg><i class="bd2">2</i></span><b>Message</b></div>
+ <div class="ti" style="left:152px"><span class="tic"><svg class="i" width="22" height="22"><use href="#heart"/></svg></span><b>Saved</b></div>
+ <div class="ti" style="left:225px"><span class="tic"><svg class="i" width="22" height="22"><use href="#grid"/></svg></span><b>Category</b></div>
+ <div class="ti" style="left:299px"><span class="tic"><svg class="i" width="22" height="22"><use href="#user"/></svg></span><b>Account</b></div>
+</div>
+<div class="a hi"></div>
+</div></div></div>
+
+<!-- 3 · Product -->
+<div class="pw"><div class="phone"><div class="scr">
+<img class="im" src="[BASE64_IMAGE]" alt="" style="left:0;top:2px;width:386px;height:281px">
+<div class="a isl"></div><div class="a tm">9:41</div>
+<div class="a ri"><svg width="18" height="12"><use href="#sig"/></svg><svg width="17" height="12"><use href="#wifi"/></svg><svg width="27" height="13"><use href="#bat"/></svg></div>
+<div class="a rb" style="left:11px;top:49px"><svg class="i" width="21" height="21"><use href="#back"/></svg></div>
+<div class="a rb" style="left:278px;top:49px"><svg class="i" width="20" height="20"><use href="#share"/></svg></div>
+<div class="a rb" id="hrt" style="left:328px;top:49px"><svg class="i" width="21" height="21"><use href="#heart"/></svg></div>
+<div class="a" style="left:164px;top:250px;width:56px;height:26px;border-radius:13px;background:rgba(238,238,240,.92);font:500 12.5px/26px -apple-system,Inter,sans-serif;text-align:center;color:#333;z-index:5">2/5</div>
+<div class="a sheet"></div>
+<div class="a wb" style="top:282px;height:50px"></div>
+<div class="a wb" style="top:336px;height:110px"></div>
+<div class="a wb" style="top:450px;height:52px"></div>
+<div class="a wb" style="top:507px;height:240px"></div>
+<div class="a" style="left:15px;top:290px;width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#ff5ea0,#d6286f);color:#fff;font:italic 700 17px/32px Inter,sans-serif;text-align:center">N</div>
+<div class="a" style="left:56px;top:296px;font:500 14px/20px -apple-system,'SF Pro Text',Inter,sans-serif">Flower4ever</div>
+<div class="a" style="left:297px;top:292px;width:72px;height:30px;border-radius:15px;background:#f1f1f3;display:flex;align-items:center;justify-content:center;gap:5px;font:500 14px -apple-system,'SF Pro Text',Inter,sans-serif"><svg class="i" width="15" height="15"><use href="#chat"/></svg>Chat</div>
+<div class="a" style="left:15px;top:345px;display:flex;align-items:center;gap:4px;font-size:13px;line-height:20px"><svg width="16" height="16"><use href="#star"/></svg><b style="font-size:14px;font-weight:600">4.5</b><span style="color:#6c6c72">(232 reviews)</span></div>
+<div class="a" style="left:15px;top:369px;font:600 20px/28px -apple-system,'SF Pro Display',Inter,sans-serif;letter-spacing:-.5px">Pink Lily Premium Bouquet</div>
+<div class="a" style="left:15px;top:410px;display:flex;gap:8px"><span class="chip"><svg width="18" height="18"><use href="#fire"/></svg>385</span><span class="chip">Limited Time</span><span class="chip">Free Shipping</span></div>
+<div class="a" style="left:15px;top:464px;display:flex;align-items:center;gap:8px"><span style="font:600 20px/26px -apple-system,'SF Pro Display',Inter,sans-serif;letter-spacing:-.4px">$42.99</span><s style="font-size:16px;color:#9a9aa0">$59.99</s><span style="display:flex;align-items:center;gap:4px;height:22px;padding:0 8px 0 4px;border-radius:11px;background:#fde8ec;color:var(--pink);font:600 13px -apple-system,Inter,sans-serif"><svg width="15" height="15"><use href="#off"/></svg>-28%</span></div>
+<div class="a" style="left:15px;top:518px;font:600 14px/20px -apple-system,'SF Pro Text',Inter,sans-serif">Product Details</div>
+<ul class="a ul" style="left:15px;top:552px;width:353px;height:113px"><li>lower Type: Pink Lily</li><li>Arrangement: Hand-tied Bouquet</li><li>Wrapping: Premium Paper Wrap</li><li>Freshness: 5–7 Days</li></ul>
+<div class="a ds" style="left:15px;top:678px;width:353px;height:90px">A beautifully arranged pink lily bouquet crafted to express love, care, and elegance. Perfect for birthdays, anniversaries, or special surprises.</div>
+<div class="a bar">
+ <div class="a qty"><button id="mi"><svg class="i" width="14" height="14"><use href="#minus"/></svg></button><span id="q">1</span><button class="p" id="pl"><svg class="i" width="14" height="14"><use href="#plus"/></svg></button></div>
+ <button class="a btn" style="left:134px;top:7px;width:234px;height:41px;border-radius:21px;font-size:14px">Add to Cart</button>
+</div>
+<div class="a hi"></div>
+</div></div></div>
+
+</div>
+<script>
+const $=s=>document.querySelector(s);
+function fit(){const w=innerWidth,k=w>=1380?1:Math.min(1,(w-24)/422);document.querySelectorAll('.pw').forEach(p=>{p.style.width=422*k+'px';p.style.height=872*k+'px';p.firstElementChild.style.transform='scale('+k+')'})}
+addEventListener('resize',fit);fit();
+let n=1;$('#pl').onclick=()=>{$('#q').textContent=++n};$('#mi').onclick=()=>{if(n>1)$('#q').textContent=--n};
+let on=false;$('#hrt').onclick=()=>{on=!on;const s=$('#hrt svg');s.style.fill=on?'#ee4b6a':'none';s.style.stroke=on?'#ee4b6a':'currentColor'};
+document.querySelectorAll('#tab .ti').forEach(t=>t.onclick=()=>{document.querySelectorAll('#tab .ti').forEach(x=>x.classList.remove('on'));t.classList.add('on')});
+</script>
+</body>
+</html>

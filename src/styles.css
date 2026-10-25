@@ -69,32 +69,32 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  /* NASTARIN GULLARI DESIGN SYSTEM */
-  --cream: #FFFFFF;
+  --radius: 1rem;
+  /* FLORIVA iOS DESIGN SYSTEM */
+  --cream: #FFFDF9;
   --ink: #1F2937;
-  --terracotta: #D84C73; /* Header button & Testimonial highlight color (Image 2) */
+  --terracotta: #E94B77; /* Floriva Primary Strawberry Pink */
   --cobalt: #6B7280; /* Soft Gray */
-  --saffron: #C03E63; /* Accent hover */
-  --background: #FFFFFF; /* Pure White background */
+  --saffron: #D83C68; /* Hover */
+  --background: #FFF9FA; /* Soft Pastel Pink iOS background */
   --foreground: #1F2937; /* Charcoal */
-  --card: #FFFFFF; /* White */
+  --card: #FFFFFF; /* Pure White Card */
   --card-foreground: #1F2937;
   --popover: #FFFFFF;
   --popover-foreground: #1F2937;
-  --primary: #D84C73; /* Main brand accent color (Image 1) */
-  --primary-foreground: #FFFFFF; /* White text */
-  --secondary: #F8F6F7;
-  --secondary-foreground: #1F2937;
-  --muted: #F3EEF0;
-  --muted-foreground: #6B7280; /* Soft Gray */
-  --accent: #D84C73;
+  --primary: #E94B77; /* Main Floriva Pink */
+  --primary-foreground: #FFFFFF;
+  --secondary: #FFF0F4;
+  --secondary-foreground: #E94B77;
+  --muted: #F8EDF1;
+  --muted-foreground: #7C7478;
+  --accent: #E94B77;
   --accent-foreground: #FFFFFF;
   --destructive: #EF4444;
   --destructive-foreground: #FFFFFF;
-  --border: #F0E6EB;
-  --input: #F0E6EB;
-  --ring: #D84C73;
+  --border: #FCE6ED;
+  --input: #FCE6ED;
+  --ring: #E94B77;
 }
 
 .dark {
@@ -194,5 +194,202 @@
   width: 100%;
   opacity: 0.65;
 }
+
+/* Floriva iPhone iOS Design System */
+.ios-stage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 32px 12px;
+  background: linear-gradient(120deg, #fdecef, #ebe6fb 55%, #def5ee) fixed;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (max-width: 480px) {
+  .ios-stage {
+    padding: 0;
+    background: transparent;
+  }
+}
+
+.ios-phone {
+  position: relative;
+  width: 422px;
+  height: 872px;
+  border-radius: 64px;
+  background: linear-gradient(145deg, #3b2d5c, #1d1530 60%, #2a2045);
+  box-shadow: inset 0 0 0 3px #7d6aa6, inset 0 0 0 7px #15101f, 0 40px 70px rgba(70, 40, 110, 0.3);
+  transform-origin: 0 0;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 480px) {
+  .ios-phone {
+    width: 100%;
+    height: 100dvh;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .ios-phone:before,
+  .ios-phone:after {
+    display: none !important;
+  }
+}
+
+.ios-phone:before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 150px;
+  width: 4px;
+  height: 70px;
+  border-radius: 2px;
+  background: #5b4a7a;
+}
+
+.ios-phone:after {
+  content: "";
+  position: absolute;
+  right: -3px;
+  top: 210px;
+  width: 4px;
+  height: 95px;
+  border-radius: 2px;
+  background: #5b4a7a;
+}
+
+.ios-scr {
+  position: absolute;
+  left: 18px;
+  top: 17px;
+  width: 386px;
+  height: 840px;
+  border-radius: 46px;
+  overflow: hidden;
+  background: #fff;
+  color: #17171c;
+  font-family: -apple-system, "SF Pro Text", Inter, system-ui, sans-serif;
+  user-select: none;
+}
+
+@media (max-width: 480px) {
+  .ios-scr {
+    position: relative;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100dvh;
+    border-radius: 0;
+  }
+}
+
+.ios-isl {
+  position: absolute;
+  left: 128px;
+  top: 12px;
+  width: 126px;
+  height: 38px;
+  border-radius: 20px;
+  background: #000;
+  z-index: 30;
+}
+
+@media (max-width: 480px) {
+  .ios-isl {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.ios-tm {
+  position: absolute;
+  left: 34px;
+  top: 19px;
+  font: 600 17px/22px -apple-system, "SF Pro Text", Inter, sans-serif;
+  color: #000;
+  z-index: 25;
+}
+
+.ios-ri {
+  position: absolute;
+  right: 27px;
+  top: 24px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  height: 13px;
+  z-index: 25;
+}
+
+.ios-hi {
+  position: absolute;
+  left: 125px;
+  top: 826px;
+  width: 137px;
+  height: 5px;
+  border-radius: 3px;
+  background: #0d0d0d;
+  z-index: 30;
+}
+
+@media (max-width: 480px) {
+  .ios-hi {
+    left: 50%;
+    top: auto;
+    bottom: 8px;
+    transform: translateX(-50%);
+  }
+}
+
+.ios-bub {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(120, 60, 80, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  text-align: center;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-style: italic;
+  color: #222;
+}
+
+.ios-bub i {
+  font-style: normal;
+  color: #ee4b6a;
+  font-size: 10px;
+}
+
+.ios-btn {
+  background: linear-gradient(90deg, #f04b6e, #e8466a);
+  color: #fff;
+  border: 0;
+  border-radius: 25px;
+  font: 600 17px -apple-system, "SF Pro Text", Inter, sans-serif;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(240, 75, 110, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ios-btn:active {
+  transform: scale(0.98);
+}
+
+/* Hide scrollbar for Chrome, Safari, Edge, Opera, Firefox */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
 
 

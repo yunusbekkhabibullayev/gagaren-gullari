@@ -7,76 +7,77 @@ import { MapPin, Phone, Clock, Instagram, Send, X } from "lucide-react";
 export function SiteHeader() {
   const { count, hydrated } = useCart();
   return (
-    <header className="sticky top-0 z-40 border-b border-gray-100 bg-white/95 backdrop-blur-md">
-      <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-5 py-3 sm:flex sm:justify-between">
-        {/* Logo */}
-        <Link to="/" className="flex min-w-0 items-center gap-2.5 group">
-          <img
-            src={logoImg}
-            alt="NASTARIN GULLARI logo"
-            className="h-10 w-10 shrink-0 object-contain transition-transform group-hover:scale-105"
-          />
-          <span className="truncate font-sans text-lg font-bold tracking-tight text-gray-900">
-            NASTARIN <span className="text-[#D84C73]">GULLARI</span>
-          </span>
+    <header className="sticky top-0 z-40 border-b border-pink-100/80 bg-white/95 backdrop-blur-md">
+      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 sm:px-6 py-3">
+        {/* Logo & Avatar with Pink Ring (Screen 2 Header) */}
+        <Link to="/" className="flex items-center gap-2.5 group">
+          <div className="relative h-10 w-10 shrink-0 rounded-full border-2 border-[#E94B77] p-0.5 bg-white shadow-sm overflow-hidden transition-transform group-hover:scale-105">
+            <img
+              src={logoImg}
+              alt="NASTARIN GULLARI"
+              className="h-full w-full object-cover rounded-full"
+            />
+          </div>
+          <div>
+            <span className="font-extrabold text-base tracking-tight text-gray-900 leading-none block">
+              NASTARIN <span className="text-[#E94B77]">GULLARI</span>
+            </span>
+            <span className="text-[10px] text-[#E94B77] font-bold tracking-wider uppercase block mt-0.5">
+              24/7 Bepul yetkazish
+            </span>
+          </div>
         </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-8 text-sm font-medium text-gray-600 sm:flex">
+        {/* Desktop Nav */}
+        <nav className="hidden items-center gap-7 text-xs font-bold text-gray-600 sm:flex">
           <Link
             to="/"
             activeOptions={{ exact: true }}
-            activeProps={{ className: "text-[#D84C73] font-semibold" }}
-            className="transition hover:text-[#D84C73]"
+            activeProps={{ className: "text-[#E94B77]" }}
+            className="transition hover:text-[#E94B77]"
           >
             Bosh sahifa
           </Link>
           <Link
             to="/catalog"
-            activeProps={{ className: "text-[#D84C73] font-semibold" }}
-            className="transition hover:text-[#D84C73]"
+            activeProps={{ className: "text-[#E94B77]" }}
+            className="transition hover:text-[#E94B77]"
           >
             Katalog
           </Link>
-          <a href="#hunar" className="transition hover:text-[#D84C73]">
-            Yetkazib berish
-          </a>
+          <Link
+            to="/cart"
+            activeProps={{ className: "text-[#E94B77]" }}
+            className="transition hover:text-[#E94B77]"
+          >
+            Savat
+          </Link>
         </nav>
 
-        {/* Right side: phone + cart */}
-        <div className="flex items-center gap-3">
-          {/* Phone button — desktop */}
+        {/* Right Icons: Phone & Cart (Screen 2 Right Icons) */}
+        <div className="flex items-center gap-2.5">
+          {/* Phone call icon */}
           <a
             href="tel:+998903949933"
-            className="hidden items-center gap-2 rounded-full bg-[#D84C73] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#c43f64] hover:scale-105 active:scale-95 sm:inline-flex"
+            aria-label="Qo'ng'iroq qilish"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-pink-50 text-[#E94B77] border border-pink-100 hover:bg-[#E94B77] hover:text-white transition active:scale-95 shadow-sm"
           >
-            <IconPhone />
-            <span>+998 90 394 99 33</span>
+            <Phone className="w-4 h-4" />
           </a>
 
-          {/* Cart button — desktop */}
+          {/* Cart Icon with badge */}
           <Link
             to="/cart"
             aria-label="Savat"
-            className="relative hidden shrink-0 items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-800 shadow-sm transition hover:bg-pink-50 hover:border-pink-200 sm:inline-flex"
+            className="relative flex h-9 w-9 items-center justify-center rounded-full bg-pink-50 text-[#E94B77] border border-pink-100 hover:bg-[#E94B77] hover:text-white transition active:scale-95 shadow-sm"
           >
             <IconBag />
-            <span>Savat</span>
             {hydrated && count > 0 && (
-              <span className="ml-1 grid h-5 min-w-5 place-items-center rounded-full bg-[#D84C73] px-1.5 text-[11px] font-bold text-white">
+              <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#E94B77] text-white px-1 text-[10px] font-extrabold shadow-sm">
                 {count}
               </span>
             )}
           </Link>
-
-          {/* Phone button — mobile only */}
-          <a
-            href="tel:+998903949933"
-            aria-label="Qo'ng'iroq qilish"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#D84C73] text-white shadow-sm transition hover:bg-[#c43f64] sm:hidden"
-          >
-            <IconPhone />
-          </a>
         </div>
       </div>
     </header>
